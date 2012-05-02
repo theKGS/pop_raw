@@ -1,6 +1,6 @@
 package raw.java.gui;
 
-public class Ful{
+public class Main{
 
 	/**
 	 * @param args
