@@ -1,7 +1,7 @@
 %% Author: Johan
 %% Created: 2 maj 2012
-%% Description: TODO: Add description to test
--module(test).
+%% Description: TODO: Add description to map
+-module(map).
 
 %%
 %% Include files
@@ -10,13 +10,12 @@
 %%
 %% Exported Functions
 %%
--export([foo/1]).
+-export([]).
 
 %%
 %% API Functions
 %%
-foo(N)->
-	N.
+
 
 
 %%
