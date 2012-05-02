@@ -1,0 +1,31 @@
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,k,5,4,3,v,0,0,0,0,0,k,k,k,k,k,k
+k,k,k,v,v,v,v,4,3,2,5,2,v,v,v,k,k
+k,k,k,k,k,v,v,5,4,3,2,4,2,0,0,v,v
+
+
+1. Start map server.
+2. gui sends params to map
+3. gui starts map
+
+
+
+Server can receive:
+	- {get, PID} -> {ok, MapArray, LeftPID | none, UpPID, RightPID, DownPID} || no
+	- {move, PID, X,Y} -> {moveok X, Y} || no
+	- {eat, PID, X, Y} -> ok
+	
+	
+	from java GUI
+	- {toggleStart, PID} -> paused || running
+	- {setParams, PID,  [{param, value},...]} -> setParams || badValue
+	- {restart, PID} -> {restart, MapArray}
+
+
+
+After each action the map will send to the GUI:
+	{move, X1, Y1, X2, Y2}
+	{eat, X,Y}
+	{died, X,Y}
+	{newR, X,Y}
+	{newW, X,Y}
