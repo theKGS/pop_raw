@@ -5,13 +5,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 /*
  * This is a tutorial for Swing.
  */
-
 
 public class SwingExample implements Runnable {
     @Override
