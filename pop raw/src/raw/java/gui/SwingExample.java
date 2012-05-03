@@ -35,17 +35,17 @@ public class SwingExample implements Runnable {
         
         // add JSlider
         JSlider jSl = new JSlider();
+        jSl.setLabelTable(jSl.createStandardLabels(30));
+        jSl.setPaintLabels(true);
         jSl.setPaintTicks(true);
-        jSl.setBounds(0, 60, 20, 200);        
-        jSl.setSnapToTicks(true);
-        jSl.setMaximum(50);
+        jSl.setBounds(0, 60, 200, 50);        
+        jSl.setMaximum(120);
         jSl.setMinimum(0);
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
-        jSl.setOrientation(SwingConstants.VERTICAL);
+        //jSl.setName("Heh");
         
-        //JList b;
-        
+        //JList b
         
         f.getContentPane().add(new JLabel("Hello, world!"));
         f.getContentPane().add(aB);
