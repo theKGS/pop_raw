@@ -12,7 +12,7 @@ k,k,k,k,k,v,v,5,4,3,2,4,2,0,0,v,v
 
 Server can receive, server's registered name is"rawmap":
 	- {get, PID} -> {ok, MapArray, LeftPID | none, UpPID, RightPID, DownPID} || no
-	- {move, PID, X,Y} -> {moveok X, Y} || no
+	- {move, PID, X1, Y1, X2, Y2} -> {moveok X2, Y2} || no (X1,Y1 var man står, X2, Y2 nya)
 	- {eat, PID, X, Y} -> ok
 	
 	
