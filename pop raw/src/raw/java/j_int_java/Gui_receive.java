@@ -4,10 +4,15 @@ import java.io.IOException;
 
 import com.ericsson.otp.erlang.*;
 
-public class Gui_receive {
+public class Gui_receive implements Runnable{
 	private String nodeName = "This is";
 	private String mboxName = "Sparta";
 	private OtpMbox mbox;
+	//private Fifo send;
+	
+	/*public Gui_receive(Fifo send) {
+		this.send = send;
+	}*/
 	
 	public boolean start() {
 		try {
@@ -31,7 +36,7 @@ public class Gui_receive {
 		mbox = self.createMbox(this.mboxName);
 	}
 	
-	private void run() {
+	public void run() {
 		while(true) {
 			try {
 				OtpErlangObject o = mbox.receive();
