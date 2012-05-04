@@ -1,0 +1,9 @@
+%% 
+%% Search data file for jinterface 1.5.6
+%% generated April  1 2012
+%% 
+{"jinterface.html", {function, {"jinterface", "jinterface"}},
+[
+]}.
+{"jinterface.html", {module, "jinterface"}, ["jinterface"]}.
+{notused, application, ["jinterface"]}.
