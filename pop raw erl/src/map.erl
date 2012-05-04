@@ -16,7 +16,8 @@
 %% API Functions
 %%
 init(Seed, Size)->
-	spawn(fun()->receiveLoop([[{{X,Y},5,0,none} || Y <- lists:seq(0, Size)] || X <- lists:seq(0, Size)]) end).
+	MapArr = array:new(Size, {default,array:new(Size,{default, {5,free,none}})}),
+	spawn(fun()->receiveLoop(MapArr) end).
 	
 	
 receiveLoop(Map)->
@@ -54,12 +55,14 @@ foo(PID, MSG)->
 
 
 makeMove(Map,PID,X1,Y1,X2,Y2)->
-	{_,Food, Type, NewPid} = lists:keyfind({X1,Y1},1,lists:nth(X1+1, Map)),
+	{Food, Type, _} = array:get(Y1, array:get(X1, Map)),
+	{NewFood, NewType, NewPid} = array:get(Y2, array:get(X2, Map)),
 	if NewPid =:= none ->
-		   lists:keyreplace({X2,Y2}, 1, lists:nth(X1 +1, Map), {X2,Y2,Food,1,PID});
-	(Type =:= 2) ->
+		   array:set(Y1, {Food, 0, none}, array:get(X1, Map)),
+		   array:set(Y2, {NewFood, Type, PID}, array:get(X2,Map));
+	(NewType =:= wolf) ->
 		tbi;
-	(Type =:= 1) ->
+	(NewType =:= rabbit) ->
 		tbi;
 	true -> false
 	end.
