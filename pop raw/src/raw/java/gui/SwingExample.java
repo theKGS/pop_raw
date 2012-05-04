@@ -1,30 +1,44 @@
 package raw.java.gui;
 
+/*import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.LayoutManager;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
+import javax.swing.SwingUtilities;*/
 
-/*
- * This is a tutorial for Swing.
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * 
+ * @author andreas
+ *
  */
-
 public class SwingExample implements Runnable {
     @Override
     public void run() {
         // Create the window
         JFrame controlFrame = new JFrame ("Rabbits & Wolves");
+        JFrame mapFrame = new JFrame ("Map");
         
         controlFrame.setLayout(null);
+        mapFrame.setLayout(null);
         
-        controlFrame.setBounds(100, 100, 200, 200);
+        controlFrame.setBounds(100, 100, 220, 220);
+        mapFrame.setBounds(300, 100, 600, 600);
 
         // Sets the behavior for when the window is closed
         controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mapFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        // add buttons
+        /*
+         * Start, stop, reset -buttons
+         */
         JButton rawButtonStart = new JButton("Start");
         rawButtonStart.setToolTipText("Starts simulation");
         JButton rawButtonStop = new JButton("Stop");
@@ -39,7 +53,9 @@ public class SwingExample implements Runnable {
         rawButtonReset.setLocation(0, 40);
         rawButtonReset.setSize(200, 20);
         
-        // add JSlider
+        /*
+         * Updates-per-minute slider
+         */
         JSlider jSl = new JSlider();
         jSl.setLabelTable(jSl.createStandardLabels(30));
         jSl.setPaintLabels(true);
@@ -49,8 +65,13 @@ public class SwingExample implements Runnable {
         jSl.setMinimum(0);
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
-        //jSl.setName("Heh");
         
+        mapDisplay mD = new mapDisplay();
+        mapFrame.add(mD);
+        
+        /*
+         * Show/hide map elements 
+         */
         JCheckBox cBoxWolves = new JCheckBox();
         cBoxWolves.setBounds(0, 140, 200, 20);
         cBoxWolves.setText("Hide wolves");
@@ -63,8 +84,6 @@ public class SwingExample implements Runnable {
         cBoxGrass.setBounds(0, 180, 200, 20);
         cBoxGrass.setText("Hide grass");
         cBoxGrass.setToolTipText("Hide grass in the display");
-        
-        //JList b
         
         controlFrame.getContentPane().add(new JLabel("Rabbits & Wolves"));
         controlFrame.getContentPane().add(rawButtonStart);
@@ -81,10 +100,13 @@ public class SwingExample implements Runnable {
         //f.pack();
         //By default, the window is not visible. Make it visible.
         controlFrame.setVisible(true);
+        mapFrame.setVisible(true);
     }
  
     public static void main(String[] args) {
         SwingExample se = new SwingExample();
+        //Communicator messageCommunicator = new Communicator();
+        
         // Schedules the application to be run at the correct time in the event queue.
         SwingUtilities.invokeLater(se);
     }
