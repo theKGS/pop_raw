@@ -15,13 +15,15 @@ public class SwingExample implements Runnable {
     @Override
     public void run() {
         // Create the window
-        JFrame f = new JFrame ("Hello, World!");
-        f.setLayout(null);
+        JFrame controlFrame = new JFrame ("Rabbits & Wolves");
         
-        f.setBounds(200, 200, 500, 500);
+        controlFrame.setLayout(null);
+        
+        controlFrame.setBounds(100, 100, 200, 200);
 
         // Sets the behavior for when the window is closed
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
         // add buttons
         JButton rawButtonStart = new JButton("Start");
         rawButtonStart.setToolTipText("Starts simulation");
@@ -64,21 +66,21 @@ public class SwingExample implements Runnable {
         
         //JList b
         
-        f.getContentPane().add(new JLabel("Hello, world!"));
-        f.getContentPane().add(rawButtonStart);
-        f.getContentPane().add(rawButtonStop);
-        f.getContentPane().add(rawButtonReset);
-        f.getContentPane().add(jSl);
+        controlFrame.getContentPane().add(new JLabel("Rabbits & Wolves"));
+        controlFrame.getContentPane().add(rawButtonStart);
+        controlFrame.getContentPane().add(rawButtonStop);
+        controlFrame.getContentPane().add(rawButtonReset);
+        controlFrame.getContentPane().add(jSl);
         
-        f.getContentPane().add(cBoxWolves);
-        f.getContentPane().add(cBoxRabbits);
-        f.getContentPane().add(cBoxGrass);
+        controlFrame.getContentPane().add(cBoxWolves);
+        controlFrame.getContentPane().add(cBoxRabbits);
+        controlFrame.getContentPane().add(cBoxGrass);
         
         //f.validate();
         // arrange the components inside the window
         //f.pack();
         //By default, the window is not visible. Make it visible.
-        f.setVisible(true);
+        controlFrame.setVisible(true);
     }
  
     public static void main(String[] args) {

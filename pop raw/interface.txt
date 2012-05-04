@@ -12,7 +12,7 @@ k,k,k,k,k,v,v,5,4,3,2,4,2,0,0,v,v
 
 Server can receive, server's registered name is"rawmap":
 	- {get, PID} -> {ok, MapArray, LeftPID | none, UpPID, RightPID, DownPID} || no
-	- {move, PID, X1, Y1, X2, Y2} -> {moveok X2, Y2} || no (X1,Y1 var man står, X2, Y2 nya)
+	- {move, PID, X1, Y1, X2, Y2} -> {moveok X2, Y2} || no (X1,Y1 var man stï¿½r, X2, Y2 nya)
 	- {eat, PID, X, Y} -> ok
 	
 	
@@ -25,7 +25,7 @@ Server can receive, server's registered name is"rawmap":
 
 After each action the map will send to the GUI:
 	{move, X1, Y1, X2, Y2}
-	{eat, X,Y}
+	{grass, X,Y,I}
 	{died, X,Y}
 	{newR, X,Y}
 	{newW, X,Y}
