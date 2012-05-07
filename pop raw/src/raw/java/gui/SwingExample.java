@@ -56,6 +56,10 @@ public class SwingExample implements Runnable {
         rawButtonReset.setLocation(0, 40);
         rawButtonReset.setSize(200, 20);
         
+        JButton tButton = new JButton("Temporary");
+        tButton.setLocation(10, 10);
+        tButton.setSize(40, 40);
+        
         /*
          * Updates-per-minute slider
          */
@@ -97,20 +101,34 @@ public class SwingExample implements Runnable {
         controlFrame.getContentPane().add(cBoxWolves);
         controlFrame.getContentPane().add(cBoxRabbits);
         controlFrame.getContentPane().add(cBoxGrass);
+
+        /*
+         * Add ActionListeners to all GUI elements.
+         */
+        rawButtonStart.addActionListener(new AL_StartButton());
+        rawButtonStop.addActionListener(new AL_StopButton());
+        rawButtonReset.addActionListener(new AL_ResetButton());
+        jSl.addChangeListener(new AL_TimeSlider());
+        
+        // This is just a test button
+        mapFrame.getContentPane().add(tButton);
         
         //f.validate();
         // arrange the components inside the window
         //f.pack();
         //By default, the window is not visible. Make it visible.
+        
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingExample se = new SwingExample();
-        gfxInterfaceMap absMap = new gfxInterfaceMap(32, 32);
-        Communicator messageCommunicator = new Communicator();
+    	SwingExample se = new SwingExample();
+        //Graphics2D gfx2D = new Graphics2D();
         
+    	gfxInterfaceMap absMap = new gfxInterfaceMap(32, 32);
+        Communicator messageCommunicator = new Communicator();
+
         // Schedules the application to be run at the correct time in the event queue.
         SwingUtilities.invokeLater(se);
     }
