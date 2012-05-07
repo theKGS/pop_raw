@@ -1,13 +1,14 @@
 package raw.java.j_int_java;
 
 public class Communicator {
+	private FIFO outGoing = new FIFO();
+	private FIFO inComming = new FIFO();
 	
 	public void send(Message m) {
-		// TODO enqueue message into FIFO queue.
+		outGoing.put(m);
 	}
 	
 	public Message receive() {
-		// TODO retrieve message from FIFO queue
-		return null; 
+		return inComming.get();
 	}
 }

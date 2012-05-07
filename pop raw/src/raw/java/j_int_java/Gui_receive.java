@@ -8,11 +8,11 @@ public class Gui_receive implements Runnable{
 	private String nodeName = "This is";
 	private String mboxName = "Sparta";
 	private OtpMbox mbox;
-	//private Fifo send;
+	private FIFO send;
 	
-	/*public Gui_receive(Fifo send) {
+	public Gui_receive(FIFO send) {
 		this.send = send;
-	}*/
+	}
 	
 	public boolean start() {
 		try {
@@ -41,8 +41,14 @@ public class Gui_receive implements Runnable{
 			try {
 				OtpErlangObject o = mbox.receive();
 				if(o instanceof OtpErlangTuple) {
+					Message message;
+					String sType;
 					OtpErlangTuple msg = (OtpErlangTuple) o;
-					msg.elementAt(1);
+					OtpErlangObject type = msg.elementAt(1);
+					if (type instanceof OtpErlangAtom) {
+						OtpErlangAtom tempType = (OtpErlangAtom) type;
+						sType = tempType.atomValue();
+					}
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
