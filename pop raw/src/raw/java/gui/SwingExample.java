@@ -23,7 +23,13 @@ import java.awt.*;
  *
  */
 public class SwingExample implements Runnable {
-    @Override
+	static Communicator messageCommunicator;    
+   	static gfxInterfaceMap absMap;
+	
+	/**
+	 * 
+	 */
+	@Override
     public void run() {
         // Create the window
         JFrame controlFrame = new JFrame ("Rabbits & Wolves");
@@ -92,6 +98,9 @@ public class SwingExample implements Runnable {
         cBoxGrass.setText("Hide grass");
         cBoxGrass.setToolTipText("Hide grass in the display");
         
+        /*
+         * Add all components to controlFrame and mapFrame
+         */
         controlFrame.getContentPane().add(new JLabel("Rabbits & Wolves"));
         controlFrame.getContentPane().add(rawButtonStart);
         controlFrame.getContentPane().add(rawButtonStop);
@@ -105,29 +114,28 @@ public class SwingExample implements Runnable {
         /*
          * Add ActionListeners to all GUI elements.
          */
-        rawButtonStart.addActionListener(new AL_StartButton());
-        rawButtonStop.addActionListener(new AL_StopButton());
-        rawButtonReset.addActionListener(new AL_ResetButton());
+        rawButtonStart.addActionListener(new AL_StartButton(messageCommunicator));
+        rawButtonStop.addActionListener(new AL_StopButton(messageCommunicator));
+        rawButtonReset.addActionListener(new AL_ResetButton(messageCommunicator));
         jSl.addChangeListener(new AL_TimeSlider(jSl));
         
         // This is just a test button
         mapFrame.getContentPane().add(tButton);
         
-        //f.validate();
-        // arrange the components inside the window
-        //f.pack();
-        //By default, the window is not visible. Make it visible.
-        
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
     }
 
+	/**
+	 * 
+	 * @param args
+	 */
     public static void main(String[] args) {
     	SwingExample se = new SwingExample();
         //Graphics2D gfx2D = new Graphics2D();
-        
-    	gfxInterfaceMap absMap = new gfxInterfaceMap(32, 32);
-        Communicator messageCommunicator = new Communicator();
+    	
+    	absMap = new gfxInterfaceMap(32, 32);
+        messageCommunicator = new Communicator();
 
         // Schedules the application to be run at the correct time in the event queue.
         SwingUtilities.invokeLater(se);
