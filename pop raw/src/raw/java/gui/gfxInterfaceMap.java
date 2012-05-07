@@ -11,4 +11,9 @@ public class gfxInterfaceMap {
 		mapWidth = w;
 		mapHeight = h;
 	}
+	
+	public void SetAndReset(int w, int h){
+		mapWidth = w;
+		mapHeight = h;
+	}
 }

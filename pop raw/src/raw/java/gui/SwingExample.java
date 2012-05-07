@@ -105,7 +105,7 @@ public class SwingExample implements Runnable {
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
     }
- 
+
     public static void main(String[] args) {
         SwingExample se = new SwingExample();
         gfxInterfaceMap absMap = new gfxInterfaceMap(32, 32);
