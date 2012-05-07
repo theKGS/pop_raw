@@ -25,7 +25,7 @@ import java.awt.*;
 public class SwingExample implements Runnable {
 	static Communicator messageCommunicator;    
    	static gfxInterfaceMap absMap;
-	
+   	
 	/**
 	 * 
 	 */
