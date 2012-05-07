@@ -10,7 +10,7 @@
 %%
 %% Exported Functions
 %%
--export([init/2,outerMapCheck/1,foo/2,makeMove/6]).
+-export([init/2,outerMapCheck/1,foo/2,makeMove/6, move/6]).
 
 %%
 %% API Functions
@@ -33,6 +33,7 @@ receiveLoop(Map, PMatePID)->
 			receiveLoop(Map, PMatePID);
 		{move, PID,X1,Y1, X2,Y2}->
 			NewMap = makeMove(Map,PID, X1,Y1,X2,Y2),
+			
 			if(NewMap =:= false) ->
 				  PID ! no,
 				  %%Check for mating
@@ -69,8 +70,9 @@ makeMove(Map,PID,X1,Y1,X2,Y2)->
 	{Food, Type, _} = array:get(Y1, array:get(X1, Map)),
 	{NewFood, NewType, NewPid} = array:get(Y2, array:get(X2, Map)),
 	if NewPid =:= none ->
-		   array:set(Y1, {Food, 0, none}, array:get(X1, Map)),
-		   array:set(Y2, {NewFood, Type, PID}, array:get(X2,Map));
+		   Map2 = array:set(X1, array:set(Y1, {Food, 0, none}, array:get(X1, Map)), Map),
+		   Map3 = array:set(X1,array:set(Y2, {NewFood, Type, PID}, array:get(X2,Map)), Map2),
+		   Map3;
 	(NewType =:= wolf) ->
 		if Type =:= rabbit->
 			PID ! death,
@@ -82,14 +84,29 @@ makeMove(Map,PID,X1,Y1,X2,Y2)->
 	true -> false
 	end.
 
-
+move(MapPID, Self, X1,Y1,X2,Y2)->
+	MapPID ! {move, Self, X1,Y1,X2,Y2},
+	receive
+		no -> false;
+		{moveok,_,_} ->
+			MapPID ! {get, Self},
+			receive
+				{Map,_,_,_,_} -> Map
+			end
+	end.
+	
+			   
 %%
 %% TEST CASES
 %%
-init_test()->
-	?assert(outerMapCheck(init(10,10)) =:= true).
 
-
+move_test()->
+	PID = init(10,10),
+	Self = self(),
+	NewMap = move(PID, Self, 0,0,0,1),
+	{Grass,Type, SPID} = array:get(1,array:get(0, NewMap)),
+	?assertMatch({5, free, Self}, {Grass,Type,SPID}).
+%%	?assertMatch(cat, cat).
 
 %%
 %% TEST HELPER FUNKTIONS
