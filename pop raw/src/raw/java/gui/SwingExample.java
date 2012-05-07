@@ -12,6 +12,9 @@ import javax.swing.JSlider;
 import javax.swing.SwingUtilities;*/
 
 import javax.swing.*;
+
+import raw.java.j_int_java.Communicator;
+
 import java.awt.*;
 
 /**
@@ -105,7 +108,8 @@ public class SwingExample implements Runnable {
  
     public static void main(String[] args) {
         SwingExample se = new SwingExample();
-        //Communicator messageCommunicator = new Communicator();
+        gfxInterfaceMap absMap = new gfxInterfaceMap(32, 32);
+        Communicator messageCommunicator = new Communicator();
         
         // Schedules the application to be run at the correct time in the event queue.
         SwingUtilities.invokeLater(se);

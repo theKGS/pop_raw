@@ -1,5 +1,8 @@
 package raw.java.gui;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class gfxInterfaceMap {
 	private int mapWidth;
 	private int mapHeight;
