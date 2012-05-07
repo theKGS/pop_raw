@@ -5,17 +5,18 @@ import java.awt.event.ActionListener;
 
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.map.Map;
 
 public class AL_ResetButton implements ActionListener{	
-	private Communicator communicator;
+	private Map mp;
 	
-	public AL_ResetButton(Communicator messageCommunicator) {
-		communicator = messageCommunicator;
+	public AL_ResetButton(Map map) {
+		mp = map;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		communicator.send(new Message("reset", null));
+		mp.reset();
 		System.out.println("RESET");
 	}
 }

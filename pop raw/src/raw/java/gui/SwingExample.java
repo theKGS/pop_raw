@@ -1,20 +1,9 @@
 package raw.java.gui;
 
-/*import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.LayoutManager;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;*/
-
 import javax.swing.*;
 
 import raw.java.j_int_java.Communicator;
-
+import raw.java.map.Map;
 import java.awt.*;
 
 /**
@@ -25,6 +14,7 @@ import java.awt.*;
 public class SwingExample implements Runnable {
 	static Communicator messageCommunicator;    
    	static gfxInterfaceMap absMap;
+   	static Map map;
    	
 	/**
 	 * 
@@ -114,9 +104,9 @@ public class SwingExample implements Runnable {
         /*
          * Add ActionListeners to all GUI elements.
          */
-        rawButtonStart.addActionListener(new AL_StartButton(messageCommunicator));
-        rawButtonStop.addActionListener(new AL_StopButton(messageCommunicator));
-        rawButtonReset.addActionListener(new AL_ResetButton(messageCommunicator));
+        rawButtonStart.addActionListener(new AL_StartButton(map));
+        rawButtonStop.addActionListener(new AL_StopButton(map));
+        rawButtonReset.addActionListener(new AL_ResetButton(map));
         jSl.addChangeListener(new AL_TimeSlider(jSl));
         
         // This is just a test button
@@ -130,6 +120,7 @@ public class SwingExample implements Runnable {
 	 * 
 	 * @param args
 	 */
+	
     public static void main(String[] args) {
     	SwingExample se = new SwingExample();
         //Graphics2D gfx2D = new Graphics2D();
