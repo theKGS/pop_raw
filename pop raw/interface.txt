@@ -29,3 +29,16 @@ After each action the map will send to the GUI:
 	{died, X,Y}
 	{newR, X,Y}
 	{newW, X,Y}
+
+Setup settings
+mpS		- map size
+mpG		- ammount of grass
+mpSG	- speed of grass growth
+wfN		- number of wolves
+wfA		- maximum wolf age
+wfRA	- wolf reproduction age
+wfRS	- wolf reproduction success probability
+raN		- number of rabbits
+raA		- maximum rabbit age
+raRA	- rabbit reproduction age
+raRS	- rabbit reproduction success probability
