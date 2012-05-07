@@ -1,7 +1,7 @@
 package raw.java.map;
 
 import java.util.ArrayList;
-
+import com.ericsson.otp.erlang.*;
 public class Map {
 	// mpS - map size
 	// mpG - ammount of grass
@@ -14,6 +14,15 @@ public class Map {
 	// raA - maximum rabbit age
 	// raRA - rabbit reproduction age
 	// raRS - rabbit reproduction success probability
+	private int simulationSpeed = 0;
+	public int getSimulationSpeed() {
+		return simulationSpeed;
+	}
+
+	public void setSimulationSpeed(int simulationSpeed) {
+		this.simulationSpeed = simulationSpeed;
+	}
+
 	private int mapSize = 0;
 	private int amountOfGrass = 0;
 	private int speedOfGrassGrowth = 0;
@@ -32,9 +41,10 @@ public class Map {
 		mapArray = new MapNode[Size][Size];
 		for (MapNode[] tMapNodeArr : mapArray) {
 			for (MapNode tMapNode : tMapNodeArr) {
-
+				tMapNode = new MapNode();
 			}
 		}
+		//OtpErlangP
 	}
 
 	public void start() {
