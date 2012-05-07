@@ -2,10 +2,11 @@ package raw.java.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import raw.java.j_int_java.Communicator;
-import raw.java.j_int_java.Message;
 import raw.java.map.Map;
+
+/*
+ * Listener for the start button
+ */
 
 public class AL_StartButton implements ActionListener{
 	private Map mp;

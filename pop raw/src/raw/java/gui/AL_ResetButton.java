@@ -7,6 +7,10 @@ import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.map.Map;
 
+/*
+ * Listener for the reset button
+ */
+
 public class AL_ResetButton implements ActionListener{	
 	private Map mp;
 	

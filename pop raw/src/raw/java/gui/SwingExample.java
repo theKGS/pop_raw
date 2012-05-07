@@ -107,7 +107,7 @@ public class SwingExample implements Runnable {
         rawButtonStart.addActionListener(new AL_StartButton(map));
         rawButtonStop.addActionListener(new AL_StopButton(map));
         rawButtonReset.addActionListener(new AL_ResetButton(map));
-        jSl.addChangeListener(new AL_TimeSlider(jSl));
+        jSl.addChangeListener(new AL_TimeSlider(map, jSl));
         
         // This is just a test button
         mapFrame.getContentPane().add(tButton);
