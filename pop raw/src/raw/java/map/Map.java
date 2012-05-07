@@ -3,106 +3,137 @@ package raw.java.map;
 import java.util.ArrayList;
 
 public class Map {
-//	mpS		- map size
-//	mpG		- ammount of grass
-//	mpSG	- speed of grass growth
-//	wfN		- number of wolves
-//	wfA		- maximum wolf age
-//	wfRA	- wolf reproduction age
-//	wfRS	- wolf reproduction success probability
-//	raN		- number of rabbits
-//	raA		- maximum rabbit age
-//	raRA	- rabbit reproduction age
-//	raRS	- rabbit reproduction success probability
-	private int mpS = 0;
-	private int mpG = 0;
-	private int mpSG = 0;
-	private int wfN = 0;
-	private int wfA = 0;
-	private int wfRA = 0;
-	private int wfRS = 0;
-	private int raN = 0;
-	private int raA = 0;
-	private int raRA = 0;
-	private int raRS = 0;
-	
+	// mpS - map size
+	// mpG - ammount of grass
+	// mpSG - speed of grass growth
+	// wfN - number of wolves
+	// wfA - maximum wolf age
+	// wfRA - wolf reproduction age
+	// wfRS - wolf reproduction success probability
+	// raN - number of rabbits
+	// raA - maximum rabbit age
+	// raRA - rabbit reproduction age
+	// raRS - rabbit reproduction success probability
+	private int mapSize = 0;
+	private int amountOfGrass = 0;
+	private int speedOfGrassGrowth = 0;
+	private int numberOfWolves = 0;
+	private int maxWolfAge = 0;
+	private int wolfReprAge = 0;
+	private int woldReprSuccessProb = 0;
+	private int numberOfRabbits = 0;
+	private int maxRabbitAge = 0;
+	private int rappitReprAge = 0;
+	private int rabbitReprSuccessProb = 0;
+
 	MapNode[][] mapArray;
+
 	public Map(int Size, int Seed) {
 		mapArray = new MapNode[Size][Size];
+		for (MapNode[] tMapNodeArr : mapArray) {
+			for (MapNode tMapNode : tMapNodeArr) {
+
+			}
+		}
 	}
-	public void start(){
-		
+
+	public void start() {
+
 	}
-	public void stop(){
-		
+
+	public void stop() {
+
 	}
-	public void reset(){
-		
+
+	public void reset() {
+
 	}
-	public int getMpS() {
-		return mpS;
+
+	public int getMapSize() {
+		return mapSize;
 	}
-	public void setMpS(int mpS) {
-		this.mpS = mpS;
+
+	public void setMapSize(int mapSize) {
+		this.mapSize = mapSize;
 	}
-	public int getMpG() {
-		return mpG;
+
+	public int getAmountOfGrass() {
+		return amountOfGrass;
 	}
-	public void setMpG(int mpG) {
-		this.mpG = mpG;
+
+	public void setAmountOfGrass(int amountOfGrass) {
+		this.amountOfGrass = amountOfGrass;
 	}
-	public int getMpSG() {
-		return mpSG;
+
+	public int getSpeedOfGrassGrowth() {
+		return speedOfGrassGrowth;
 	}
-	public void setMpSG(int mpSG) {
-		this.mpSG = mpSG;
+
+	public void setSpeedOfGrassGrowth(int speedOfGrassGrowth) {
+		this.speedOfGrassGrowth = speedOfGrassGrowth;
 	}
-	public int getWfN() {
-		return wfN;
+
+	public int getNumberOfWolves() {
+		return numberOfWolves;
 	}
-	public void setWfN(int wfN) {
-		this.wfN = wfN;
+
+	public void setNumberOfWolves(int numberOfWolves) {
+		this.numberOfWolves = numberOfWolves;
 	}
-	public int getWfA() {
-		return wfA;
+
+	public int getMaxWolfAge() {
+		return maxWolfAge;
 	}
-	public void setWfA(int wfA) {
-		this.wfA = wfA;
+
+	public void setMaxWolfAge(int maxWolfAge) {
+		this.maxWolfAge = maxWolfAge;
 	}
-	public int getWfRA() {
-		return wfRA;
+
+	public int getWolfReprAge() {
+		return wolfReprAge;
 	}
-	public void setWfRA(int wfRA) {
-		this.wfRA = wfRA;
+
+	public void setWolfReprAge(int wolfReprAge) {
+		this.wolfReprAge = wolfReprAge;
 	}
-	public int getWfRS() {
-		return wfRS;
+
+	public int getWoldReprSuccessProb() {
+		return woldReprSuccessProb;
 	}
-	public void setWfRS(int wfRS) {
-		this.wfRS = wfRS;
+
+	public void setWoldReprSuccessProb(int woldReprSuccessProb) {
+		this.woldReprSuccessProb = woldReprSuccessProb;
 	}
-	public int getRaN() {
-		return raN;
+
+	public int getNumberOfRabbits() {
+		return numberOfRabbits;
 	}
-	public void setRaN(int raN) {
-		this.raN = raN;
+
+	public void setNumberOfRabbits(int numberOfRabbits) {
+		this.numberOfRabbits = numberOfRabbits;
 	}
-	public int getRaA() {
-		return raA;
+
+	public int getMaxRabbitAge() {
+		return maxRabbitAge;
 	}
-	public void setRaA(int raA) {
-		this.raA = raA;
+
+	public void setMaxRabbitAge(int maxRabbitAge) {
+		this.maxRabbitAge = maxRabbitAge;
 	}
-	public int getRaRA() {
-		return raRA;
+
+	public int getRappitReprAge() {
+		return rappitReprAge;
 	}
-	public void setRaRA(int raRA) {
-		this.raRA = raRA;
+
+	public void setRappitReprAge(int rappitReprAge) {
+		this.rappitReprAge = rappitReprAge;
 	}
-	public int getRaRS() {
-		return raRS;
+
+	public int getRabbitReprSuccessProb() {
+		return rabbitReprSuccessProb;
 	}
-	public void setRaRS(int raRS) {
-		this.raRS = raRS;
+
+	public void setRabbitReprSuccessProb(int rabbitReprSuccessProb) {
+		this.rabbitReprSuccessProb = rabbitReprSuccessProb;
 	}
 }
