@@ -67,7 +67,7 @@ public class SwingExample implements Runnable {
         jSl.setLabelTable(jSl.createStandardLabels(30));
         jSl.setPaintLabels(true);
         jSl.setPaintTicks(true);
-        jSl.setBounds(0, 60, 200, 70);        
+        jSl.setBounds(0, 70, 200, 70);        
         jSl.setMaximum(120);
         jSl.setMinimum(0);
         jSl.setMajorTickSpacing(10);
@@ -108,7 +108,7 @@ public class SwingExample implements Runnable {
         rawButtonStart.addActionListener(new AL_StartButton());
         rawButtonStop.addActionListener(new AL_StopButton());
         rawButtonReset.addActionListener(new AL_ResetButton());
-        jSl.addChangeListener(new AL_TimeSlider());
+        jSl.addChangeListener(new AL_TimeSlider(jSl));
         
         // This is just a test button
         mapFrame.getContentPane().add(tButton);

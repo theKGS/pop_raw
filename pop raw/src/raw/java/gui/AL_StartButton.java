@@ -7,7 +7,7 @@ public class AL_StartButton implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.print("START");
+		System.out.println("START");
 	}
 
 }
