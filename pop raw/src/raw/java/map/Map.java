@@ -58,7 +58,7 @@ public class Map extends Thread {
 		mapArray = new MapNode[Size][Size];
 		for (MapNode[] tMapNodeArr : mapArray) {
 			for (MapNode tMapNode : tMapNodeArr) {
-				tMapNode = new MapNode();
+				tMapNode = new MapNode(5, MapNode.NONE, null);
 			}
 		}
 		setUp();
@@ -102,31 +102,62 @@ public class Map extends Thread {
 			mErlCom.send(new SendMessage("map", mapArray, pid));
 		}
 	}
+
 	class MoveMsgHandler implements Runnable {
 		final OtpErlangPid pid;
 		private int[] coords;
-		public MoveMsgHandler(OtpErlangPid pid, int[] coords){
+
+		public MoveMsgHandler(OtpErlangPid pid, int[] coords) {
 			this.pid = pid;
 			this.coords = coords;
 		}
+
 		@Override
 		public void run() {
-			if(compareCoordsArr(coords)){
-				
+			if (compareCoordsArr(coords)) {
+				synchronized(mapArray[coords[0]][coords[1]]){
+					synchronized(mapArray[coords[2]][coords[3]]){
+						checkMove();
+					}
+				}
+			} else {
+				synchronized(mapArray[coords[2]][coords[3]]){
+					synchronized(mapArray[coords[1]][coords[0]]){
+						checkMove();
+					}
+				}
 			}
-			
+
 		}
-	}
-	/**
-	 * Method that get the index of both coordinate pairs and returns the smallest one
-	 * @param coords int[4] with {x1,y1,x,y2} coords
-	 * @return coord-pair with the smallest index
-	 */
-	public boolean compareCoordsArr(int[] coords){
-		return coords[1]*mapArray.length + coords[0]+mapArray.length < 
-				coords[3]*mapArray.length + coords[2]+mapArray.length ? true : false;
+		private void checkMove(){
+			MapNode currentNode = mapArray[coords[1]][coords[2]];
+			MapNode targetNode = mapArray[coords[2]][coords[3]];
+			if(targetNode.getType() != MapNode.NONE){
+				mErlCom.send(new SendMessage("no", null, pid));
+			} else {
+				targetNode.setPid(currentNode.getPid());
+				targetNode.setType(currentNode.getType());
+				currentNode.setPid(null);
+				currentNode.setType(MapNode.NONE);
+			}
+		}
 
 	}
+
+	/**
+	 * Method that get the index of both coordinate pairs and returns the
+	 * smallest one
+	 * 
+	 * @param coords
+	 *            int[4] with {x1,y1,x,y2} coords
+	 * @return coord-pair with the smallest index
+	 */
+	public boolean compareCoordsArr(int[] coords) {
+		return coords[1] * mapArray.length + coords[0] + mapArray.length < coords[3]
+				* mapArray.length + coords[2] + mapArray.length ? true : false;
+
+	}
+
 	public void simulationStart() {
 
 	}
