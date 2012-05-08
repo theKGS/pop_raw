@@ -32,7 +32,7 @@ After each action the map will send to the GUI:
 
 Setup settings
 mpS		- map size
-mpG		- ammount of grass
+mpG		- amount of grass
 mpSG	- speed of grass growth
 wfN		- number of wolves
 wfA		- maximum wolf age

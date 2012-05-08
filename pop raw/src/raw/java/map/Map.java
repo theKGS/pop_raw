@@ -1,6 +1,9 @@
 package raw.java.map;
 
 import java.util.ArrayList;
+
+import raw.java.j_int_java.Communicator;
+
 import com.ericsson.otp.erlang.*;
 public class Map {
 	// mpS - map size
@@ -36,6 +39,9 @@ public class Map {
 	private int rabbitReprSuccessProb = 0;
 
 	MapNode[][] mapArray;
+	private boolean running = true;
+	
+	private Communicator mErlCom;
 
 	public Map(int Size, int Seed) {
 		mapArray = new MapNode[Size][Size];
@@ -44,9 +50,15 @@ public class Map {
 				tMapNode = new MapNode();
 			}
 		}
-		//OtpErlangP
+		mErlCom = new Communicator();
+		run();
+		
 	}
+	private void run(){
+		while(running){
 
+		}
+	}
 	public void start() {
 
 	}
