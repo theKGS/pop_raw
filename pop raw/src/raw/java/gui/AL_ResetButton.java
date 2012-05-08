@@ -18,6 +18,9 @@ public class AL_ResetButton implements ActionListener{
 		mp = map;
 	}
 
+	/**
+	 * Called by the reset button
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		mp.reset();

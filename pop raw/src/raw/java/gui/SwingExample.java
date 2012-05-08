@@ -14,10 +14,10 @@ import java.awt.*;
 public class SwingExample implements Runnable {
 	static Communicator messageCommunicator;    
    	static gfxInterfaceMap absMap;
-   	static Map map;
+	static Map map;
    	
 	/**
-	 * 
+	 * The Swing thread 
 	 */
 	@Override
     public void run() {
@@ -28,7 +28,7 @@ public class SwingExample implements Runnable {
         controlFrame.setLayout(null);
         mapFrame.setLayout(null);
         
-        controlFrame.setBounds(100, 100, 220, 220);
+        controlFrame.setBounds(100, 100, 208, 220);
         mapFrame.setBounds(300, 100, 600, 600);
 
         // Sets the behavior for when the window is closed
@@ -46,11 +46,11 @@ public class SwingExample implements Runnable {
         rawButtonReset.setToolTipText("Resets simulation");
         
         rawButtonStart.setLocation(0, 0);
-        rawButtonStart.setSize(200, 20);
+        rawButtonStart.setSize(80, 20);
         rawButtonStop.setLocation(0, 20);
-        rawButtonStop.setSize(200, 20);
+        rawButtonStop.setSize(80, 20);
         rawButtonReset.setLocation(0, 40);
-        rawButtonReset.setSize(200, 20);
+        rawButtonReset.setSize(80, 20);
         
         JButton tButton = new JButton("Temporary");
         tButton.setLocation(10, 10);
@@ -117,15 +117,14 @@ public class SwingExample implements Runnable {
     }
 
 	/**
-	 * 
+	 * Main method
 	 * @param args
 	 */
-	
     public static void main(String[] args) {
     	SwingExample se = new SwingExample();
         //Graphics2D gfx2D = new Graphics2D();
     	
-    	absMap = new gfxInterfaceMap(32, 32);
+    	map = new Map(32, 32);
         messageCommunicator = new Communicator();
 
         // Schedules the application to be run at the correct time in the event queue.

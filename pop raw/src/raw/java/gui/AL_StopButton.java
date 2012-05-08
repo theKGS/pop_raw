@@ -14,6 +14,9 @@ public class AL_StopButton implements ActionListener{
 		mp = map;
 	}
 
+	/**
+	 * Called by the stop button
+	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		mp.stop();
