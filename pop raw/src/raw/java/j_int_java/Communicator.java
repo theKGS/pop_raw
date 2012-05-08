@@ -4,8 +4,8 @@ public class Communicator {
 	private FIFO outGoing = new FIFO();
 	private FIFO inComming = new FIFO();
 	
-	public void send(Message m) {
-		outGoing.put(m);
+	public void send(SendMessage m) {
+		//outGoing.put(m);
 	}
 	
 	public Message receive() {

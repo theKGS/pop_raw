@@ -1,11 +1,18 @@
 package raw.java.map;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import raw.java.j_int_java.Communicator;
+import raw.java.j_int_java.Message;
+import raw.java.j_int_java.SendMessage;
+import raw.java.map.threadpool.MessageThreadExecutor;
 
 import com.ericsson.otp.erlang.*;
-public class Map {
+
+public class Map extends Thread {
+
 	// mpS - map size
 	// mpG - ammount of grass
 	// mpSG - speed of grass growth
@@ -18,6 +25,7 @@ public class Map {
 	// raRA - rabbit reproduction age
 	// raRS - rabbit reproduction success probability
 	private int simulationSpeed = 0;
+
 	public int getSimulationSpeed() {
 		return simulationSpeed;
 	}
@@ -40,8 +48,11 @@ public class Map {
 
 	MapNode[][] mapArray;
 	private boolean running = true;
-	
+	private boolean paused = true;
 	private Communicator mErlCom;
+	private ExecutorService mCachedThrPool;
+	private MessageThreadExecutor mMsgThrExec;
+	private Message nextMessage;
 
 	public Map(int Size, int Seed) {
 		mapArray = new MapNode[Size][Size];
@@ -50,24 +61,81 @@ public class Map {
 				tMapNode = new MapNode();
 			}
 		}
-		mErlCom = new Communicator();
-		run();
-		
+		setUp();
 	}
-	private void run(){
-		while(running){
+
+	private void setUp() {
+		mErlCom = new Communicator();
+		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
+	}
+
+	@Override
+	public void run() {
+		super.run();
+		while (running) {
+			if (paused) {
+				continue;
+			}
+			handleNextMessage();
 
 		}
 	}
-	public void start() {
+
+	private void handleNextMessage() {
+		nextMessage = mErlCom.receive();
+		if (nextMessage.getType().equalsIgnoreCase("get")) {
+			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid()));
+		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
+
+		}
+	}
+
+	class MapMsgHandler implements Runnable {
+		final OtpErlangPid pid;
+
+		public MapMsgHandler(OtpErlangPid pid) {
+			this.pid = pid;
+		}
+
+		@Override
+		public void run() {
+			mErlCom.send(new SendMessage("map", mapArray, pid));
+		}
+	}
+	class MoveMsgHandler implements Runnable {
+		final OtpErlangPid pid;
+		private int[] coords;
+		public MoveMsgHandler(OtpErlangPid pid, int[] coords){
+			this.pid = pid;
+			this.coords = coords;
+		}
+		@Override
+		public void run() {
+			if(compareCoordsArr(coords)){
+				
+			}
+			
+		}
+	}
+	/**
+	 * Method that get the index of both coordinate pairs and returns the smallest one
+	 * @param coords int[4] with {x1,y1,x,y2} coords
+	 * @return coord-pair with the smallest index
+	 */
+	public boolean compareCoordsArr(int[] coords){
+		return coords[1]*mapArray.length + coords[0]+mapArray.length < 
+				coords[3]*mapArray.length + coords[2]+mapArray.length ? true : false;
+
+	}
+	public void simulationStart() {
 
 	}
 
-	public void stop() {
+	public void simulationStop() {
 
 	}
 
-	public void reset() {
+	public void simulationReset() {
 
 	}
 
@@ -85,42 +153,60 @@ public class Map {
 
 	public void setAmountOfGrass(int amountOfGrass) {
 		this.amountOfGrass = amountOfGrass;
+
 	}
 
 	public int getSpeedOfGrassGrowth() {
 		return speedOfGrassGrowth;
+
 	}
 
 	public void setSpeedOfGrassGrowth(int speedOfGrassGrowth) {
 		this.speedOfGrassGrowth = speedOfGrassGrowth;
+
 	}
 
 	public int getNumberOfWolves() {
 		return numberOfWolves;
+
 	}
 
 	public void setNumberOfWolves(int numberOfWolves) {
 		this.numberOfWolves = numberOfWolves;
+
 	}
 
 	public int getMaxWolfAge() {
 		return maxWolfAge;
+
 	}
 
 	public void setMaxWolfAge(int maxWolfAge) {
 		this.maxWolfAge = maxWolfAge;
+
 	}
 
 	public int getWolfReprAge() {
 		return wolfReprAge;
+
 	}
 
 	public void setWolfReprAge(int wolfReprAge) {
 		this.wolfReprAge = wolfReprAge;
+
 	}
 
 	public int getWoldReprSuccessProb() {
 		return woldReprSuccessProb;
+
+	}
+
+	public MapNode[][] getMapArray() {
+		return mapArray;
+	}
+
+	public void setMapArray(MapNode[][] mapArray) {
+		this.mapArray = mapArray;
 	}
 
 	public void setWoldReprSuccessProb(int woldReprSuccessProb) {
