@@ -1,14 +1,8 @@
 package raw.java.gui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import raw.java.j_int_java.Communicator;
 import raw.java.map.Map;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * 
@@ -72,18 +66,8 @@ public class SwingExample implements Runnable {
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
         
-        MapPanel mD = new MapPanel();
-        mD.setBounds(0,0,200,200);
-        
-        /*try {
-			BufferedImage IconZombie = ImageIO.read(new File("Dragon3Headed.PNG"));
-			JLabel jl = new JLabel();
-			jl.setBounds(10, 10, 50, 50);
-			jl.prepareImage(IconZombie, null);
-			mapFrame.add(jl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+        MapPanel mD = new MapPanel(map);
+        mD.setBounds(0,0,400,400);
                
         mapFrame.add(mD);
         
