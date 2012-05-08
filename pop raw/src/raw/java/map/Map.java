@@ -59,12 +59,12 @@ public class Map extends Thread {
 		mapArray = new MapNode[Size][Size];
 		for (int i = 0; i < mapArray.length;i++) {
 			for (int j = 0; j < mapArray[i].length;j++) {
-				mapArray[i][j] = new MapNode(i*j%5, MapNode.NONE, null);
+				mapArray[i][j] = new MapNode(i*j%5, (i*j^(i+j))%3, null);
 			}
 		}
 		for(MapNode[] tArr : mapArray){
 			for(MapNode tMapNode : tArr){
-				System.out.print(tMapNode.getGrassLevel()+"");
+				System.out.print("(" + tMapNode.getGrassLevel() + ", " + tMapNode.getType() + ")");
 			}
 			System.out.print("\n");
 		}
@@ -81,9 +81,10 @@ public class Map extends Thread {
 	public void run() {
 		super.run();
 		while (running) {
-			if (paused) {
+			if (!paused) {
 				continue;
 			}
+			
 			System.out.println("Getting next message");
 			handleNextMessage();
 
@@ -95,7 +96,7 @@ public class Map extends Thread {
 		if (nextMessage.getType().equalsIgnoreCase("get")) {
 			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid()));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
-
+			mMsgThrExec.execute(new MoveMsgHandler(nextMessage.getPid(), nextMessage.getValues()));
 		}
 	}
 
