@@ -21,6 +21,9 @@ public class JFramePaint2 {
    static class MyComponent extends JComponent {
       public void paint(Graphics g) {
          g.drawRect(20,10,100,60);
+         g.drawRect(30,20,110,65);
+         g.drawRect(40,30,120,70);
+         //g.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer)
       }
    }
 }

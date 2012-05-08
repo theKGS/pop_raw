@@ -73,8 +73,10 @@ public class SwingExample implements Runnable {
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
         
-        /*MapPanel mD = new MapPanel();
-        try {
+        MapPanel mD = new MapPanel();
+        mD.setBounds(0,0,200,200);
+        
+        /*try {
 			BufferedImage IconZombie = ImageIO.read(new File("Dragon3Headed.PNG"));
 			JLabel jl = new JLabel();
 			jl.setBounds(10, 10, 50, 50);
@@ -83,10 +85,7 @@ public class SwingExample implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/
-        
-        
-        
-        
+               
         mapFrame.add(mD);
         
         /*
