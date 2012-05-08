@@ -57,16 +57,23 @@ public class Map extends Thread {
 	public Map(int Size, int Seed) {
 		this.mapSize = Size;
 		mapArray = new MapNode[Size][Size];
-		for (MapNode[] tMapNodeArr : mapArray) {
-			for (MapNode tMapNode : tMapNodeArr) {
-				tMapNode = new MapNode(5, MapNode.NONE, null);
+		for (int i = 0; i < mapArray.length;i++) {
+			for (int j = 0; j < mapArray[i].length;j++) {
+				mapArray[i][j] = new MapNode(5, MapNode.NONE, null);
 			}
+		}
+		for(MapNode[] tArr : mapArray){
+			for(MapNode tMapNode : tArr){
+				System.out.print(tMapNode.getType()+"");
+			}
+			System.out.print("\n");
 		}
 		setUp();
 	}
 
 	private void setUp() {
 		mErlCom = new Communicator();
+		mErlCom.inComming.put(new Message("move", null, new int[]{0,0,0,1}));
 		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
 	}
 
@@ -77,6 +84,7 @@ public class Map extends Thread {
 			if (paused) {
 				continue;
 			}
+			System.out.println("Getting next message");
 			handleNextMessage();
 
 		}
@@ -142,6 +150,7 @@ public class Map extends Thread {
 				currentNode.setType(MapNode.NONE);
 				mErlCom.send(new SendMessage("yes",null,pid));
 			}
+			System.out.println("Move handled");
 		}
 
 	}

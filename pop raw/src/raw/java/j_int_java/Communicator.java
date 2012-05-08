@@ -1,8 +1,8 @@
 package raw.java.j_int_java;
 
 public class Communicator {
-	private FIFO outGoing = new FIFO();
-	private FIFO inComming = new FIFO();
+	public FIFO outGoing = new FIFO();
+	public FIFO inComming = new FIFO();
 	
 	public void send(SendMessage m) {
 		//outGoing.put(m);
