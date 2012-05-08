@@ -7,6 +7,14 @@ public class Message {
 	private final int[] values;
 	private final OtpErlangPid pid;
 	
+	public int[] getValues() {
+		return values;
+	}
+
+	public OtpErlangPid getPid() {
+		return pid;
+	}
+
 	public Message(String type, OtpErlangPid pid, int[] args){
 		this.type = type;
 		this.values = args;
