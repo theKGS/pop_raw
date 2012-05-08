@@ -7,8 +7,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-public class mapDisplay extends JPanel {
-	public mapDisplay() {
+public class MapPanel extends JPanel {
+	public MapPanel() {
 		setBackground(Color.gray);
 		setPreferredSize(new Dimension(600, 600));
 	}

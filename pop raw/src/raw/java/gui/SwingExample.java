@@ -69,7 +69,7 @@ public class SwingExample implements Runnable {
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
         
-        mapDisplay mD = new mapDisplay();
+        MapPanel mD = new MapPanel();
         mapFrame.add(mD);
         
         /*
