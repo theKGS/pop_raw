@@ -18,9 +18,12 @@ public class AL_TimeSlider implements ChangeListener{
 		slider = jsl;
 	}
 	
+	/**
+	 * Called by the JSlider when the value changes
+	 */
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
-		//Map.setSpeed(slider.getValue());
+		mp.setSimulationSpeed(slider.getValue());
 		System.out.println(slider.getValue()+" ");
 	}
 }
