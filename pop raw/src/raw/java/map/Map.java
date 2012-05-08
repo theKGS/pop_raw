@@ -72,7 +72,7 @@ public class Map extends Thread{
 	public void run() {
 		super.run();	
 		nextMessage = mErlCom.receive();
-		nextMessage.
+//		nextMessage.
 	}
 	public void simulationStart() {
 
