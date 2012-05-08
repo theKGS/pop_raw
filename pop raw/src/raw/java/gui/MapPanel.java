@@ -1,25 +1,27 @@
 package raw.java.gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MapPanel extends JPanel {
-	public MapPanel() {
-		setBackground(Color.gray);
-		setPreferredSize(new Dimension(600, 600));
-	}
+	private BufferedImage IconZombie;
+	private BufferedImage IconDragon;
 
-	/*
-	 * public void paint(Graphics g) { super.paint(g); }
-	 */
+    public MapPanel() {
+       try {                
+          IconZombie = ImageIO.read(new File("Dragon3Headed.PNG"));
+       } catch (IOException ex) {
+            System.err.println("File not found");
+       }
+    }
 
-	public void paintComponent(Graphics g) {
-    	super.paintComponent(g);
-    	Graphics2D g2d = (Graphics2D)g;
-    	//drawing messages sent to g2d
+    @Override
+    public void paintComponent(Graphics g) {
+        g.drawImage(IconZombie, 0, 0, null); // see javadoc for more info on the parameters
     }
 }
