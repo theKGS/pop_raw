@@ -17,7 +17,6 @@ import java.io.IOException;
  */
 public class SwingExample implements Runnable {
 	static Communicator messageCommunicator;    
-   	static gfxInterfaceMap absMap;
 	static Map map;
    	
 	/**

@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class MapPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	static int TILEWIDTH = 16;
 	static int TILEHEIGHT = 16;
 	

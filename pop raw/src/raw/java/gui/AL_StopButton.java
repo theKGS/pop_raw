@@ -19,7 +19,7 @@ public class AL_StopButton implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		mp.stop();
+		mp.simulationStop();
 		System.out.println("STOP");
 	}
 }

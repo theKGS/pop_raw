@@ -20,7 +20,7 @@ public class AL_StartButton implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		mp.start();
+		mp.simulationStart();
 		System.out.println("START");
 	}
 }
