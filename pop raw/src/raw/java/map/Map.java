@@ -1,11 +1,18 @@
 package raw.java.map;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import raw.java.j_int_java.Communicator;
+import raw.java.j_int_java.Message;
+import raw.java.map.threadpool.MessageThreadExecutor;
 
 import com.ericsson.otp.erlang.*;
-public class Map {
+
+public class Map extends Thread{
+
+
 	// mpS - map size
 	// mpG - ammount of grass
 	// mpSG - speed of grass growth
@@ -18,6 +25,7 @@ public class Map {
 	// raRA - rabbit reproduction age
 	// raRS - rabbit reproduction success probability
 	private int simulationSpeed = 0;
+
 	public int getSimulationSpeed() {
 		return simulationSpeed;
 	}
@@ -40,8 +48,11 @@ public class Map {
 
 	MapNode[][] mapArray;
 	private boolean running = true;
-	
+	private boolean paused = true;
 	private Communicator mErlCom;
+	private ExecutorService mCachedThrPool;
+	private MessageThreadExecutor mMsgThrExec;
+	private Message nextMessage;
 
 	public Map(int Size, int Seed) {
 		mapArray = new MapNode[Size][Size];
@@ -50,77 +61,78 @@ public class Map {
 				tMapNode = new MapNode();
 			}
 		}
+		setUp();
+	}
+
+	private void setUp() {
 		mErlCom = new Communicator();
-		run();
-		
+		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
 	}
-	private void run(){
-		while(running){
-
-		}
+	@Override
+	public void run() {
+		super.run();	
+		nextMessage = mErlCom.receive();
+		nextMessage.
 	}
-	public void start() {
-
-	}
-
-	public void stop() {
+	public void simulationStart() {
 
 	}
-
-	public void reset() {
+	public void simulationStop() {
 
 	}
+	public void simulationReset() {
 
+	}
 	public int getMapSize() {
 		return mapSize;
 	}
-
 	public void setMapSize(int mapSize) {
 		this.mapSize = mapSize;
 	}
-
 	public int getAmountOfGrass() {
 		return amountOfGrass;
 	}
-
 	public void setAmountOfGrass(int amountOfGrass) {
 		this.amountOfGrass = amountOfGrass;
+		
 	}
-
 	public int getSpeedOfGrassGrowth() {
 		return speedOfGrassGrowth;
+		
 	}
-
 	public void setSpeedOfGrassGrowth(int speedOfGrassGrowth) {
 		this.speedOfGrassGrowth = speedOfGrassGrowth;
+		
 	}
-
 	public int getNumberOfWolves() {
 		return numberOfWolves;
+		
 	}
-
 	public void setNumberOfWolves(int numberOfWolves) {
 		this.numberOfWolves = numberOfWolves;
+		
 	}
-
 	public int getMaxWolfAge() {
 		return maxWolfAge;
+		
 	}
-
 	public void setMaxWolfAge(int maxWolfAge) {
 		this.maxWolfAge = maxWolfAge;
+		
 	}
-
 	public int getWolfReprAge() {
 		return wolfReprAge;
+		
 	}
 
 	public void setWolfReprAge(int wolfReprAge) {
 		this.wolfReprAge = wolfReprAge;
+		
 	}
 
 	public int getWoldReprSuccessProb() {
 		return woldReprSuccessProb;
+		
 	}
 
 	public void setWoldReprSuccessProb(int woldReprSuccessProb) {
