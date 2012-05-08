@@ -4,26 +4,22 @@ import java.io.IOException;
 import com.ericsson.otp.erlang.*;
 
 public class Gui_receive implements Runnable{
-	private String nodeName = "This is";
-	private String mboxName = "Sparta";
+	private String nodeName = "athens";
+	private String mboxName = "sparta";
 	private OtpMbox mbox;
 	private FIFO queue;
 
 	public Gui_receive(FIFO send) {
 		this.queue = send;
+		start();
 	}
 
-	public boolean start() {
+	public void start() {
 		try {
 			init();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
 		}
-
-		run();
-
-		return true;
 	}
 
 	public boolean stop() {
@@ -33,6 +29,10 @@ public class Gui_receive implements Runnable{
 	private void init() throws IOException {
 		OtpNode self = new OtpNode(this.nodeName);
 		mbox = self.createMbox(this.mboxName);
+		self.setCookie("thisissparta");
+		System.out.println("name: " + self.alive());
+		System.out.println("host: " + self.host());
+		System.out.println("cookie: " + self.cookie());
 	}
 
 	public void run() {
@@ -55,7 +55,7 @@ public class Gui_receive implements Runnable{
 		String sType;
 		int size = msg.arity();
 		int[] values = new int[size-1];
-		OtpErlangObject type = msg.elementAt(1);
+		OtpErlangObject type = msg.elementAt(0);
 		if (type instanceof OtpErlangAtom) {
 			OtpErlangAtom tempType = (OtpErlangAtom) type;
 			sType = tempType.atomValue();
