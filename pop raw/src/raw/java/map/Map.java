@@ -50,11 +50,12 @@ public class Map extends Thread {
 	private boolean running = true;
 	private boolean paused = true;
 	private Communicator mErlCom;
-	private ExecutorService mCachedThrPool;
+
 	private MessageThreadExecutor mMsgThrExec;
 	private Message nextMessage;
 
 	public Map(int Size, int Seed) {
+		this.mapSize = Size;
 		mapArray = new MapNode[Size][Size];
 		for (MapNode[] tMapNodeArr : mapArray) {
 			for (MapNode tMapNode : tMapNodeArr) {
@@ -139,9 +140,29 @@ public class Map extends Thread {
 				targetNode.setType(currentNode.getType());
 				currentNode.setPid(null);
 				currentNode.setType(MapNode.NONE);
+				mErlCom.send(new SendMessage("yes",null,pid));
 			}
 		}
 
+	}
+	
+	class EatMsgHandler implements Runnable {
+		OtpErlangPid pid;
+		int[] coords;
+		public EatMsgHandler(OtpErlangPid pid, int[] coords){
+			this.pid = pid;
+			this.coords = coords;
+		}
+		@Override
+		public void run() {
+			
+			synchronized(mapArray[coords[0]][coords[1]]){
+				MapNode tNode = mapArray[coords[0]][coords[1]];
+				tNode.setGrassLevel(tNode.getGrassLevel());
+				mErlCom.send(new SendMessage("yes", null, pid));
+			}
+		}
+		
 	}
 
 	/**
