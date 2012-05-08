@@ -59,12 +59,12 @@ public class Map extends Thread {
 		mapArray = new MapNode[Size][Size];
 		for (int i = 0; i < mapArray.length;i++) {
 			for (int j = 0; j < mapArray[i].length;j++) {
-				mapArray[i][j] = new MapNode(5, MapNode.NONE, null);
+				mapArray[i][j] = new MapNode(i*j%5, MapNode.NONE, null);
 			}
 		}
 		for(MapNode[] tArr : mapArray){
 			for(MapNode tMapNode : tArr){
-				System.out.print(tMapNode.getType()+"");
+				System.out.print(tMapNode.getGrassLevel()+"");
 			}
 			System.out.print("\n");
 		}
