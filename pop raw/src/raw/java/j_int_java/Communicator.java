@@ -13,25 +13,25 @@ public class Communicator {
 		receiver = new Gui_receive(inComming, pid);
 		new Thread(receiver).start();
 		boolean hold = true;
-		while (hold) {
-			if (this.pid == null) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} else {
-				hold = false;
-			}
-		}
+//		while (hold) {
+//			if (this.pid == null) {
+//				try {
+//					wait();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			} else {
+//				hold = false;
+//			}
+//		}
 		sender = new Gui_send(outGoing, pid);
 		new Thread(sender).start();
 
 	}
 	
-	public void send(Message m) {
-		outGoing.put(m);
+	public void send(SendMessage m) {
+//		outGoing.put(m);
 	}
 	
 	public Message getSend() {
