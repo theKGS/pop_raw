@@ -8,9 +8,11 @@ public class Gui_send implements Runnable{
 	private FIFO queue;
 	private String nodeName = "rawsender";
 	private OtpMbox mbox;
+	private OtpErlangPid pid;
 	
-	public Gui_send(FIFO queue) {
+	public Gui_send(FIFO queue, OtpErlangPid pid) {
 		this.queue = queue;
+		this.pid = pid;
 		
 		try {
 			init();
@@ -28,18 +30,19 @@ public class Gui_send implements Runnable{
 	public void run() {
 		while(true) {
 			OtpErlangTuple message = enCode(queue.get());
-			mbox.send("rawMap", "raws@laptop", message);
+			mbox.send(this.pid , message);
 		}
 	}
 	
 	private OtpErlangTuple enCode(Message msg) {
 		String sType = msg.getType();
-		int[] values = msg.getValue();
+		int[] values = msg.getValues();
 		int size = values.length;
-		OtpErlangObject[] message = new OtpErlangObject[size+1];
+		OtpErlangObject[] message = new OtpErlangObject[size+2];
 		message[0] = new OtpErlangAtom(sType);
-		for (int i = 1; i <= size; i++) {
-			message[i] = new OtpErlangInt(values[i-1]);
+		message[1] = msg.getPid();
+		for (int i = 2; i <= size; i++) {
+			message[i] = new OtpErlangInt(values[i-2]);
 		}
 		return new OtpErlangTuple(message);
 	}
