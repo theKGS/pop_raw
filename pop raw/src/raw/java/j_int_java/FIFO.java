@@ -54,7 +54,7 @@ public class FIFO {
 			last.setNext(ny);
 			this.last = ny;
 		}
-		notify();
+		notifyAll();
 	}
 
 	/**
