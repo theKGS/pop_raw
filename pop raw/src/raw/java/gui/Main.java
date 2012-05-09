@@ -9,10 +9,10 @@ import raw.java.map.Map;
  * @author andreas
  *
  */
-public class Main implements Runnable {
-	static Communicator messageCommunicator;    
+public class Main implements Runnable, UpdateListener{    
 	static Map map;
-
+	private MapPanel mD;
+	
 	/**
 	 * The Swing thread
 	 */
@@ -65,7 +65,7 @@ public class Main implements Runnable {
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
         
-        MapPanel mD = new MapPanel(map);
+        mD = new MapPanel(map);
         mD.setBounds(0,0,400,400);
         
         mapFrame.add(mD);
@@ -128,12 +128,12 @@ public class Main implements Runnable {
 	 */
     public static void main(String[] args) {
     	Main se = new Main();    	
-    	map = new Map(80, 32, this);
+    	map = new Map(80, 32, se);
     	
         SwingUtilities.invokeLater(se);
     }
     
     public void update(){
-    	
+    	mD.repaint();
     }
 }
