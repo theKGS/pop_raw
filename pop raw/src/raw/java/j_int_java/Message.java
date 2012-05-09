@@ -14,7 +14,11 @@ public class Message {
 	public OtpErlangPid getPid() {
 		return pid;
 	}
-
+	
+	public String getType() {
+		return this.type;
+	}
+	
 	public Message(String type, OtpErlangPid pid, int[] args){
 		this.type = type;
 		this.values = args;
@@ -36,12 +40,4 @@ public class Message {
 //		this.type = type;
 //		this.values = values;
 //	}
-	
-	public String getType() {
-		return this.type;
-	}
-	
-	public int[] getValue() {
-		return this.values;
-	}
 }
