@@ -25,6 +25,7 @@ public class AL_ZoomSlider implements ChangeListener{
 	public void stateChanged(ChangeEvent arg0) {
 		//mp.setSimulationSpeed(slider.getValue());
 		mPanel.setZoom(slider.getValue());
+		mPanel.repaint();
 		System.out.println(slider.getValue()+" ");
 	}
 }

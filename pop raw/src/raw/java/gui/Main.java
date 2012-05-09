@@ -11,7 +11,7 @@ import raw.java.map.Map;
  */
 public class Main implements Runnable, UpdateListener{    
 	static Map map;
-	private MapPanel mD;
+	private MapPanel mapDisplayPanel;
 	
 	/**
 	 * The Swing thread
@@ -65,10 +65,16 @@ public class Main implements Runnable, UpdateListener{
         jSl.setMajorTickSpacing(10);
         jSl.setPaintTicks(true);
         
-        mD = new MapPanel(map);
-        mD.setBounds(0,0,400,400);
+        JSlider zoomSlider = new JSlider();
+        //zoomSlider.setLabelTable(jSl.createStandardLabels(30));
+        zoomSlider.setBounds(0, 200, 200, 70);
+        zoomSlider.setMaximum(64);
+        zoomSlider.setMinimum(2);  
         
-        mapFrame.add(mD);
+        mapDisplayPanel = new MapPanel(map);
+        mapDisplayPanel.setBounds(0,0,400,400);
+        
+        mapFrame.add(mapDisplayPanel);
        // mapFrame.pack();
         
         /*
@@ -95,6 +101,7 @@ public class Main implements Runnable, UpdateListener{
         controlFrame.getContentPane().add(rawButtonStop);
         controlFrame.getContentPane().add(rawButtonReset);
         controlFrame.getContentPane().add(jSl);
+        controlFrame.getContentPane().add(zoomSlider);
         
         controlFrame.getContentPane().add(cBoxWolves);
         controlFrame.getContentPane().add(cBoxRabbits);
@@ -107,9 +114,10 @@ public class Main implements Runnable, UpdateListener{
         rawButtonStop.addActionListener(new AL_StopButton(map));
         rawButtonReset.addActionListener(new AL_ResetButton(map));
         jSl.addChangeListener(new AL_TimeSlider(map, jSl));
-        cBoxWolves.addItemListener(new AL_CBL_Wolves(mD));
-        cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mD));
-        cBoxGrass.addItemListener(new AL_CBL_Grass(mD));
+        zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
+        cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
+        cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
+        cBoxGrass.addItemListener(new AL_CBL_Grass(mapDisplayPanel));
         
         /*
          * Set frame specifics. Visibility, resizeability.        
@@ -118,9 +126,9 @@ public class Main implements Runnable, UpdateListener{
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
        
-        mD.setWolvesVisibility(true);
-        mD.setRabbitsVisibility(true);
-        mD.setGrassVisibility(true);
+        mapDisplayPanel.setWolvesVisibility(true);
+        mapDisplayPanel.setRabbitsVisibility(true);
+        mapDisplayPanel.setGrassVisibility(true);
     }
 
 	/**
@@ -135,6 +143,6 @@ public class Main implements Runnable, UpdateListener{
     }
     
     public void update(){
-    	mD.repaint();
+    	mapDisplayPanel.repaint();
     }
 }
