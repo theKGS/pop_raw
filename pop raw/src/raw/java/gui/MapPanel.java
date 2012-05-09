@@ -52,6 +52,7 @@ public class MapPanel extends JPanel {
 				// g.drawImage(IconRabbit, x*TILEWIDTH,y*TILEHEIGHT , null); //
 				// see javadoc for more info on
 
+				// Draw grass
 				if (nodes[x][y].getType() == MapNode.NONE) {
 					if (VisibleGrass) {
 						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
@@ -66,34 +67,47 @@ public class MapPanel extends JPanel {
 					}
 				}
 
+				// Draw wolves
 				if (nodes[x][y].getType() == MapNode.WOLF) {
 					if (VisibleWolves) {
-						c = new Color(110, 90, 90);
+						c = new Color(255, 0, 0);
 						g.setColor(c);
 						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
 								TILEHEIGHT);
-					} else { // draw grass instead of wolves when wolves are
-								// hidden
+					} else if (VisibleGrass) { // draw grass instead of wolves
+												// when wolves are
+						// hidden
 						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					} else { // draw nothing if grass and wolves are hidden
+						c = new Color(0, 0, 0);
 						g.setColor(c);
 						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
 								TILEHEIGHT);
 					}
 				}
 
+				// Draw rabbits
 				if (nodes[x][y].getType() == MapNode.RABBIT) {
 					if (VisibleRabbits) {
-						c = new Color(220, 220, 200);
+						c = new Color(0, 0, 255);
 						g.setColor(c);
 						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
 								TILEHEIGHT);
-					}
-					else { // draw grass instead of rabbits when rabbits are
-							// hidden
-					c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
-					g.setColor(c);
-					g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
-							TILEHEIGHT);
+					} else if (VisibleGrass) { // draw grass instead of rabbits
+												// when rabbits are
+						// hidden and grass is visible
+						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					} else { // draw nothing if grass and rabbits are hidden
+						c = new Color(0, 0, 0);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
 					}
 				}
 			}

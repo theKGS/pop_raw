@@ -22,7 +22,7 @@ public class Main implements Runnable {
         JFrame mapFrame = new JFrame ("Map");
         
         controlFrame.setLayout(null);
-        mapFrame.setLayout(null);
+        //mapFrame.setLayout(null);
         
         controlFrame.setBounds(100, 100, 208, 320);
         mapFrame.setBounds(300, 100, 600, 600);
@@ -107,10 +107,9 @@ public class Main implements Runnable {
         rawButtonStop.addActionListener(new AL_StopButton(map));
         rawButtonReset.addActionListener(new AL_ResetButton(map));
         jSl.addChangeListener(new AL_TimeSlider(map, jSl));
-        cBoxWolves.addItemListener(new AL_ToggleWolves(mD));
-        //cBoxWolves.addChangeListener(new CL_ToggleRabbits(map));
-        //cBoxWolves.addChangeListener(new CL_ToggleGrass(map));
-        
+        cBoxWolves.addItemListener(new AL_CBL_Wolves(mD));
+        cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mD));
+        cBoxGrass.addItemListener(new AL_CBL_Grass(mD));
         
         /*
          * Set frame specifics. Visibility, resizeability.        
@@ -118,8 +117,8 @@ public class Main implements Runnable {
         controlFrame.setResizable(false);
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
-        mD.setWolvesVisibility(false);
-        mD.setRabbitsVisibility(false);
+        mD.setWolvesVisibility(true);
+        mD.setRabbitsVisibility(true);
         mD.setGrassVisibility(true);
     }
 
@@ -129,8 +128,12 @@ public class Main implements Runnable {
 	 */
     public static void main(String[] args) {
     	Main se = new Main();    	
-    	map = new Map(128, 32);
+    	map = new Map(80, 32, this);
     	
         SwingUtilities.invokeLater(se);
+    }
+    
+    public void update(){
+    	
     }
 }
