@@ -50,7 +50,7 @@ move(Rabbit, {X, Y}) ->
 
 findNewSquare(Rabbit) ->
 	Dir = random:uniform(4),
-	{X, Y} = {X, Y} = {Rabbit#rabbit2.x, Rabbit#rabbit2.y},
+	{X, Y} = {Rabbit#rabbit2.x, Rabbit#rabbit2.y},
 	case Dir of
 		1 ->
 			{X2, Y2} = {X - 1, Y};
@@ -61,7 +61,6 @@ findNewSquare(Rabbit) ->
 		4 ->
 			{X2, Y2} = {X, Y + 1}
 	end,
-	Map = getMap(Rabbit),
 	PID = Rabbit#rabbit2.spid,
 	PID ! {move, self(), X, Y, X2, Y2},
 	receive
@@ -82,10 +81,9 @@ eat(Rabbit) ->
 	{Grass, _, _} = array:get(Y,array:get(X, Map)),
 	case isHungry(Rabbit) and (Grass > 0) of
 		true ->
-			Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger - 1},
-			{X, Y, food};
+			{Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger - 1}, X, Y, food};
 		false ->
-			{X, Y, noFood}
+			{Rabbit, X, Y, noFood}
 	end.
 	
 
@@ -156,17 +154,16 @@ getMap(Rabbit) ->
 
 doTick(Rabbit) ->
 	NewAge = Rabbit#rabbit2.age + 1,
+	PID = Rabbit#rabbit2.spid,
 	case isHungry(Rabbit) of
 		true ->
-			{X, Y, Z} = eat(Rabbit),
+			{Rabbit, X, Y, Z} = eat(Rabbit),
 			if
 				Z == food ->
-					tbi;
-					%% send {X, Y} to map, map will decrease grass level
+					PID ! {eat, self(), X, Y};
 				true ->
 					findNewSquare(Rabbit)							
 			end,
-			% Simple temporary workaround (starve)
 			NewHunger = Rabbit#rabbit2.hunger - 1;
 		false ->
 			NewHunger = Rabbit#rabbit2.hunger + 1,
