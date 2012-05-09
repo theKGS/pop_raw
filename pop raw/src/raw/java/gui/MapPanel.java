@@ -16,11 +16,15 @@ public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	static int TILEWIDTH = 12;
 	static int TILEHEIGHT = 12;
-	
+
+	private boolean VisibleWolves;
+	private boolean VisibleRabbits;
+	private boolean VisibleGrass;
+
 	private BufferedImage IconRabbit;
 	private BufferedImage IconWolf;
 	private Map map;
-	
+
 	public MapPanel(Map map) {
 		try {
 			IconWolf = ImageIO.read(new File("Dragon3Headed.PNG"));
@@ -28,7 +32,7 @@ public class MapPanel extends JPanel {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		this.map = map;
 	}
 
@@ -37,42 +41,74 @@ public class MapPanel extends JPanel {
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
-		//g.drawImage(IconRabbit, 0, 0, null); // see javadoc for more info on
-		//g.drawImage(IconRabbit, 32, 32, null); // see javadoc for more info on
+		// g.drawImage(IconRabbit, 0, 0, null); // see javadoc for more info on
+		// g.drawImage(IconRabbit, 32, 32, null); // see javadoc for more info
+		// on
 		MapNode[][] nodes = map.getMapArray();
-		Color c = new Color(0,0,0);
-		
-		for (int y = 0; y < map.getMapSize()-1; y++){
-			for (int x = 0; x < map.getMapSize()-1; x++){
-				//g.drawImage(IconRabbit, x*TILEWIDTH,y*TILEHEIGHT , null); // see javadoc for more info on
-				
-				if (nodes[x][y].getType() == MapNode.NONE){
-					c = new Color(0,nodes[x][y].getGrassLevel()*50,0);
-					g.setColor(c);
-					g.fillRect(x*TILEWIDTH,y*TILEHEIGHT,TILEWIDTH,TILEHEIGHT);
-				}
-				
-				if (nodes[x][y].getType() == MapNode.WOLF){
-					c = new Color(110,90,90);
-					g.setColor(c);
-					g.fillRect(x*TILEWIDTH,y*TILEHEIGHT,TILEWIDTH,TILEHEIGHT);
+		Color c = new Color(0, 0, 0);
+
+		for (int y = 0; y < map.getMapSize() - 1; y++) {
+			for (int x = 0; x < map.getMapSize() - 1; x++) {
+				// g.drawImage(IconRabbit, x*TILEWIDTH,y*TILEHEIGHT , null); //
+				// see javadoc for more info on
+
+				if (nodes[x][y].getType() == MapNode.NONE) {
+					if (VisibleGrass) {
+						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					} else {
+						c = new Color(0, 0, 0);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					}
 				}
 
-				if (nodes[x][y].getType() == MapNode.RABBIT){
-					c = new Color(220,220,200);
-					g.setColor(c);
-					g.fillRect(x*TILEWIDTH,y*TILEHEIGHT,TILEWIDTH,TILEHEIGHT);
+				if (nodes[x][y].getType() == MapNode.WOLF) {
+					if (VisibleWolves) {
+						c = new Color(110, 90, 90);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					} else { // draw grass instead of wolves when wolves are
+								// hidden
+						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					}
 				}
-				
-				//g.setColor(c);
-				//g.drawRect(x*TILEWIDTH,y*TILEHEIGHT,TILEWIDTH-1,TILEHEIGHT-1);
+
+				if (nodes[x][y].getType() == MapNode.RABBIT) {
+					if (VisibleRabbits) {
+						c = new Color(220, 220, 200);
+						g.setColor(c);
+						g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+								TILEHEIGHT);
+					}
+					else { // draw grass instead of rabbits when rabbits are
+							// hidden
+					c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
+					g.setColor(c);
+					g.fillRect(x * TILEWIDTH, y * TILEHEIGHT, TILEWIDTH,
+							TILEHEIGHT);
+					}
+				}
 			}
 		}
-		
-		// the parameters
-//		g.drawRect(20, 10, 100, 60);
-//		g.drawRect(30, 20, 110, 65);
-//		g.drawRect(40, 30, 120, 70);
-		// g.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer)
+	}
+
+	public void setWolvesVisibility(boolean b) {
+		VisibleWolves = b;
+	}
+
+	public void setRabbitsVisibility(boolean b) {
+		VisibleRabbits = b;
+	}
+
+	public void setGrassVisibility(boolean b) {
+		VisibleGrass = b;
 	}
 }

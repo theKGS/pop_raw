@@ -24,7 +24,7 @@ public class Main implements Runnable {
         controlFrame.setLayout(null);
         mapFrame.setLayout(null);
         
-        controlFrame.setBounds(100, 100, 208, 220);
+        controlFrame.setBounds(100, 100, 208, 320);
         mapFrame.setBounds(300, 100, 600, 600);
 
         // Sets the behavior for when the window is closed
@@ -40,13 +40,13 @@ public class Main implements Runnable {
         rawButtonStop.setToolTipText("Stops simulation");
         JButton rawButtonReset = new JButton("Reset");
         rawButtonReset.setToolTipText("Resets simulation");
-        
+
         rawButtonStart.setLocation(0, 0);
-        rawButtonStart.setSize(80, 20);
+        rawButtonStart.setSize(200, 20);
         rawButtonStop.setLocation(0, 20);
-        rawButtonStop.setSize(80, 20);
+        rawButtonStop.setSize(200, 20);
         rawButtonReset.setLocation(0, 40);
-        rawButtonReset.setSize(80, 20);
+        rawButtonReset.setSize(200, 20);
         
         JButton tButton = new JButton("Temporary");
         tButton.setLocation(10, 10);
@@ -67,8 +67,9 @@ public class Main implements Runnable {
         
         MapPanel mD = new MapPanel(map);
         mD.setBounds(0,0,400,400);
-               
+        
         mapFrame.add(mD);
+       // mapFrame.pack();
         
         /*
          * Show/hide map elements 
@@ -106,12 +107,20 @@ public class Main implements Runnable {
         rawButtonStop.addActionListener(new AL_StopButton(map));
         rawButtonReset.addActionListener(new AL_ResetButton(map));
         jSl.addChangeListener(new AL_TimeSlider(map, jSl));
+        cBoxWolves.addItemListener(new AL_ToggleWolves(mD));
+        //cBoxWolves.addChangeListener(new CL_ToggleRabbits(map));
+        //cBoxWolves.addChangeListener(new CL_ToggleGrass(map));
         
-        // This is just a test button
-        //mapFrame.getContentPane().add(tButton);
         
+        /*
+         * Set frame specifics. Visibility, resizeability.        
+         */
+        controlFrame.setResizable(false);
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
+        mD.setWolvesVisibility(false);
+        mD.setRabbitsVisibility(false);
+        mD.setGrassVisibility(true);
     }
 
 	/**
@@ -120,7 +129,8 @@ public class Main implements Runnable {
 	 */
     public static void main(String[] args) {
     	Main se = new Main();    	
-    	map = new Map(32, 32);
+    	map = new Map(128, 32);
+    	
         SwingUtilities.invokeLater(se);
     }
 }
