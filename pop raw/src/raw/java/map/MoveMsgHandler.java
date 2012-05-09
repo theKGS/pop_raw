@@ -44,13 +44,7 @@ public class MoveMsgHandler implements Runnable {
 		if (updtLis != null) {
 			updtLis.update();
 		}
-		try {
-			Thread.sleep(10);
-
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 	}
 

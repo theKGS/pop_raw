@@ -1,8 +1,8 @@
 package raw.java.map;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import raw.java.gui.Main;
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
@@ -41,6 +41,7 @@ public class Map extends Thread {
 	private UpdateListener mUpdtLis;
 	private Random r;
 	private long Seed;
+	private FakeMsgSender mFakeMsgSender;
 
 	/**
 	 * Constructor for the map class
@@ -80,52 +81,62 @@ public class Map extends Thread {
 	 */
 	private void setUp() {
 		r = new Random(Seed);
+		//test
+		ArrayList<int[]> entities = new ArrayList<int[]>();
+		// end test
 		for (int i = 0; i < mapArray.length; i++) {
 			for (int j = 0; j < mapArray[i].length; j++) {
-				int type = r.nextInt(6);
+				int type = r.nextInt(12);
 				if(type > 2)
 					type = 0;
 				else
 					type %=3;
 				mapArray[i][j] = new MapNode(r.nextInt(6), type, null);
+				/* only for testing */
+				if(type != 0){
+					entities.add(new int[]{i,j});
+				}
+				
+				// end test
 
 			}
 
 		}
 		mErlCom = new Communicator();
-		for (int i = 0; i < 10000; i++) {
-			int x = r.nextInt(mapSize);
-			int y = r.nextInt(mapSize);
-			if (mapArray[x][y].getType() != MapNode.NONE) {
-				int dir = r.nextInt(4);
-				switch (dir) {
-				case 0:
-					if (x > 0) {
-						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x-1, y }));
-					}
-					break;
-				case 1:
-					if (y > 0) {
-						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y-1 }));
-					}
-					break;
-				case 2:
-					if(x < mapSize-1){
-						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x+1, y }));
-					}
-					break;
-				case 3:
-					if(y < mapSize-1){
-						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y+1 }));
-					}
-					break;
-				default:
-					break;
-
-				}
-			}
-		}
-		mErlCom.putReceive(new Message("stop", null, null));
+		mFakeMsgSender = new FakeMsgSender(mErlCom, entities, mapSize);
+//		for (int i = 0; i < 10000; i++) {
+//			int x = r.nextInt(mapSize);
+//			int y = r.nextInt(mapSize);
+//			if (mapArray[x][y].getType() != MapNode.NONE) {
+//				int dir = r.nextInt(4);
+//				switch (dir) {
+//				case 0:
+//					if (x > 0) {
+//						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x-1, y }));
+//					}
+//					break;
+//				case 1:
+//					if (y > 0) {
+//						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y-1 }));
+//					}
+//					break;
+//				case 2:
+//					if(x < mapSize-1){
+//						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x+1, y }));
+//					}
+//					break;
+//				case 3:
+//					if(y < mapSize-1){
+//						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y+1 }));
+//					}
+//					break;
+//				default:
+//					break;
+//
+//				}
+//			}
+//		}
+//		mErlCom.putReceive(new Message("stop", null, null));
 
 		mMsgThrExec = new MessageThreadExecutor(10000, 10, 100, 10);
 	}
@@ -141,6 +152,7 @@ public class Map extends Thread {
 	@Override
 	public void run() {
 		super.run();
+		
 		try {
 			Thread.sleep(1000);
 
@@ -148,6 +160,7 @@ public class Map extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		mFakeMsgSender.start();
 		while (running) {
 			if (paused) {
 				continue;
