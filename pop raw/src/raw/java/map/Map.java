@@ -3,6 +3,7 @@ package raw.java.map;
 import java.util.Random;
 
 import raw.java.gui.Main;
+import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.map.threadpool.MessageThreadExecutor;
@@ -37,6 +38,8 @@ public class Map extends Thread {
 
 	private MessageThreadExecutor mMsgThrExec;
 	private Message nextMessage;
+	private UpdateListener mUpdtLis;
+	private Random r;
 
 	/**
 	 * Constructor for the map class
@@ -46,9 +49,12 @@ public class Map extends Thread {
 	 * @param Seed
 	 *            seed for generating maps
 	 */
-	public Map(int Size, long Seed, Main main) {
+	public Map(int Size, long Seed, UpdateListener udpLis) {
+		if (udpLis != null) {
+			this.mUpdtLis = udpLis;
+		}
 		this.mapSize = Size;
-		Random r = new Random(Seed);
+		r = new Random(Seed);
 		mapArray = new MapNode[Size][Size];
 		for (int i = 0; i < mapArray.length; i++) {
 			for (int j = 0; j < mapArray[i].length; j++) {
@@ -79,13 +85,46 @@ public class Map extends Thread {
 	 */
 	private void setUp() {
 		mErlCom = new Communicator();
-		mErlCom.putReceive(new Message("move", null, new int[] { 1, 0, 0, 0 }));
-		mErlCom.putReceive(new Message("move", null, new int[] { 0, 0, 0, 1 }));
-		mErlCom.putReceive(new Message("move", null, new int[] { 1, 1, 1, 0 }));
-		mErlCom.putReceive(new Message("move", null, new int[] { 1, 0, 0, 0 }));
+		for (int i = 0; i < 1000; i++) {
+			int x = r.nextInt(mapSize);
+			int y = r.nextInt(mapSize);
+			if (mapArray[x][y].getType() != MapNode.NONE) {
+				int dir = r.nextInt(4);
+				switch (dir) {
+				case 0:
+					if (x > 0) {
+						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x-1, y }));
+					}
+					break;
+				case 1:
+					if (y > 0) {
+						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y-1 }));
+					}
+					break;
+				case 2:
+					if(x < mapSize-1){
+						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x+1, y }));
+					}
+					break;
+				case 3:
+					if(y < mapSize-1){
+						mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y+1 }));
+					}
+					break;
+				default:
+					break;
+
+				}
+			}
+		}
 		mErlCom.putReceive(new Message("stop", null, null));
 
 		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
+	}
+
+	void moveNode(int x1, int y1, int x2, int y2) {
+		mapArray[x2][y2].setType(mapArray[x1][y1].getType());
+		mapArray[x1][y1].setType(MapNode.NONE);
 	}
 
 	/**
@@ -102,13 +141,7 @@ public class Map extends Thread {
 			System.out.println("Getting next message");
 			printMap();
 			handleNextMessage();
-			try {
-				Thread.sleep(1000);
-
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		}
 	}
 
@@ -122,7 +155,7 @@ public class Map extends Thread {
 					mErlCom, mapArray));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
 			mMsgThrExec.execute(new MoveMsgHandler(nextMessage, mErlCom,
-					mapArray));
+					mapArray, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
 			System.out.println("stopping");
 			this.running = false;
