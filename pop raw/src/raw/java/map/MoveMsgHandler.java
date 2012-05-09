@@ -7,44 +7,32 @@ import raw.java.j_int_java.SendMessage;
 
 import com.ericsson.otp.erlang.OtpErlangPid;
 
-public class MoveMsgHandler implements Runnable {
+public class MoveMsgHandler extends MsgHandler implements Runnable {
 
-	final OtpErlangPid pid;
-	private int[] coords;
-	private Communicator mErlCom;
-	private MapNode[][] mapArray;
-	private UpdateListener updtLis;
+	
 
-	public MoveMsgHandler(Message message, Communicator mErlCom,
-			MapNode[][] mapArray, UpdateListener updtLis) {
-		if (updtLis != null) {
-			this.updtLis = updtLis;
-		}
-		this.pid = message.getPid();
-		this.coords = message.getValues();
-		this.mapArray = mapArray;
-		this.mErlCom = mErlCom;
+	public MoveMsgHandler(Message message, Communicator mErlCom, Map map,
+			UpdateListener updtLis) {
+		super(message, mErlCom, map, updtLis);
 	}
 
 	@Override
 	public void run() {
+		mate();
 		if (compareCoordsArr(coords)) {
-			synchronized (mapArray[coords[0]][coords[1]]) {
-				synchronized (mapArray[coords[2]][coords[3]]) {
+			synchronized (map.getMapArray()[coords[0]][coords[1]]) {
+				synchronized (map.getMapArray()[coords[2]][coords[3]]) {
 					checkMove();
 				}
 			}
 		} else {
-			synchronized (mapArray[coords[2]][coords[3]]) {
-				synchronized (mapArray[coords[0]][coords[1]]) {
+			synchronized (map.getMapArray()[coords[2]][coords[3]]) {
+				synchronized (map.getMapArray()[coords[0]][coords[1]]) {
 					checkMove();
 				}
 			}
 		}
-		if (updtLis != null) {
-			updtLis.update();
-		}
-		
+		sendUpdate();
 
 	}
 
@@ -56,15 +44,11 @@ public class MoveMsgHandler implements Runnable {
 	 *            int[4] with {x1,y1,x,y2} coords
 	 * @return coord-pair with the smallest index
 	 */
-	private boolean compareCoordsArr(int[] coords) {
-		return coords[1] * mapArray.length + coords[0] + mapArray.length < coords[3]
-				* mapArray.length + coords[2] + mapArray.length ? true : false;
 
-	}
 
 	private void checkMove() {
-		MapNode currentNode = mapArray[coords[0]][coords[1]];
-		MapNode targetNode = mapArray[coords[2]][coords[3]];
+		MapNode currentNode = map.getMapArray()[coords[0]][coords[1]];
+		MapNode targetNode = map.getMapArray()[coords[2]][coords[3]];
 		if (targetNode.getType() != MapNode.NONE) {
 			mErlCom.send(new SendMessage("no", null, pid));
 		} else {
