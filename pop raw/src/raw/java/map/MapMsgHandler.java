@@ -16,6 +16,7 @@ public class MapMsgHandler implements Runnable {
 	 * @param mapArray the representation of the map
 	 */
 	public MapMsgHandler(OtpErlangPid pid, Communicator mErlCom, MapNode[][] mapArray) {
+		
 		this.pid = pid;
 		this.mErlCom = mErlCom;
 		this.mapArray = mapArray;

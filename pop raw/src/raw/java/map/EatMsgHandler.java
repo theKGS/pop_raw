@@ -6,10 +6,7 @@ import raw.java.j_int_java.SendMessage;
 
 import com.ericsson.otp.erlang.OtpErlangPid;
 
-public class EatMsgHandler implements Runnable {
-	OtpErlangPid pid;
-	int[] coords;
-	private Communicator mErlCom;
+public class EatMsgHandler extends MsgHandler implements Runnable {
 	private MapNode[][] mapArray;
 	/**
 	 * Constructor for the Eat message handler
@@ -18,9 +15,8 @@ public class EatMsgHandler implements Runnable {
 	 * @param mapArray the map representation.
 	 */
 	public EatMsgHandler(Message msg, Communicator mErlCom, MapNode[][] mapArray){
-		this.pid = msg.getPid();
-		this.coords = msg.getValues();
-		this.mErlCom = mErlCom;
+		super(msg.getPid(), msg.getValues(),mErlCom);
+		
 		this.mapArray = mapArray;
 	}
 	
