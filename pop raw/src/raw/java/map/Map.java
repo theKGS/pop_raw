@@ -1,16 +1,10 @@
 package raw.java.map;
 
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
-import raw.java.j_int_java.SendMessage;
 import raw.java.map.threadpool.MessageThreadExecutor;
-
-import com.ericsson.otp.erlang.*;
 
 public class Map extends Thread {
 	private int simulationSpeed = 0;
@@ -37,60 +31,79 @@ public class Map extends Thread {
 
 	MapNode[][] mapArray;
 	private boolean running = true;
-	private boolean paused = true;
+	private boolean paused = false;
 	private Communicator mErlCom;
 
 	private MessageThreadExecutor mMsgThrExec;
 	private Message nextMessage;
+
 	/**
 	 * Constructor for the map class
-	 * @param Size the y, and x size of the map
-	 * @param Seed seed for generating maps
+	 * 
+	 * @param Size
+	 *            the y, and x size of the map
+	 * @param Seed
+	 *            seed for generating maps
 	 */
 	public Map(int Size, long Seed) {
 		this.mapSize = Size;
 		Random r = new Random(Seed);
 		mapArray = new MapNode[Size][Size];
-		for (int i = 0; i < mapArray.length;i++) {
-			for (int j = 0; j < mapArray[i].length;j++) {
-				mapArray[i][j] = new MapNode(r.nextInt(6), r.nextInt(4), null);
-				
+		for (int i = 0; i < mapArray.length; i++) {
+			for (int j = 0; j < mapArray[i].length; j++) {
+				mapArray[i][j] = new MapNode(r.nextInt(6), r.nextInt(3), null);
+
 			}
-			
+
 		}
 
-	//printMap();
+		// printMap();
 		setUp();
 	}
-	private void printMap(){
-		for(MapNode[] tArr : mapArray){
-			for(MapNode tMapNode : tArr){
-				System.out.print(tMapNode.getType()+" ");
+
+	/**
+	 * Prints the map to the console
+	 */
+	private void printMap() {
+		for (int y = 0; y < mapSize; y++) {
+			for (int x = 0; x < mapSize; x++) {
+				System.out.print(mapArray[x][y].getType() + " ");
 			}
 			System.out.print("\n");
 		}
-		System.out.print("\n");
 	}
+
+	/**
+	 * Sets up Communicator and thread pool.
+	 */
 	private void setUp() {
 		mErlCom = new Communicator();
-		mErlCom.putReceive(new Message("move", null, new int[]{1,0,0,0}));
+		mErlCom.putReceive(new Message("move", null, new int[] { 1, 0, 0, 0 }));
+		mErlCom.putReceive(new Message("move", null, new int[] { 0, 0, 0, 1 }));
+		mErlCom.putReceive(new Message("move", null, new int[] { 1, 1, 1, 0 }));
+		mErlCom.putReceive(new Message("move", null, new int[] { 1, 0, 0, 0 }));
+		mErlCom.putReceive(new Message("stop", null, null));
+
 		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
 	}
 
+	/**
+	 * Main loop that gets messages and delegates work to thread pool
+	 */
 	@Override
 	public void run() {
 		super.run();
 		while (running) {
-			if (!paused) {
+			if (paused) {
 				continue;
 			}
-			
+
 			System.out.println("Getting next message");
 			printMap();
 			handleNextMessage();
 			try {
 				Thread.sleep(1000);
-				
+
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -98,34 +111,23 @@ public class Map extends Thread {
 		}
 	}
 
+	/**
+	 * Starts the correct Runnable according to the current message.
+	 */
 	private void handleNextMessage() {
 		nextMessage = mErlCom.receive();
 		if (nextMessage.getType().equalsIgnoreCase("get")) {
-			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid(), mErlCom, mapArray));
+			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid(),
+					mErlCom, mapArray));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
-			mMsgThrExec.execute(new MoveMsgHandler(nextMessage,mErlCom, mapArray));
+			mMsgThrExec.execute(new MoveMsgHandler(nextMessage, mErlCom,
+					mapArray));
+		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
+			System.out.println("stopping");
+			this.running = false;
+			// System.exit(0);
 		}
-	}	
-	class EatMsgHandler implements Runnable {
-		OtpErlangPid pid;
-		int[] coords;
-		public EatMsgHandler(OtpErlangPid pid, int[] coords){
-			this.pid = pid;
-			this.coords = coords;
-		}
-		@Override
-		public void run() {
-			
-			synchronized(mapArray[coords[0]][coords[1]]){
-				MapNode tNode = mapArray[coords[0]][coords[1]];
-				tNode.setGrassLevel(tNode.getGrassLevel());
-				mErlCom.send(new SendMessage("yes", null, pid));
-			}
-		}
-		
 	}
-
-	
 
 	public void simulationStart() {
 

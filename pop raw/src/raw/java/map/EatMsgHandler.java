@@ -11,12 +11,21 @@ public class EatMsgHandler implements Runnable {
 	int[] coords;
 	private Communicator mErlCom;
 	private MapNode[][] mapArray;
+	/**
+	 * Constructor for the Eat message handler
+	 * @param msg the message containing pid and coords
+	 * @param mErlCom communicator used to send responses
+	 * @param mapArray the map representation.
+	 */
 	public EatMsgHandler(Message msg, Communicator mErlCom, MapNode[][] mapArray){
 		this.pid = msg.getPid();
 		this.coords = msg.getValues();
 		this.mErlCom = mErlCom;
 		this.mapArray = mapArray;
 	}
+	
+	
+	
 	@Override
 	public void run() {
 		

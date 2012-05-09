@@ -42,7 +42,12 @@ public class MapNode {
 	}
 
 	private OtpErlangPid pid;
-
+	/**
+	 * Constructor for the MapNode.
+	 * @param grassLevel the level of grass for this square
+	 * @param type the type that populates this square
+	 * @param pid the pid of the entity populating this square (null if it is empty)
+	 */
 	public MapNode(int grassLevel, int type, OtpErlangPid pid) {
 		this.grassLevel = grassLevel;
 		this.type = type;
