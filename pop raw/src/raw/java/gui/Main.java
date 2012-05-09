@@ -117,6 +117,7 @@ public class Main implements Runnable, UpdateListener{
         controlFrame.setResizable(false);
         controlFrame.setVisible(true);
         mapFrame.setVisible(true);
+       
         mD.setWolvesVisibility(true);
         mD.setRabbitsVisibility(true);
         mD.setGrassVisibility(true);
