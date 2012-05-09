@@ -1,15 +1,13 @@
 -module(jint_erl).
 
--export([start/0, server/0]).
+-export([setup/0, server/0]).
 
-start() ->
-	Pid = spawn(jint_erl, server, []),
-	register(rawMap, Pid),
-	set_cookie
+setup() ->
+	spawn(jint_erl, server, []).
 
 server() ->
 	receive
-		{abba, _} ->
+		{_} ->
 			io:fwrite("Hello, world!\n"),
 			server()
 	end.
