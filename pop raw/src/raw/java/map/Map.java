@@ -2,6 +2,7 @@ package raw.java.map;
 
 import java.util.Random;
 
+import raw.java.gui.Main;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.map.threadpool.MessageThreadExecutor;
@@ -45,7 +46,7 @@ public class Map extends Thread {
 	 * @param Seed
 	 *            seed for generating maps
 	 */
-	public Map(int Size, long Seed) {
+	public Map(int Size, long Seed, Main main) {
 		this.mapSize = Size;
 		Random r = new Random(Seed);
 		mapArray = new MapNode[Size][Size];

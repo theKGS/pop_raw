@@ -9,7 +9,7 @@ public class TestMain {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Map map = new Map(10, 10);
+		Map map = new Map(10, 10, null);
 		map.start();
 	}
 
