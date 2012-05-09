@@ -23,7 +23,7 @@ public class EatMsgHandler implements Runnable {
 		synchronized(mapArray[coords[0]][coords[1]]){
 			MapNode tNode = mapArray[coords[0]][coords[1]];
 			tNode.setGrassLevel(tNode.getGrassLevel());
-			mErlCom.send(new SendMessage("yes", null, pid));
+			mErlCom.send((new SendMessage("yes", null, pid)));
 		}
 	}
 	

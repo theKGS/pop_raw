@@ -59,8 +59,11 @@ public class Map extends Thread {
 		mapArray = new MapNode[Size][Size];
 		for (int i = 0; i < mapArray.length;i++) {
 			for (int j = 0; j < mapArray[i].length;j++) {
-				mapArray[i][j] = new MapNode(i*j%5, (i*j^(i+j))%3, null);
+				mapArray[i][j] = new MapNode(i*j%5, MapNode.NONE, null);
+				if(i == 0)
+					mapArray[i][j].setType(MapNode.WOLF);
 			}
+			mapArray[i][0].setType(MapNode.RABBIT);
 		}
 
 	//printMap();
@@ -77,7 +80,7 @@ public class Map extends Thread {
 	}
 	private void setUp() {
 		mErlCom = new Communicator();
-		mErlCom.inComming.put(new Message("move", null, new int[]{1,0,0,0}));
+		mErlCom.putReceive(new Message("move", null, new int[]{1,0,0,0}));
 		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
 	}
 
