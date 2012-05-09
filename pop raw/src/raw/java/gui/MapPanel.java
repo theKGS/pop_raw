@@ -48,6 +48,10 @@ public class MapPanel extends JPanel {
 		MapNode[][] nodes = map.getMapArray();
 		Color c = new Color(0, 0, 0);
 
+		g.setColor(c);
+		g.fillRect(0, 0, 700, 700);				
+
+		
 		for (int y = 0; y < map.getMapSize() - 1; y++) {
 			for (int x = 0; x < map.getMapSize() - 1; x++) {
 				// g.drawImage(IconRabbit, x*TILEWIDTH,y*TILEHEIGHT , null); //

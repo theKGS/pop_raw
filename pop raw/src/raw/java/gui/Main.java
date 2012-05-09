@@ -70,6 +70,7 @@ public class Main implements Runnable, UpdateListener{
         zoomSlider.setBounds(0, 200, 200, 70);
         zoomSlider.setMaximum(64);
         zoomSlider.setMinimum(2);  
+        zoomSlider.setValue(7);
         
         mapDisplayPanel = new MapPanel(map);
         mapDisplayPanel.setBounds(0,0,400,400);
