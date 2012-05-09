@@ -12,12 +12,11 @@ import raw.java.map.Map;
 public class Main implements Runnable {
 	static Communicator messageCommunicator;    
 	static Map map;
-   	
+
 	/**
-	 * The Swing thread 
+	 * The Swing thread
 	 */
-	@Override
-    public void run() {
+	@Override public void run() {
         // Create the window
         JFrame controlFrame = new JFrame ("Rabbits & Wolves");
         JFrame mapFrame = new JFrame ("Map");
@@ -120,13 +119,8 @@ public class Main implements Runnable {
 	 * @param args
 	 */
     public static void main(String[] args) {
-    	Main se = new Main();
-        //Graphics2D gfx2D = new Graphics2D();
-    	
+    	Main se = new Main();    	
     	map = new Map(32, 32);
-        messageCommunicator = new Communicator();
-
-        // Schedules the application to be run at the correct time in the event queue.
         SwingUtilities.invokeLater(se);
     }
 }
