@@ -129,7 +129,7 @@ public class Main implements Runnable, UpdateListener{
     public static void main(String[] args) {
     	Main se = new Main();    	
     	map = new Map(80, 32, se);
-    	
+    	map.start();
         SwingUtilities.invokeLater(se);
     }
     
