@@ -62,13 +62,14 @@ public class Map extends Thread {
 				mapArray[i][j] = new MapNode(i*j%5, (i*j^(i+j))%3, null);
 			}
 		}
+
 	//printMap();
 		setUp();
 	}
 	private void printMap(){
 		for(MapNode[] tArr : mapArray){
 			for(MapNode tMapNode : tArr){
-				System.out.print("(" + tMapNode.getGrassLevel() + ", " + tMapNode.getType() + ")");
+				System.out.print(tMapNode.getType()+" ");
 			}
 			System.out.print("\n");
 		}
@@ -87,78 +88,28 @@ public class Map extends Thread {
 			if (!paused) {
 				continue;
 			}
-			printMap();
+			
 			System.out.println("Getting next message");
+			printMap();
 			handleNextMessage();
-
+			try {
+				Thread.sleep(1000);
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void handleNextMessage() {
 		nextMessage = mErlCom.receive();
 		if (nextMessage.getType().equalsIgnoreCase("get")) {
-			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid()));
+			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid(), mErlCom, mapArray));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
-			mMsgThrExec.execute(new MoveMsgHandler(nextMessage.getPid(), nextMessage.getValues()));
+			mMsgThrExec.execute(new MoveMsgHandler(nextMessage,mErlCom, mapArray));
 		}
-	}
-
-	class MapMsgHandler implements Runnable {
-		final OtpErlangPid pid;
-
-		public MapMsgHandler(OtpErlangPid pid) {
-			this.pid = pid;
-		}
-
-		@Override
-		public void run() {
-			mErlCom.send(new SendMessage("map", mapArray, pid));
-		}
-	}
-
-	class MoveMsgHandler implements Runnable {
-		final OtpErlangPid pid;
-		private int[] coords;
-
-		public MoveMsgHandler(OtpErlangPid pid, int[] coords) {
-			this.pid = pid;
-			this.coords = coords;
-		}
-
-		@Override
-		public void run() {
-			if (compareCoordsArr(coords)) {
-				synchronized(mapArray[coords[0]][coords[1]]){
-					synchronized(mapArray[coords[2]][coords[3]]){
-						checkMove();
-					}
-				}
-			} else {
-				synchronized(mapArray[coords[2]][coords[3]]){
-					synchronized(mapArray[coords[1]][coords[0]]){
-						checkMove();
-					}
-				}
-			}
-
-		}
-		private void checkMove(){
-			MapNode currentNode = mapArray[coords[1]][coords[2]];
-			MapNode targetNode = mapArray[coords[2]][coords[3]];
-			if(targetNode.getType() != MapNode.NONE){
-				mErlCom.send(new SendMessage("no", null, pid));
-			} else {
-				targetNode.setPid(currentNode.getPid());
-				targetNode.setType(currentNode.getType());
-				currentNode.setPid(null);
-				currentNode.setType(MapNode.NONE);
-				mErlCom.send(new SendMessage("yes",null,pid));
-			}
-			//System.out.println("Move handled");
-		}
-
-	}
-	
+	}	
 	class EatMsgHandler implements Runnable {
 		OtpErlangPid pid;
 		int[] coords;
@@ -178,19 +129,7 @@ public class Map extends Thread {
 		
 	}
 
-	/**
-	 * Method that get the index of both coordinate pairs and returns the
-	 * smallest one
-	 * 
-	 * @param coords
-	 *            int[4] with {x1,y1,x,y2} coords
-	 * @return coord-pair with the smallest index
-	 */
-	public boolean compareCoordsArr(int[] coords) {
-		return coords[1] * mapArray.length + coords[0] + mapArray.length < coords[3]
-				* mapArray.length + coords[2] + mapArray.length ? true : false;
-
-	}
+	
 
 	public void simulationStart() {
 
