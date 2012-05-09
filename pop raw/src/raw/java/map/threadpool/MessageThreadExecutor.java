@@ -24,10 +24,10 @@ public class MessageThreadExecutor {
 	 * @param timeOut threads will be released if they've been idle in timeOut seconds
 	 */
 	public MessageThreadExecutor(int queueSize, int corNoThread, int maxNoThread, int timeOut){
-		mWorksQueue = new ArrayBlockingQueue<Runnable>(10);
+		mWorksQueue = new ArrayBlockingQueue<Runnable>(queueSize);
 		executionHandler = new MyRejectedExecutionHandelerImpl();
 		
-		executor = new ThreadPoolExecutor(5, 10, 10,
+		executor = new ThreadPoolExecutor(corNoThread, maxNoThread, timeOut,
 		        TimeUnit.SECONDS, mWorksQueue, executionHandler);
 		executor.allowCoreThreadTimeOut(true);
 	}

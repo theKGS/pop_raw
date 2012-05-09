@@ -40,6 +40,7 @@ public class Map extends Thread {
 	private Message nextMessage;
 	private UpdateListener mUpdtLis;
 	private Random r;
+	private long Seed;
 
 	/**
 	 * Constructor for the map class
@@ -54,15 +55,9 @@ public class Map extends Thread {
 			this.mUpdtLis = udpLis;
 		}
 		this.mapSize = Size;
-		r = new Random(Seed);
+		this.Seed = Seed;
 		mapArray = new MapNode[Size][Size];
-		for (int i = 0; i < mapArray.length; i++) {
-			for (int j = 0; j < mapArray[i].length; j++) {
-				mapArray[i][j] = new MapNode(r.nextInt(6), r.nextInt(3), null);
-
-			}
-
-		}
+		
 
 		// printMap();
 		setUp();
@@ -84,8 +79,21 @@ public class Map extends Thread {
 	 * Sets up Communicator and thread pool.
 	 */
 	private void setUp() {
+		r = new Random(Seed);
+		for (int i = 0; i < mapArray.length; i++) {
+			for (int j = 0; j < mapArray[i].length; j++) {
+				int type = r.nextInt(6);
+				if(type > 2)
+					type = 0;
+				else
+					type %=3;
+				mapArray[i][j] = new MapNode(r.nextInt(6), type, null);
+
+			}
+
+		}
 		mErlCom = new Communicator();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			int x = r.nextInt(mapSize);
 			int y = r.nextInt(mapSize);
 			if (mapArray[x][y].getType() != MapNode.NONE) {
@@ -119,7 +127,7 @@ public class Map extends Thread {
 		}
 		mErlCom.putReceive(new Message("stop", null, null));
 
-		mMsgThrExec = new MessageThreadExecutor(5, 10, 20, 10);
+		mMsgThrExec = new MessageThreadExecutor(10000, 10, 100, 10);
 	}
 
 	void moveNode(int x1, int y1, int x2, int y2) {
@@ -133,13 +141,20 @@ public class Map extends Thread {
 	@Override
 	public void run() {
 		super.run();
+		try {
+			Thread.sleep(1000);
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		while (running) {
 			if (paused) {
 				continue;
 			}
 
-			System.out.println("Getting next message");
-			printMap();
+//			System.out.println("Getting next message");
+//			printMap();
 			handleNextMessage();
 			
 		}
@@ -164,15 +179,16 @@ public class Map extends Thread {
 	}
 
 	public void simulationStart() {
-
+		paused = false;
 	}
 
 	public void simulationStop() {
-
+		paused = true;
 	}
 
 	public void simulationReset() {
-
+		setUp();
+		mUpdtLis.update();
 	}
 
 	public int getMapSize() {
