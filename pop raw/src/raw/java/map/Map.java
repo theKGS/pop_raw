@@ -1,6 +1,7 @@
 package raw.java.map;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,18 +13,6 @@ import raw.java.map.threadpool.MessageThreadExecutor;
 import com.ericsson.otp.erlang.*;
 
 public class Map extends Thread {
-
-	// mpS - map size
-	// mpG - ammount of grass
-	// mpSG - speed of grass growth
-	// wfN - number of wolves
-	// wfA - maximum wolf age
-	// wfRA - wolf reproduction age
-	// wfRS - wolf reproduction success probability
-	// raN - number of rabbits
-	// raA - maximum rabbit age
-	// raRA - rabbit reproduction age
-	// raRS - rabbit reproduction success probability
 	private int simulationSpeed = 0;
 
 	public int getSimulationSpeed() {
@@ -53,17 +42,21 @@ public class Map extends Thread {
 
 	private MessageThreadExecutor mMsgThrExec;
 	private Message nextMessage;
-
-	public Map(int Size, int Seed) {
+	/**
+	 * Constructor for the map class
+	 * @param Size the y, and x size of the map
+	 * @param Seed seed for generating maps
+	 */
+	public Map(int Size, long Seed) {
 		this.mapSize = Size;
+		Random r = new Random(Seed);
 		mapArray = new MapNode[Size][Size];
 		for (int i = 0; i < mapArray.length;i++) {
 			for (int j = 0; j < mapArray[i].length;j++) {
-				mapArray[i][j] = new MapNode(i*j%5, MapNode.NONE, null);
-				if(i == 0)
-					mapArray[i][j].setType(MapNode.WOLF);
+				mapArray[i][j] = new MapNode(r.nextInt(6), r.nextInt(4), null);
+				
 			}
-			mapArray[i][0].setType(MapNode.RABBIT);
+			
 		}
 
 	//printMap();
