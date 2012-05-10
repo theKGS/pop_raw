@@ -12,7 +12,6 @@ public class Communicator {
 	public Communicator() {
 		receiver = new Gui_receive(inComming, this);
 		new Thread(receiver).start();
-		System.out.println("Gui_receive started");
 		while (this.pid == null) {
 			try {
 				Thread.sleep(10);
@@ -20,8 +19,6 @@ public class Communicator {
 				e.printStackTrace();
 			}
 		}
-		System.out.println(this.pid.toString());
-		
 		sender = new Gui_send(outGoing, pid);
 		new Thread(sender).start();
 

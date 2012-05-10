@@ -51,8 +51,8 @@ public class MapPanel extends JPanel {
 		g.setColor(c);
 		g.fillRect(0, 0, 700, 700);
 
-		for (int y = 0; y < map.getMapSize() - 1; y++) {
-			for (int x = 0; x < map.getMapSize() - 1; x++) {
+		for (int y = 0; y < map.getMapSize(); y++) {
+			for (int x = 0; x < map.getMapSize(); x++) {
 				// g.drawImage(IconRabbit, x*TILEWIDTH,y*TILEHEIGHT , null); //
 				// see javadoc for more info on
 
@@ -108,7 +108,6 @@ public class MapPanel extends JPanel {
 						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
 					}
 				}
-
 			}
 		}
 	}

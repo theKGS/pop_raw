@@ -1,5 +1,7 @@
 package raw.java.gui;
 
+import java.awt.Dialog;
+
 import javax.swing.*;
 import raw.java.j_int_java.Communicator;
 import raw.java.map.Map;
@@ -35,6 +37,28 @@ public class Main implements Runnable, UpdateListener{
         // Sets the behavior for when the window is closed
         controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mapFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+      /*	// dialog
+        JFrame startupFrame = new JFrame("This JFrame pwns all");
+        startupFrame.setLayout(null);
+        
+        JLabel dLabel = new JLabel("Set size and random seed");
+        dLabel.setBounds(10,10,220,10);
+        
+        JButton dOk = new JButton();
+        dOk.setBounds(10,30,60,20);
+        
+        startupFrame.getContentPane().add(dLabel);
+        startupFrame.getContentPane().add(dOk);
+        
+        startupFrame.setSize(300, 140);
+        startupFrame.setVisible(true);
+        startupFrame.setResizable(false);
+        mapFrame.setEnabled(false);
+        controlFrame.setEnabled(false);
+        startupFrame.setAlwaysOnTop(true);*/
+        
+        
         
         /*
          * Start, stop, reset -buttons
@@ -154,8 +178,6 @@ public class Main implements Runnable, UpdateListener{
 	 */
     public static void main(String[] args) {
     	se = new Main();    	
-    	//map = new Map(100, 32, se);
-    	//map.start();
     	
         mapDisplayPanel = new MapPanel();
         mapDisplayPanel.setMain(se);

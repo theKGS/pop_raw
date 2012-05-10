@@ -75,7 +75,10 @@ public class Gui_send implements Runnable{
 					}
 					list[i] = new OtpErlangTuple(tuple);
 				} else {
-					list[i] = new OtpErlangTuple(new OtpErlangAtom("out"));
+					OtpErlangObject[] tuple = new OtpErlangObject[2];
+					tuple[0] = new OtpErlangAtom("out");
+					tuple[1] = new OtpErlangAtom("out");
+					list[i] = new OtpErlangTuple(tuple);
 				}
 			}
 			OtpErlangObject[] message = new OtpErlangObject[3];
