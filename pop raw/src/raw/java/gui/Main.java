@@ -13,6 +13,8 @@ import raw.java.map.MapNode;
 public class Main implements Runnable, UpdateListener{    
 	static Map map;
 	private MapPanel mapDisplayPanel;
+    private JTextField textFieldSize;
+    private JTextField textFieldSeed;
 	
 	/**
 	 * The Swing thread
@@ -67,7 +69,6 @@ public class Main implements Runnable, UpdateListener{
         jSl.setPaintTicks(true);
         
         JSlider zoomSlider = new JSlider();
-        //zoomSlider.setLabelTable(jSl.createStandardLabels(30));
         zoomSlider.setBounds(0, 200, 200, 70);
         zoomSlider.setMaximum(64);
         zoomSlider.setMinimum(1);  
@@ -78,6 +79,17 @@ public class Main implements Runnable, UpdateListener{
         
         mapFrame.add(mapDisplayPanel);
        // mapFrame.pack();
+        
+        /*
+         * Text fields
+         */
+        JTextField textFieldSize = new JTextField();
+        JTextField textFieldSeed = new JTextField();
+        textFieldSize.setBounds(16, 250, 64, 24);
+        textFieldSeed.setBounds(116, 250, 64, 24);
+        
+        controlFrame.getContentPane().add(textFieldSize);
+        controlFrame.getContentPane().add(textFieldSeed);
         
         /*
          * Show/hide map elements 
@@ -114,7 +126,7 @@ public class Main implements Runnable, UpdateListener{
          */
         rawButtonStart.addActionListener(new AL_StartButton(map));
         rawButtonStop.addActionListener(new AL_StopButton(map));
-        rawButtonReset.addActionListener(new AL_ResetButton(map));
+        rawButtonReset.addActionListener(new AL_InitButton(map));
         jSl.addChangeListener(new AL_TimeSlider(map, jSl));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
@@ -147,5 +159,17 @@ public class Main implements Runnable, UpdateListener{
     public void update(int x, int y, MapNode mn){
     	mapDisplayPanel.addNode(x, y, mn);
     	mapDisplayPanel.repaint();
+    }
+    
+    public int getSizeFromTextField(){
+    	Integer size = 32;
+    	size = Integer.getInteger(textFieldSeed.getText());
+    	return size;
+    }
+    
+    public int getSeedFromTextField(){
+    	Integer seed = 0;
+    	seed = Integer.getInteger(textFieldSeed.getText());
+    	return seed;
     }
 }
