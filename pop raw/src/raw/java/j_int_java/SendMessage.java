@@ -1,17 +1,18 @@
 package raw.java.j_int_java;
 
 import com.ericsson.otp.erlang.OtpErlangPid;
-
 import raw.java.map.MapNode;
 
-public class SendMessage {
-	private final String type;
-	private MapNode[][] map;
-	private OtpErlangPid pid;
-	public SendMessage(String type, OtpErlangPid pid, MapNode[][] map){
-		this.type = type;
+public class SendMessage extends MessageSuper{
+	private MapNode[] map;
+	
+	public SendMessage(String type, OtpErlangPid pid, MapNode[] map){
+		super(type, pid);
 		this.map = map;
-		this.pid = pid;
+	}
+	
+	public MapNode[] getMap() {
+		return this.map;
 	}
 }
 

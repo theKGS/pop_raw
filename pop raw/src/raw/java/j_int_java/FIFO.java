@@ -22,7 +22,7 @@ public class FIFO {
 	 * Plockar ut f�rsta element ur k�n och returnera str�ngen.
 	 * @return str�ngen i f�rsta elementet om det finns annars null.
 	 */
-	public synchronized Message get() {
+	public synchronized MessageSuper get() {
 		while (this.first == null) {
 			try {
 				wait();
@@ -44,7 +44,7 @@ public class FIFO {
 	 * Tar ett str�ng och skapar en Node i listan.
 	 * @param m som ett str�ng
 	 */
-	public synchronized void put(Message m) {
+	public synchronized void put(MessageSuper m) {
 		Node ny = new Node(m, null);
 
 		if (last == null) {
@@ -63,14 +63,14 @@ public class FIFO {
 	 *
 	 */
 	private class Node {
-		private Message m;
+		private MessageSuper m;
 		private Node next;
 		/**
 		 * Konstruktorn Node tar en str�ng m och en Node next.
 		 * @param m
 		 * @param next
 		 */
-		public Node(Message m, Node next) {
+		public Node(MessageSuper m, Node next) {
 			this.m = m;
 			this.next = next;
 		}
@@ -92,7 +92,7 @@ public class FIFO {
 		 * Returnera medelandet ur en nod
 		 * @return medelandet ur en nod
 		 */
-		public Message getMsg(){
+		public MessageSuper getMsg(){
 			return this.m;
 		}
 	}
