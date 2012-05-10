@@ -46,7 +46,8 @@ public class MapPanel extends JPanel {
 		// g.drawImage(IconRabbit, 0, 0, null); // see javadoc for more info on
 		// g.drawImage(IconRabbit, 32, 32, null); // see javadoc for more info
 		Color c = new Color(0, 0, 0);
-
+		g.drawImage(IconRabbit, 0, 0, 48, 48, new Color (255, 0, 255), null);
+		
 		g.setColor(c);
 		g.fillRect(0, 0, 700, 700);
 
