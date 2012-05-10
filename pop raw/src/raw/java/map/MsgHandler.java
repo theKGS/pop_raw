@@ -26,6 +26,7 @@ public class MsgHandler {
 			UpdateListener updtLis) {
 		this.pid = msg.getPid();
 		this.coords = msg.getValues();
+		
 		this.mErlCom = com;
 		this.map = map;
 		this.mUpdtLis = updtLis;

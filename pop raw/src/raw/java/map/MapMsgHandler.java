@@ -2,13 +2,12 @@ package raw.java.map;
 
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.j_int_java.SendMessage;
 
 import com.ericsson.otp.erlang.OtpErlangPid;
 
 public class MapMsgHandler extends MsgHandler implements Runnable {
-	OtpErlangPid pid;
-	Communicator mErlCom;
-	MapNode[][] mapArray;
+
 
 	/**
 	 * Constructor for the Map message runnable.
@@ -35,11 +34,11 @@ public class MapMsgHandler extends MsgHandler implements Runnable {
 			for (int i = -1; i < 2; i++) {
 				if (x + i >= 0 && x + i < map.getMapSize() && y + j >= 0
 						&& y + j < map.getMapSize()) {
-					squares[index] = map.getMapArray()[i][j];
+					squares[index] = map.getMapArray()[x+i][y+j];
 				}
 				index++;
 			}
 		}
-		// mErlCom.send(new SendMessage("map", mapArray, pid));
+		mErlCom.send(new SendMessage("map", pid, squares));
 	}
 }

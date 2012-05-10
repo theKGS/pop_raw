@@ -58,8 +58,8 @@ public class Map extends Thread {
 		if (udpLis != null) {
 			this.mUpdtLis = udpLis;
 		}
-		this.mapSize = 20; //Size;
-		this.Seed = 30; //Seed;
+		this.mapSize = Size; //Size;
+		this.Seed = Seed; //Seed;
 		mapArray = new MapNode[mapSize][mapSize];
 
 		// printMap();
@@ -98,7 +98,7 @@ public class Map extends Thread {
 					mErlCom.send(new Message("new", null, new int[] { i, j }));
 					
 					MessageSuper msg = mErlCom.receive();
-					System.out.println("got send: " + i + ", " + j);
+					System.out.println("got send: " + msg.getPid());
 					mapArray[i][j] = new MapNode(r.nextInt(6), type,
 							msg.getPid());
 					startReceivers.add(msg.getPid());
@@ -113,7 +113,7 @@ public class Map extends Thread {
 			mErlCom.send(new Message("start", pid, null));
 		}
 
-		//mFakeMsgSender = new FakeMsgSender(mErlCom, this);
+//		mFakeMsgSender = new FakeMsgSender(mErlCom, this);
 
 		mMsgThrExec = new MessageThreadExecutor(1000000, 100, 500, 10);
 
@@ -138,12 +138,11 @@ public class Map extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		mFakeMsgSender.start();
+		//mFakeMsgSender.start();
 		while (running) {
 			if (paused) {
 				continue;
 			}
-
 			// System.out.println("Getting next message");
 			// printMap();
 
@@ -171,6 +170,7 @@ public class Map extends Thread {
 			this.running = false;
 			// System.exit(0);
 		}
+//		System.out.println("Message handled");
 	}
 
 	public void simulationStart() {

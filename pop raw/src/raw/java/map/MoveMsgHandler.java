@@ -9,34 +9,44 @@ import com.ericsson.otp.erlang.OtpErlangPid;
 
 public class MoveMsgHandler extends MsgHandler implements Runnable {
 
-	
-
 	public MoveMsgHandler(Message message, Communicator mErlCom, Map map,
 			UpdateListener updtLis) {
 		super(message, mErlCom, map, updtLis);
 	}
-	
+
 	@Override
 	public void run() {
-		mate();
-		if (compareCoordsArr(coords)) {
-			synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
-				synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {
-					checkMove();
-					sendUpdate(coords[X1],coords[Y1], map.getMapArray()[coords[X1]][coords[Y1]]);
-					sendUpdate(coords[X2],coords[Y2], map.getMapArray()[coords[X2]][coords[Y2]]);
-				}
-			}
+		
+		
+		if (coords[X2] < 0 || coords[X2] >= map.getMapSize() || coords[Y2] < 0
+				|| coords[Y2] >= map.getMapSize()) {
+//			System.out.println("MoveTarget coords:" + coords[X2] + " , " + coords[Y2]);
+			mErlCom.send(new Message("no", pid, null));
 		} else {
-			synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {
+			
+			//mate();
+			if (compareCoordsArr(coords)) {
 				synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
-					checkMove();
-					sendUpdate(coords[X1],coords[Y1], map.getMapArray()[coords[X1]][coords[Y1]]);
-					sendUpdate(coords[X2],coords[Y2], map.getMapArray()[coords[X2]][coords[Y2]]);
+					synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {
+						checkMove();
+						sendUpdate(coords[X1], coords[Y1],
+								map.getMapArray()[coords[X1]][coords[Y1]]);
+						sendUpdate(coords[X2], coords[Y2],
+								map.getMapArray()[coords[X2]][coords[Y2]]);
+					}
+				}
+			} else {
+				synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {
+					synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
+						checkMove();
+						sendUpdate(coords[X1], coords[Y1],
+								map.getMapArray()[coords[X1]][coords[Y1]]);
+						sendUpdate(coords[X2], coords[Y2],
+								map.getMapArray()[coords[X2]][coords[Y2]]);
+					}
 				}
 			}
 		}
-		
 
 	}
 
@@ -49,19 +59,19 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 	 * @return coord-pair with the smallest index
 	 */
 
-
 	private void checkMove() {
+		// System.out.println("moving: " + coords[X1] + " , " + coords[Y1] +
+		// "to " + coords[X2] + ", " + coords[Y2]);
 		MapNode currentNode = map.getMapArray()[coords[X1]][coords[Y1]];
-		MapNode targetNode = map.getMapArray()[coords[X2]][coords[Y1]];
+		MapNode targetNode = map.getMapArray()[coords[X2]][coords[Y2]];
 		if (targetNode.getType() != MapNode.NONE) {
-			//mErlCom.send(new SendMessage("no", null, pid));
+			mErlCom.send(new Message("no", pid, null));
 		} else {
-
 			targetNode.setPid(currentNode.getPid());
 			targetNode.setType(currentNode.getType());
 			currentNode.setPid(null);
 			currentNode.setType(MapNode.NONE);
-			//.send(new SendMessage("yes", null, pid));
+			mErlCom.send(new Message("yes", pid, null));
 
 		}
 		// System.out.println("Move handled");

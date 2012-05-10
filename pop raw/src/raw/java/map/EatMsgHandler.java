@@ -23,13 +23,14 @@ public class EatMsgHandler extends MsgHandler implements Runnable {
 
 	@Override
 	public void run() {
-
+		//System.out.println("Eat coords:" + coords[X1] + " , " + coords[Y1]);
 		synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
 			MapNode tNode = map.getMapArray()[coords[X1]][coords[Y1]];
 			if (tNode.getGrassLevel() > 0) {
 				tNode.setGrassLevel(tNode.getGrassLevel() - 1);
+				mUpdtLis.update(coords[X1],coords[Y1], map.getMapArray()[coords[X1]][coords[Y1]]);
+				
 			}
-			//mErlCom.send((new SendMessage("yes", pid, null)));
 		}
 	}
 

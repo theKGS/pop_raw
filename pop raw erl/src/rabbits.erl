@@ -22,11 +22,8 @@
 %% 
 
 new({X, Y}, SenderPID) ->
-	SenderPID ! {new, self(), X, Y},
-	receive
-		start ->
-			spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}])
-	end.
+	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
+	SenderPID ! {new, PID, X, Y}.
 		
 %% 
 %% @doc Increases Rabbit's age by 1.
@@ -40,7 +37,15 @@ new({X, Y}, SenderPID) ->
 %% 
 
 move(Rabbit, {X, Y}) ->
-	Rabbit#rabbit{x = X, y = Y}.
+	PID = Rabbit#rabbit.spid,
+	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, Rabbit#rabbit.x, Rabbit#rabbit.y, X, Y },
+	receive
+		yes ->
+			NewRabbit = Rabbit#rabbit{x = X, y = Y},
+			loop(NewRabbit);
+		no ->
+			loop(Rabbit)
+	end.
 
 %% 
 %% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
@@ -76,7 +81,7 @@ findNewSquare(Rabbit) ->
 %% 
 
 eat(Rabbit) ->
-	{Grass, _} = getMap(),
+	{Grass, _} = getMap(Rabbit),
 %% 	Grass = 5,
 %% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
 	case isHungry(Rabbit) and (Grass > 0) of
@@ -139,10 +144,11 @@ isTooHungry(Rabbit) ->
 %% 
 %% 
 
-getMap() ->
+getMap(Rabbit) ->
+	Rabbit#rabbit.spid ! {get, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
 	receive
-		{map, [H|L]} ->
-			{Grass, Type} = lists:nth(5, [H|L]),
+		{map, List} ->
+			{Grass, Type} = lists:nth(5, List),
 			{Grass, Type}
 	end.
 	
@@ -183,19 +189,14 @@ doTick(Rabbit) ->
 %% 
 
 preloop(Rabbit) ->
-	init(),
-	loop(Rabbit).
+	receive
+		start ->
+			init(),
+			loop(Rabbit)
+	end.
 
 loop(Rabbit) ->
 	receive
-		{_, tick} ->
-			Rabbit2 = doTick(Rabbit),
-			case checkToDie(Rabbit2) of
-				true ->
-					exit(died);
-				false ->
-					loop(Rabbit2)
-			end;
 		{Sender, getInfo} ->
 			Sender ! {self(), Rabbit},
 			loop(Rabbit);
@@ -204,6 +205,15 @@ loop(Rabbit) ->
 			loop(Rabbit);
 		{_, die} ->
 			exit(killed)
+		after 200 ->
+			Rabbit2 = doTick(Rabbit),
+			loop(Rabbit2)
+%% 			case checkToDie(Rabbit2) of
+%% 				true ->
+%% 					exit(died);
+%% 				false ->
+%% 					loop(Rabbit2)
+%% 			end
 	end.
 
 %% 
