@@ -61,7 +61,11 @@ public class Gui_receive implements Runnable{
 				if(o instanceof OtpErlangTuple) {
 					OtpErlangTuple msg = (OtpErlangTuple) o;
 					Message message = deCode(msg);
-					System.out.println(message.getType());
+					String val = "";
+					for (int i = 0; i < message.getValues().length; i++) {
+						val += (message.getValues())[i];
+					}
+					System.out.println(message.getType() + ", " + val);
 					queue.put(message);
 				}
 			} catch (Exception e) {
@@ -75,7 +79,8 @@ public class Gui_receive implements Runnable{
 		String sType;
 		OtpErlangPid pidTemp = null;
 		int size = msg.arity();
-		int[] values = new int[size-1];
+		System.out.println("SIZE: " + size);
+		int[] values = new int[size - 2];
 		OtpErlangObject type = msg.elementAt(0);
 		OtpErlangObject pid = msg.elementAt(1);
 		if (type instanceof OtpErlangAtom) {
@@ -88,8 +93,9 @@ public class Gui_receive implements Runnable{
 			pidTemp = (OtpErlangPid) pid;
 		}
 		for (int i = 2; i <= size; i++) {
-			if (msg.elementAt(i) instanceof OtpErlangInt) {
-				values[i-2] = ((OtpErlangInt) msg.elementAt(i)).intValue(); 
+			if (msg.elementAt(i) instanceof OtpErlangLong) {
+				System.out.println("IN VALUES");
+				values[i-2] = ((OtpErlangLong) msg.elementAt(i)).intValue(); 
 			}
 		}
 		return new Message(sType, pidTemp, values);
