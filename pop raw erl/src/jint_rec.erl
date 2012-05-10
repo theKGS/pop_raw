@@ -7,16 +7,14 @@ setup(SendPid) ->
 
 server(SendPid) ->
 	receive
-		{_A, _, _, _} ->
-			io:fwrite("Hello world!~n", []),
+		{new, _Pid, X, Y} ->
+			io:fwrite("new~n", []),
+			rabbits:new({X, Y}, SendPid),
+			server(SendPid);
+		{A,Pid, B} ->
+			Pid ! {A, B},
+			server(SendPid);
+		{A, Pid} ->
+			Pid ! A,
 			server(SendPid)
-%% 		{new, _Pid, X, Y} ->
-%% 			rabbits:new({X, Y}, SendPid),
-%% 			server(SendPid);
-%% 		{A,Pid, B} ->
-%% 			Pid ! {A, B},
-%% 			server(SendPid);
-%% 		{A, Pid} ->
-%% 			Pid ! A,
-%% 			server(SendPid)
 	end.
