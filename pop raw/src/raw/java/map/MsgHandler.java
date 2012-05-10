@@ -46,27 +46,6 @@ public class MsgHandler {
 
 		x + 1, y + 1 };
 		syncAll(syncCoords, 0);
-		// if (x > 0 && x < map.getMapSize() && y > 0 && y < map.getMapSize()) {
-		// synchronized (map.getMapArray()[x - 1][y - 1]) {
-		// synchronized (map.getMapArray()[x][y - 1]) {
-		// synchronized (map.getMapArray()[x + 1][y - 1]) {
-		// synchronized (map.getMapArray()[x - 1][y]) {
-		// synchronized (map.getMapArray()[x][y]) {
-		// synchronized (map.getMapArray()[x + 1][y]) {
-		// synchronized (map.getMapArray()[x - 1][y + 1]) {
-		// synchronized (map.getMapArray()[x][y + 1]) {
-		// synchronized (map.getMapArray()[x + 1][y + 1]) {
-		// doMate(x, y);
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
-		// }
 		return false;
 	}
 

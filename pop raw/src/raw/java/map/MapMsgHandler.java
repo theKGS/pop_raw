@@ -24,6 +24,6 @@ public class MapMsgHandler implements Runnable {
 
 	@Override
 	public void run() {
-		mErlCom.send(new SendMessage("map", mapArray, pid));
+		//mErlCom.send(new SendMessage("map", mapArray, pid));
 	}
 }

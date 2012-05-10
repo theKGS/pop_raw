@@ -94,45 +94,8 @@ public class Map extends Thread {
 		}
 		mErlCom = new Communicator();
 		mFakeMsgSender = new FakeMsgSender(mErlCom, this);
-		// for (int i = 0; i < 10000; i++) {
-		// int x = r.nextInt(mapSize);
-		// int y = r.nextInt(mapSize);
-		// if (mapArray[x][y].getType() != MapNode.NONE) {
-		// int dir = r.nextInt(4);
-		// switch (dir) {
-		// case 0:
-		// if (x > 0) {
-		// mErlCom.putReceive(new Message("move", null, new int[] { x, y, x-1, y
-		// }));
-		// }
-		// break;
-		// case 1:
-		// if (y > 0) {
-		// mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y-1
-		// }));
-		// }
-		// break;
-		// case 2:
-		// if(x < mapSize-1){
-		// mErlCom.putReceive(new Message("move", null, new int[] { x, y, x+1, y
-		// }));
-		// }
-		// break;
-		// case 3:
-		// if(y < mapSize-1){
-		// mErlCom.putReceive(new Message("move", null, new int[] { x, y, x, y+1
-		// }));
-		// }
-		// break;
-		// default:
-		// break;
-		//
-		// }
-		// }
-		// }
-		// mErlCom.putReceive(new Message("stop", null, null));
 
-		mMsgThrExec = new MessageThreadExecutor(10000, 10, 100, 10);
+		mMsgThrExec = new MessageThreadExecutor(10000, 100, 500, 10);
 	}
 
 	void moveNode(int x1, int y1, int x2, int y2) {
