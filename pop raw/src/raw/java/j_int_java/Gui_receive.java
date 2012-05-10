@@ -8,11 +8,12 @@ public class Gui_receive implements Runnable{
 	private String mboxName = "sparta";
 	private OtpMbox mbox;
 	private FIFO queue;
-	private OtpErlangPid p = null;
+	private Communicator com;
 
-	public Gui_receive(FIFO send, OtpErlangPid pid) {
+	public Gui_receive(FIFO send, Communicator com) {
 		this.queue = send;
-		this.p = pid;
+		this.com = com;
+		
 		start();
 	}
 
@@ -29,9 +30,8 @@ public class Gui_receive implements Runnable{
 	}
 
 	private void init() throws IOException {
-		OtpNode self = new OtpNode(this.nodeName);
+		OtpNode self = new OtpNode(this.nodeName, "thisissparta");
 		mbox = self.createMbox(this.mboxName);
-		self.setCookie("thisissparta");
 		System.out.println("name: " + self.alive());
 		System.out.println("host: " + self.host());
 		System.out.println("cookie: " + self.cookie());
@@ -39,8 +39,17 @@ public class Gui_receive implements Runnable{
 
 	public void run() {
 		try {
-			this.p = (OtpErlangPid) mbox.receive();
-			this.p.notifyAll();
+			OtpErlangObject tempO = mbox.receive();
+			if (tempO instanceof OtpErlangTuple) {
+				OtpErlangTuple tupleTemp = (OtpErlangTuple) tempO;
+				if (tupleTemp.elementAt(0) instanceof OtpErlangPid) {
+					com.pid = (OtpErlangPid) tupleTemp.elementAt(0);
+				} else {
+					System.out.println("No Erlang pid");
+				}
+			} else {
+				System.out.println("No Erlang tuple");
+			}
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

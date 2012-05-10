@@ -3,9 +3,17 @@
 -export([setup/0, send/0]).
 
 setup() ->
-	Pid = spawn(jint_erl, start, []),
-	{sparta, athens@laptop} ! {Pid},
-	send().
+	PidSelf = spawn(jint_send, send, []),
+	Pid = spawn(jint_rec, setup, [PidSelf]),
+	{sparta, athens@laptop} ! {Pid}.
 
 send() ->
-	{sparta, athens@laptop} ! {test, 56}.
+	Node = erlang:atom_to_list(athens@),
+	Host = net_adm:localhost(),
+	Address = erlang:list_to_atom(lists:append(Node, Host)),
+	receive
+		Msg ->
+			%% TODO Fixa dynamiskt laptop argument
+			{sparta, Address} ! Msg
+	end,
+	send().
