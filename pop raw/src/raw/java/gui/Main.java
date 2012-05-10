@@ -181,8 +181,8 @@ public class Main implements Runnable, UpdateListener{
     	
         mapDisplayPanel = new MapPanel();
         mapDisplayPanel.setMain(se);
-    	//mapDisplayPanel.newMap(100,32);
-    	//mapDisplayPanel.getMap().start();
+    	mapDisplayPanel.newMap(100,32);
+    	mapDisplayPanel.getMap().start();
         SwingUtilities.invokeLater(se);
     }
     
