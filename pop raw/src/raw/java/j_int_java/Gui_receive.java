@@ -32,9 +32,6 @@ public class Gui_receive implements Runnable{
 	private void init() throws IOException {
 		OtpNode self = new OtpNode(this.nodeName, "thisissparta");
 		mbox = self.createMbox(this.mboxName);
-		System.out.println("name: " + self.alive());
-		System.out.println("host: " + self.host());
-		System.out.println("cookie: " + self.cookie());
 	}
 
 	public void run() {
@@ -54,18 +51,12 @@ public class Gui_receive implements Runnable{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		System.out.println("stuff");
 		while(true) {
 			try {
 				OtpErlangObject o = mbox.receive();
 				if(o instanceof OtpErlangTuple) {
 					OtpErlangTuple msg = (OtpErlangTuple) o;
 					Message message = deCode(msg);
-					String val = "";
-					for (int i = 0; i < message.getValues().length; i++) {
-						val += (message.getValues())[i];
-					}
-					System.out.println(message.getType() + ", " + val);
 					queue.put(message);
 				}
 			} catch (Exception e) {
@@ -79,7 +70,6 @@ public class Gui_receive implements Runnable{
 		String sType;
 		OtpErlangPid pidTemp = null;
 		int size = msg.arity();
-		System.out.println("SIZE: " + size);
 		int[] values = new int[size - 2];
 		OtpErlangObject type = msg.elementAt(0);
 		OtpErlangObject pid = msg.elementAt(1);
@@ -94,7 +84,6 @@ public class Gui_receive implements Runnable{
 		}
 		for (int i = 2; i <= size; i++) {
 			if (msg.elementAt(i) instanceof OtpErlangLong) {
-				System.out.println("IN VALUES");
 				values[i-2] = ((OtpErlangLong) msg.elementAt(i)).intValue(); 
 			}
 		}
