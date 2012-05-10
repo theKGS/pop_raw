@@ -12,10 +12,12 @@ import raw.java.map.MapNode;
  */
 public class Main implements Runnable, UpdateListener{    
 	static Map map;
-	private MapPanel mapDisplayPanel;
+	private static Main se;
+	private static MapPanel mapDisplayPanel;
     private JTextField textFieldSize;
     private JTextField textFieldSeed;
-	
+
+    
 	/**
 	 * The Swing thread
 	 */
@@ -74,7 +76,6 @@ public class Main implements Runnable, UpdateListener{
         zoomSlider.setMinimum(1);  
         zoomSlider.setValue(7);
         
-        mapDisplayPanel = new MapPanel(map);
         mapDisplayPanel.setBounds(0,0,400,400);
         
         mapFrame.add(mapDisplayPanel);
@@ -126,10 +127,10 @@ public class Main implements Runnable, UpdateListener{
         /*
          * Add ActionListeners to all GUI elements.
          */
-        rawButtonStart.addActionListener(new AL_StartButton(map));
-        rawButtonStop.addActionListener(new AL_StopButton(map));
-        rawButtonReset.addActionListener(new AL_InitButton(map));
-        jSl.addChangeListener(new AL_TimeSlider(map, jSl));
+        rawButtonStart.addActionListener(new AL_StartButton(mapDisplayPanel));
+        rawButtonStop.addActionListener(new AL_StopButton(mapDisplayPanel));
+        rawButtonReset.addActionListener(new AL_InitButton(mapDisplayPanel));
+        jSl.addChangeListener(new AL_TimeSlider(mapDisplayPanel, jSl));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
         cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
@@ -152,9 +153,14 @@ public class Main implements Runnable, UpdateListener{
 	 * @param args
 	 */
     public static void main(String[] args) {
-    	Main se = new Main();    	
-    	map = new Map(600, 32, se);
-    	map.start();
+    	se = new Main();    	
+    	//map = new Map(100, 32, se);
+    	//map.start();
+    	
+        mapDisplayPanel = new MapPanel();
+        mapDisplayPanel.setMain(se);
+    	mapDisplayPanel.newMap(100,32);
+    	mapDisplayPanel.getMap().start();
         SwingUtilities.invokeLater(se);
     }
     

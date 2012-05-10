@@ -25,19 +25,17 @@ public class MapPanel extends JPanel {
 	private BufferedImage IconRabbit;
 	private BufferedImage IconWolf;
 	private Map map;
-	MapNode[][] nodes; 
+	private MapNode[][] nodes; 
+	private Main mainRef;
 	
-	public MapPanel(Map map) {
+	public MapPanel() {
 		try {
 			IconWolf = ImageIO.read(new File("Dragon3Headed.PNG"));
 			IconRabbit = ImageIO.read(new File("Zombie.PNG"));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-
-		this.map = map;
 		
-		nodes = map.getMapArray();
 	}
 
 	/**
@@ -132,5 +130,18 @@ public class MapPanel extends JPanel {
 	
 	public void addNode(int x, int y, MapNode mn){
 		nodes[x][y] = mn;
+	}
+	
+	public Map getMap(){
+		return map;
+	}
+	
+	public void newMap(int size, int seed){
+    	map = new Map(size, seed, mainRef);
+    	nodes = map.getMapArray();
+	}
+	
+	public void setMain(Main mref){
+		mainRef = mref;
 	}
 }

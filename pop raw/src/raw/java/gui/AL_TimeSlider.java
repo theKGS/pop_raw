@@ -10,11 +10,11 @@ import raw.java.map.Map;
  */
 
 public class AL_TimeSlider implements ChangeListener{
-	Map mp;
-	JSlider slider;
+	private MapPanel mPanel;
+	private JSlider slider;
 	
-	public AL_TimeSlider(Map map, JSlider jsl){
-		mp = map;
+	public AL_TimeSlider(MapPanel mp, JSlider jsl){
+		mPanel = mp;
 		slider = jsl;
 	}
 	
@@ -23,7 +23,7 @@ public class AL_TimeSlider implements ChangeListener{
 	 */
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
-		mp.setSimulationSpeed(slider.getValue());
+		mPanel.getMap().setSimulationSpeed(slider.getValue());
 		System.out.println(slider.getValue()+" ");
 	}
 }
