@@ -28,19 +28,19 @@ public class Communicator {
 
 	}
 	
-	public void send(Message m) {
+	public void send(MessageSuper m) {
 		outGoing.put(m);
 	}
 	
-	public Message getSend() {
+	public MessageSuper getSend() {
 		return outGoing.get();
 	}
 	
-	public Message receive() {
+	public MessageSuper receive() {
 		return inComming.get();
 	}
 	
-	public void putReceive(Message m) {
+	public void putReceive(MessageSuper m) {
 		inComming.put(m);
 	}
 	
