@@ -16,7 +16,8 @@ public class AL_InitButton implements ActionListener{
 	}
 
 	/**
-	 * Called by the reset button
+	 * Called by the init button
+	 * Resets simulation with new seed.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {

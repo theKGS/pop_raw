@@ -87,6 +87,8 @@ public class Main implements Runnable, UpdateListener{
         JTextField textFieldSeed = new JTextField();
         textFieldSize.setBounds(16, 250, 64, 24);
         textFieldSeed.setBounds(116, 250, 64, 24);
+        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
+        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener());
         
         controlFrame.getContentPane().add(textFieldSize);
         controlFrame.getContentPane().add(textFieldSeed);
@@ -151,7 +153,7 @@ public class Main implements Runnable, UpdateListener{
 	 */
     public static void main(String[] args) {
     	Main se = new Main();    	
-    	map = new Map(80, 32, se);
+    	map = new Map(600, 32, se);
     	map.start();
         SwingUtilities.invokeLater(se);
     }
@@ -162,7 +164,7 @@ public class Main implements Runnable, UpdateListener{
     }
     
     public int getSizeFromTextField(){
-    	Integer size = 32;
+    	Integer size = 80;
     	size = Integer.getInteger(textFieldSeed.getText());
     	return size;
     }
