@@ -155,6 +155,7 @@ public class Main implements Runnable, UpdateListener{
     public static void main(String[] args) {
     	se = new Main();    	
     	//map = new Map(100, 32, se);
+    	
     	//map.start();
     	
         mapDisplayPanel = new MapPanel();
