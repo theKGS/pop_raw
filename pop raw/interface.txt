@@ -42,3 +42,10 @@ raN		- number of rabbits
 raA		- maximum rabbit age
 raRA	- rabbit reproduction age
 raRS	- rabbit reproduction success probability
+
+Från kartan
+(atom, Pid, mapArray (kan vara null))
+
+
+Till kartan
+Whatever, skicka vidare!
