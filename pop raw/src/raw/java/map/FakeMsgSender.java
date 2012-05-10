@@ -35,31 +35,33 @@ public class FakeMsgSender extends Thread {
 				for (int y = 0; y < mapSize; y++) {
 					if (map.getMapArray()[x][y].getType() != 0) {
 						int dir = r.nextInt(4);
+						int hunger = r.nextInt(6);
+						int age = r.nextInt(60);
 						switch (dir) {
 						case 0:
 							if (x > 0) {
 								mErlCom.putReceive(new Message("move", null,
-										new int[] { x, y, x - 1, y }));
+										new int[] {age, hunger, x, y, x - 1, y }));
 							}
 							break;
 						case 1:
 							if (y > 0) {
 
 								mErlCom.putReceive(new Message("move", null,
-										new int[] { x, y, x, y - 1 }));
+										new int[] {age, hunger, x, y, x, y - 1 }));
 							}
 							break;
 						case 2:
 							if (x < mapSize - 1) {
 
 								mErlCom.putReceive(new Message("move", null,
-										new int[] { x, y, x + 1, y }));
+										new int[] {age, hunger, x, y, x + 1, y }));
 							}
 							break;
 						case 3:
 							if (y < mapSize - 1) {
 								mErlCom.putReceive(new Message("move", null,
-										new int[] { x, y, x, y + 1 }));
+										new int[] {age, hunger, x, y, x, y + 1 }));
 							}
 							break;
 						default:

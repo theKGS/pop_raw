@@ -3,9 +3,12 @@ package raw.java.map;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.ericsson.otp.erlang.OtpErlangPid;
+
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.j_int_java.MessageSuper;
 import raw.java.map.threadpool.MessageThreadExecutor;
 
 public class Map extends Thread {
@@ -37,7 +40,7 @@ public class Map extends Thread {
 	private Communicator mErlCom;
 
 	private MessageThreadExecutor mMsgThrExec;
-	private Message nextMessage;
+	private MessageSuper nextMessage;
 	private UpdateListener mUpdtLis;
 	private Random r;
 	private long Seed;
@@ -55,8 +58,8 @@ public class Map extends Thread {
 		if (udpLis != null) {
 			this.mUpdtLis = udpLis;
 		}
-		this.mapSize = Size;
-		this.Seed = Seed;
+		this.mapSize = 20; //Size;
+		this.Seed = 30; //Seed;
 		mapArray = new MapNode[Size][Size];
 
 		// printMap();
@@ -80,6 +83,9 @@ public class Map extends Thread {
 	 */
 	private void setUp() {
 		r = new Random(Seed);
+		mErlCom = new Communicator();
+		System.out.println("com started");
+		ArrayList<OtpErlangPid> startReceivers = new ArrayList<OtpErlangPid>();
 		for (int i = 0; i < mapArray.length; i++) {
 			for (int j = 0; j < mapArray[i].length; j++) {
 				int type = r.nextInt(12);
@@ -87,15 +93,28 @@ public class Map extends Thread {
 					type = 0;
 				else
 					type %= 3;
-				mapArray[i][j] = new MapNode(r.nextInt(6), type, null);
+				if (type == MapNode.RABBIT) {
+					mErlCom.send(new Message("new", null, new int[] { i, j }));
+					
+					MessageSuper msg = mErlCom.receive();
+					mapArray[i][j] = new MapNode(r.nextInt(6), type,
+							msg.getPid());
+					startReceivers.add(msg.getPid());
+				} else {
+					mapArray[i][j] = new MapNode(r.nextInt(6), MapNode.NONE,null);
+				}
 
 			}
 
 		}
-		mErlCom = new Communicator();
-		mFakeMsgSender = new FakeMsgSender(mErlCom, this);
+		for(OtpErlangPid pid : startReceivers){
+			mErlCom.send(new Message("start", pid, null));
+		}
 
-		mMsgThrExec = new MessageThreadExecutor(10000, 100, 500, 10);
+		//mFakeMsgSender = new FakeMsgSender(mErlCom, this);
+
+		mMsgThrExec = new MessageThreadExecutor(1000000, 100, 500, 10);
+
 	}
 
 	void moveNode(int x1, int y1, int x2, int y2) {
@@ -125,7 +144,7 @@ public class Map extends Thread {
 
 			// System.out.println("Getting next message");
 			// printMap();
-			
+
 			handleNextMessage();
 
 		}
@@ -137,14 +156,14 @@ public class Map extends Thread {
 	private void handleNextMessage() {
 		nextMessage = mErlCom.receive();
 		if (nextMessage.getType().equalsIgnoreCase("get")) {
-			mMsgThrExec.execute(new MapMsgHandler(nextMessage.getPid(),
-					mErlCom, mapArray));
+			mMsgThrExec.execute(new MapMsgHandler((Message) nextMessage,
+					mErlCom, this));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
-			mMsgThrExec.execute(new MoveMsgHandler(nextMessage, mErlCom,
-					this, mUpdtLis));
+			mMsgThrExec.execute(new MoveMsgHandler((Message) nextMessage,
+					mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("eat")) {
-			mMsgThrExec.execute(new EatMsgHandler(nextMessage, mErlCom,
-					this, mUpdtLis));
+			mMsgThrExec.execute(new EatMsgHandler((Message) nextMessage,
+					mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
 			System.out.println("stopping");
 			this.running = false;
@@ -162,7 +181,7 @@ public class Map extends Thread {
 
 	public void simulationReset() {
 		setUp();
-		
+
 	}
 
 	public int getMapSize() {

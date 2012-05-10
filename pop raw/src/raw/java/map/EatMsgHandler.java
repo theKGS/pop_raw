@@ -24,8 +24,8 @@ public class EatMsgHandler extends MsgHandler implements Runnable {
 	@Override
 	public void run() {
 
-		synchronized (map.getMapArray()[coords[0]][coords[1]]) {
-			MapNode tNode = map.getMapArray()[coords[0]][coords[1]];
+		synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
+			MapNode tNode = map.getMapArray()[coords[X1]][coords[Y1]];
 			if (tNode.getGrassLevel() > 0) {
 				tNode.setGrassLevel(tNode.getGrassLevel() - 1);
 			}
