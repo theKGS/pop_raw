@@ -44,7 +44,11 @@ public class Gui_send implements Runnable{
 			int size = values.length;
 			OtpErlangObject[] message = new OtpErlangObject[size+2];
 			message[0] = new OtpErlangAtom(sType);
-			message[1] = msg.getPid();
+			if (msg.getPid() == null) {
+				message[1] = new OtpErlangAtom("null");
+			} else {
+				message[1] = msg.getPid();
+			}
 			for (int i = 2; i <= size+1; i++) {
 				message[i] = new OtpErlangInt(values[i-2]);
 			}
