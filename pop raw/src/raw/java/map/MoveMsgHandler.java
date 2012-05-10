@@ -50,14 +50,14 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 		MapNode currentNode = map.getMapArray()[coords[0]][coords[1]];
 		MapNode targetNode = map.getMapArray()[coords[2]][coords[3]];
 		if (targetNode.getType() != MapNode.NONE) {
-			mErlCom.send(new SendMessage("no", null, pid));
+			//mErlCom.send(new SendMessage("no", null, pid));
 		} else {
 
 			targetNode.setPid(currentNode.getPid());
 			targetNode.setType(currentNode.getType());
 			currentNode.setPid(null);
 			currentNode.setType(MapNode.NONE);
-			mErlCom.send(new SendMessage("yes", null, pid));
+			//.send(new SendMessage("yes", null, pid));
 
 		}
 		// System.out.println("Move handled");

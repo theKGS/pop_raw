@@ -29,7 +29,7 @@ public class EatMsgHandler extends MsgHandler implements Runnable {
 			if (tNode.getGrassLevel() > 0) {
 				tNode.setGrassLevel(tNode.getGrassLevel() - 1);
 			}
-			mErlCom.send((new SendMessage("yes", null, pid)));
+			//mErlCom.send((new SendMessage("yes", pid, null)));
 		}
 	}
 
