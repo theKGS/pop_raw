@@ -53,7 +53,8 @@ public class Gui_receive implements Runnable{
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}		
+		}
+		System.out.println("stuff");
 		while(true) {
 			try {
 				OtpErlangObject o = mbox.receive();
