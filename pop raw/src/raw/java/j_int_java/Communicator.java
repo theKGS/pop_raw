@@ -13,12 +13,11 @@ public class Communicator {
 		receiver = new Gui_receive(inComming, this);
 		new Thread(receiver).start();
 		System.out.println("Gui_receive started");
-		boolean hold = true;
-		while (hold) {
-			if (this.pid == null) {
-				
-			} else {
-				hold = false;
+		while (this.pid == null) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 		System.out.println(this.pid.toString());
