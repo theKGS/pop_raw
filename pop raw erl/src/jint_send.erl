@@ -13,7 +13,6 @@ send() ->
 	Address = erlang:list_to_atom(lists:append(Node, Host)),
 	receive
 		Msg ->
-			%% TODO Fixa dynamiskt laptop argument
 			{sparta, Address} ! Msg
 	end,
 	send().
