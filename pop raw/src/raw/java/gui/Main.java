@@ -3,6 +3,7 @@ package raw.java.gui;
 import javax.swing.*;
 import raw.java.j_int_java.Communicator;
 import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 /**
  * 
