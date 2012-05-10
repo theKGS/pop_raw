@@ -26,7 +26,7 @@ public class FakeMsgSender extends Thread {
 	public void run() {
 		while (true) {
 			try {
-				Thread.sleep(150);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
