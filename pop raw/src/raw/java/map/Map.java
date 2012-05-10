@@ -162,7 +162,7 @@ public class Map extends Thread {
 
 	public void simulationReset() {
 		setUp();
-		mUpdtLis.update();
+		
 	}
 
 	public int getMapSize() {

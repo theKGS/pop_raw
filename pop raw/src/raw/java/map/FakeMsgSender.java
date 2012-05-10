@@ -21,12 +21,12 @@ public class FakeMsgSender extends Thread {
 		this.map = map;
 		r = new Random();
 	}
-
+	
 	@Override
 	public void run() {
 		while (true) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(150);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

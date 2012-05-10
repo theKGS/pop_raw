@@ -23,16 +23,20 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 			synchronized (map.getMapArray()[coords[0]][coords[1]]) {
 				synchronized (map.getMapArray()[coords[2]][coords[3]]) {
 					checkMove();
+					sendUpdate(coords[0],coords[1], map.getMapArray()[coords[0]][coords[1]]);
+					sendUpdate(coords[2],coords[3], map.getMapArray()[coords[2]][coords[3]]);
 				}
 			}
 		} else {
 			synchronized (map.getMapArray()[coords[2]][coords[3]]) {
 				synchronized (map.getMapArray()[coords[0]][coords[1]]) {
 					checkMove();
+					sendUpdate(coords[0],coords[1], map.getMapArray()[coords[0]][coords[1]]);
+					sendUpdate(coords[2],coords[3], map.getMapArray()[coords[2]][coords[3]]);
 				}
 			}
 		}
-		sendUpdate();
+		
 
 	}
 
