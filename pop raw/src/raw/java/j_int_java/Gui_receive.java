@@ -61,6 +61,7 @@ public class Gui_receive implements Runnable{
 				if(o instanceof OtpErlangTuple) {
 					OtpErlangTuple msg = (OtpErlangTuple) o;
 					Message message = deCode(msg);
+					System.out.println(message.getType());
 					queue.put(message);
 				}
 			} catch (Exception e) {
