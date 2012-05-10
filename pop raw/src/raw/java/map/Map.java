@@ -60,7 +60,7 @@ public class Map extends Thread {
 		}
 		this.mapSize = 20; //Size;
 		this.Seed = 30; //Seed;
-		mapArray = new MapNode[Size][Size];
+		mapArray = new MapNode[mapSize][mapSize];
 
 		// printMap();
 		setUp();
@@ -94,9 +94,11 @@ public class Map extends Thread {
 				else
 					type %= 3;
 				if (type == MapNode.RABBIT) {
+					System.out.println("Sending new: " + i  + ", " + j);
 					mErlCom.send(new Message("new", null, new int[] { i, j }));
 					
 					MessageSuper msg = mErlCom.receive();
+					System.out.println("got send: " + i + ", " + j);
 					mapArray[i][j] = new MapNode(r.nextInt(6), type,
 							msg.getPid());
 					startReceivers.add(msg.getPid());
