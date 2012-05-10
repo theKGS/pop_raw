@@ -126,10 +126,10 @@ public class Main implements Runnable, UpdateListener{
         /*
          * Add ActionListeners to all GUI elements.
          */
-        rawButtonStart.addActionListener(new AL_StartButton(map));
-        rawButtonStop.addActionListener(new AL_StopButton(map));
-        rawButtonReset.addActionListener(new AL_InitButton(map));
-        jSl.addChangeListener(new AL_TimeSlider(map, jSl));
+        rawButtonStart.addActionListener(new AL_StartButton(mapDisplayPanel));
+        rawButtonStop.addActionListener(new AL_StopButton(mapDisplayPanel));
+        rawButtonReset.addActionListener(new AL_InitButton(mapDisplayPanel));
+        jSl.addChangeListener(new AL_TimeSlider(mapDisplayPanel, jSl));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
         cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
@@ -153,7 +153,7 @@ public class Main implements Runnable, UpdateListener{
 	 */
     public static void main(String[] args) {
     	Main se = new Main();    	
-    	map = new Map(600, 32, se);
+    	map = new Map(100, 32, se);
     	map.start();
         SwingUtilities.invokeLater(se);
     }

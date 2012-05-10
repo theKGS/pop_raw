@@ -133,4 +133,8 @@ public class MapPanel extends JPanel {
 	public void addNode(int x, int y, MapNode mn){
 		nodes[x][y] = mn;
 	}
+	
+	public Map getMap(){
+		return map;
+	}
 }

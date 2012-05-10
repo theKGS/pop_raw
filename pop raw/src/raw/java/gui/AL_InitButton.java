@@ -9,10 +9,10 @@ import raw.java.map.Map;
  */
 
 public class AL_InitButton implements ActionListener{	
-	private Map mp;
+	private MapPanel mPanel;
 	
-	public AL_InitButton(Map map) {
-		mp = map;
+	public AL_InitButton(MapPanel mp) {
+		mPanel = mp;
 	}
 
 	/**
@@ -21,7 +21,7 @@ public class AL_InitButton implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		mp.simulationReset();
+		mPanel.getMap().simulationReset();
 		System.out.println("RESET");
 	}
 }

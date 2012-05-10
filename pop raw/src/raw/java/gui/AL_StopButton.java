@@ -8,10 +8,10 @@ import raw.java.map.Map;
  */
 
 public class AL_StopButton implements ActionListener{
-	private Map mp;
+	private MapPanel mPanel;
 	
-	public AL_StopButton(Map map) {
-		mp = map;
+	public AL_StopButton(MapPanel mp) {
+		mPanel = mp;
 	}
 
 	/**
@@ -19,7 +19,7 @@ public class AL_StopButton implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		mp.simulationStop();
+		mPanel.getMap().simulationStop();
 		System.out.println("STOP");
 	}
 }
