@@ -30,10 +30,8 @@ public class Gui_send implements Runnable{
 
 	public void run() {
 		while(true) {
-			System.out.println("Sending pid: " + this.pid.toString());
 			OtpErlangTuple message = enCode(queue.get());
 			mbox.send(this.pid , message);
-			System.out.println("Gui_send sent message");
 		}
 	}
 
