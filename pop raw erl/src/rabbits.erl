@@ -22,8 +22,11 @@
 %% 
 
 new({X, Y}, SenderPID) ->
-	spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
-	SenderPID ! {new, self(), X, Y}.
+	SenderPID ! {new, self(), X, Y},
+	receive
+		start ->
+			spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}])
+	end.
 		
 %% 
 %% @doc Increases Rabbit's age by 1.

@@ -15,24 +15,24 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 			UpdateListener updtLis) {
 		super(message, mErlCom, map, updtLis);
 	}
-
+	
 	@Override
 	public void run() {
 		mate();
 		if (compareCoordsArr(coords)) {
-			synchronized (map.getMapArray()[coords[0]][coords[1]]) {
-				synchronized (map.getMapArray()[coords[2]][coords[3]]) {
+			synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
+				synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {
 					checkMove();
-					sendUpdate(coords[0],coords[1], map.getMapArray()[coords[0]][coords[1]]);
-					sendUpdate(coords[2],coords[3], map.getMapArray()[coords[2]][coords[3]]);
+					sendUpdate(coords[X1],coords[Y1], map.getMapArray()[coords[X1]][coords[Y1]]);
+					sendUpdate(coords[X2],coords[Y2], map.getMapArray()[coords[X2]][coords[Y2]]);
 				}
 			}
 		} else {
-			synchronized (map.getMapArray()[coords[2]][coords[3]]) {
-				synchronized (map.getMapArray()[coords[0]][coords[1]]) {
+			synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {
+				synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
 					checkMove();
-					sendUpdate(coords[0],coords[1], map.getMapArray()[coords[0]][coords[1]]);
-					sendUpdate(coords[2],coords[3], map.getMapArray()[coords[2]][coords[3]]);
+					sendUpdate(coords[X1],coords[Y1], map.getMapArray()[coords[X1]][coords[Y1]]);
+					sendUpdate(coords[X2],coords[Y2], map.getMapArray()[coords[X2]][coords[Y2]]);
 				}
 			}
 		}
@@ -51,8 +51,8 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 
 
 	private void checkMove() {
-		MapNode currentNode = map.getMapArray()[coords[0]][coords[1]];
-		MapNode targetNode = map.getMapArray()[coords[2]][coords[3]];
+		MapNode currentNode = map.getMapArray()[coords[X1]][coords[Y1]];
+		MapNode targetNode = map.getMapArray()[coords[X2]][coords[Y1]];
 		if (targetNode.getType() != MapNode.NONE) {
 			//mErlCom.send(new SendMessage("no", null, pid));
 		} else {

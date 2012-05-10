@@ -14,14 +14,14 @@ public class Communicator {
 		new Thread(receiver).start();
 		System.out.println("Gui_receive started");
 		boolean hold = true;
-//		while (hold) {
-//			if (this.pid == null) {
-//				
-//			} else {
-//				hold = false;
-//			}
-//		}
-//		System.out.println(this.pid.toString());
+		while (hold) {
+			if (this.pid == null) {
+				
+			} else {
+				hold = false;
+			}
+		}
+		System.out.println(this.pid.toString());
 		
 		sender = new Gui_send(outGoing, pid);
 		new Thread(sender).start();
