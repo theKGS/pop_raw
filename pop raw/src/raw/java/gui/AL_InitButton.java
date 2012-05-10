@@ -21,7 +21,9 @@ public class AL_InitButton implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		mPanel.getMap().simulationReset();
+		//mPanel.getMap().simulationReset();
+		mPanel.newMap(80, 99);
+		mPanel.repaint();
 		System.out.println("RESET");
 	}
 }
