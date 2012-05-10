@@ -21,7 +21,7 @@ public class FakeMsgSender extends Thread {
 		this.map = map;
 		r = new Random();
 	}
-
+	
 	@Override
 	public void run() {
 		while (true) {

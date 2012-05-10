@@ -25,7 +25,8 @@ public class MapPanel extends JPanel {
 	private BufferedImage IconRabbit;
 	private BufferedImage IconWolf;
 	private Map map;
-
+	MapNode[][] nodes; 
+	
 	public MapPanel(Map map) {
 		try {
 			IconWolf = ImageIO.read(new File("Dragon3Headed.PNG"));
@@ -35,6 +36,8 @@ public class MapPanel extends JPanel {
 		}
 
 		this.map = map;
+		
+		nodes = map.getMapArray();
 	}
 
 	/**
@@ -44,8 +47,6 @@ public class MapPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		// g.drawImage(IconRabbit, 0, 0, null); // see javadoc for more info on
 		// g.drawImage(IconRabbit, 32, 32, null); // see javadoc for more info
-		// on
-		MapNode[][] nodes = map.getMapArray();
 		Color c = new Color(0, 0, 0);
 
 		g.setColor(c);
@@ -127,5 +128,9 @@ public class MapPanel extends JPanel {
 
 	public void setZoom(int size) {
 		SIZE = size;
+	}
+	
+	public void addNode(int x, int y, MapNode mn){
+		nodes[x][y] = mn;
 	}
 }

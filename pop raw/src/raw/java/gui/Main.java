@@ -3,6 +3,7 @@ package raw.java.gui;
 import javax.swing.*;
 import raw.java.j_int_java.Communicator;
 import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 /**
  * 
@@ -69,7 +70,7 @@ public class Main implements Runnable, UpdateListener{
         //zoomSlider.setLabelTable(jSl.createStandardLabels(30));
         zoomSlider.setBounds(0, 200, 200, 70);
         zoomSlider.setMaximum(64);
-        zoomSlider.setMinimum(2);  
+        zoomSlider.setMinimum(1);  
         zoomSlider.setValue(7);
         
         mapDisplayPanel = new MapPanel(map);
@@ -143,7 +144,8 @@ public class Main implements Runnable, UpdateListener{
         SwingUtilities.invokeLater(se);
     }
     
-    public void update(){
+    public void update(int x, int y, MapNode mn){
+    	mapDisplayPanel.addNode(x, y, mn);
     	mapDisplayPanel.repaint();
     }
 }
