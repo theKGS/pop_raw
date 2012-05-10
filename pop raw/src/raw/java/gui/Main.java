@@ -3,6 +3,7 @@ package raw.java.gui;
 import javax.swing.*;
 import raw.java.j_int_java.Communicator;
 import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 /**
  * 
@@ -12,6 +13,8 @@ import raw.java.map.Map;
 public class Main implements Runnable, UpdateListener{    
 	static Map map;
 	private MapPanel mapDisplayPanel;
+    private JTextField textFieldSize;
+    private JTextField textFieldSeed;
 	
 	/**
 	 * The Swing thread
@@ -66,10 +69,9 @@ public class Main implements Runnable, UpdateListener{
         jSl.setPaintTicks(true);
         
         JSlider zoomSlider = new JSlider();
-        //zoomSlider.setLabelTable(jSl.createStandardLabels(30));
         zoomSlider.setBounds(0, 200, 200, 70);
         zoomSlider.setMaximum(64);
-        zoomSlider.setMinimum(2);  
+        zoomSlider.setMinimum(1);  
         zoomSlider.setValue(7);
         
         mapDisplayPanel = new MapPanel(map);
@@ -77,6 +79,19 @@ public class Main implements Runnable, UpdateListener{
         
         mapFrame.add(mapDisplayPanel);
        // mapFrame.pack();
+        
+        /*
+         * Text fields
+         */
+        JTextField textFieldSize = new JTextField();
+        JTextField textFieldSeed = new JTextField();
+        textFieldSize.setBounds(16, 250, 64, 24);
+        textFieldSeed.setBounds(116, 250, 64, 24);
+        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
+        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener());
+        
+        controlFrame.getContentPane().add(textFieldSize);
+        controlFrame.getContentPane().add(textFieldSeed);
         
         /*
          * Show/hide map elements 
@@ -113,7 +128,7 @@ public class Main implements Runnable, UpdateListener{
          */
         rawButtonStart.addActionListener(new AL_StartButton(map));
         rawButtonStop.addActionListener(new AL_StopButton(map));
-        rawButtonReset.addActionListener(new AL_ResetButton(map));
+        rawButtonReset.addActionListener(new AL_InitButton(map));
         jSl.addChangeListener(new AL_TimeSlider(map, jSl));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
@@ -138,12 +153,25 @@ public class Main implements Runnable, UpdateListener{
 	 */
     public static void main(String[] args) {
     	Main se = new Main();    	
-    	map = new Map(80, 32, se);
+    	map = new Map(600, 32, se);
     	map.start();
         SwingUtilities.invokeLater(se);
     }
     
-    public void update(){
+    public void update(int x, int y, MapNode mn){
+    	mapDisplayPanel.addNode(x, y, mn);
     	mapDisplayPanel.repaint();
+    }
+    
+    public int getSizeFromTextField(){
+    	Integer size = 80;
+    	size = Integer.getInteger(textFieldSeed.getText());
+    	return size;
+    }
+    
+    public int getSeedFromTextField(){
+    	Integer seed = 0;
+    	seed = Integer.getInteger(textFieldSeed.getText());
+    	return seed;
     }
 }

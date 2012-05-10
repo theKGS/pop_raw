@@ -10,46 +10,45 @@
 %%
 %% Exported Functions
 %%
--export([preloop/1, loop/1, test/0, mate/0, move/2, checkMate/1, new/2, createStaticMap/1]).
+-export([preloop/1, loop/1, test/0, mate/0, move/2, checkMate/1, new/2]).
 
 %% 
 %% Defining a rabbit record
 %% 
-%% -record(rabbit, {age=0, hunger=0, x=none, y=none}).
--record(rabbit2, {age=0, hunger=0, x=none, y=none, spid=none}).
-
+-record(rabbit, {age=0, hunger=0, x=none, y=none, spid=none}).
 
 %% 
-%% Spwans a new rabbit process with info in record
+%% @doc Spwans a new rabbit process.
 %% 
-
-%% new({X, Y}) ->
-%% 	spawn(rabbits, loop, [#rabbit{age = 0, hunger = 0, x = X, y = Y}]).
-
 
 new({X, Y}, SenderPID) ->
-	spawn(rabbits, preloop, [#rabbit2{age = 0, hunger = 4, x = X, y = Y, spid = SenderPID}]).
-
-
+	SenderPID ! {new, self(), X, Y},
+	receive
+		start ->
+			spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}])
+	end.
 		
 %% 
-%% 
+%% @doc Increases Rabbit's age by 1.
 %% 
 
  increaseAge(Rabbit) ->
-	Rabbit#rabbit2{age = Rabbit#rabbit2.age + 1}.
+	Rabbit#rabbit{age = Rabbit#rabbit.age + 1}.
 
 %% 
-%% 
+%% @doc Updates Rabbit's coordinates to {X, Y}.
 %% 
 
 move(Rabbit, {X, Y}) ->
-	Rabbit#rabbit2{x = X, y = Y}.
+	Rabbit#rabbit{x = X, y = Y}.
 
+%% 
+%% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
+%% 
 
 findNewSquare(Rabbit) ->
 	Dir = random:uniform(4),
-	{X, Y} = {Rabbit#rabbit2.x, Rabbit#rabbit2.y},
+	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
 	case Dir of
 		1 ->
 			{X2, Y2} = {X - 1, Y};
@@ -62,8 +61,8 @@ findNewSquare(Rabbit) ->
 	end,
 	move(Rabbit, {X2, Y2}).
 
-%% 	PID = Rabbit#rabbit2.spid,
-%% 	PID ! {move, self(), X, Y, X2, Y2},
+%% 	PID = Rabbit#rabbit.spid,
+%% 	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, X, Y, X2, Y2},
 %% 	receive
 %% 		yes ->
 %% 			move(Rabbit, {X2, Y2});
@@ -77,15 +76,14 @@ findNewSquare(Rabbit) ->
 %% 
 
 eat(Rabbit) ->
-%% 	Map = getMap(Rabbit),
-	{X, Y} = {Rabbit#rabbit2.x, Rabbit#rabbit2.y},
-%% 	{Grass, _, _} = array:get(Y,array:get(X, Map)),
-	Grass = 5,
+	{Grass, _} = getMap(),
+%% 	Grass = 5,
+%% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
 	case isHungry(Rabbit) and (Grass > 0) of
 		true ->
-			{Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger - 1}, X, Y, gotFood};
+			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood};
 		false ->
-			{Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger + 1}, X, Y, noFood}
+			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger + 1}, noFood}
 	end.
 	
 
@@ -107,8 +105,8 @@ mate() ->
 %% 
 
 checkMate(Rabbit) ->
-	Hunger = Rabbit#rabbit2.hunger,
-	Age = Rabbit#rabbit2.age,
+	Hunger = Rabbit#rabbit.hunger,
+	Age = Rabbit#rabbit.age,
 	if
 		(Age >= 7) and (Hunger =< 3) ->
 			true;
@@ -121,35 +119,34 @@ checkMate(Rabbit) ->
 %% 
 
 isHungry(Rabbit) ->
-	Rabbit#rabbit2.hunger > 0.
+	Rabbit#rabbit.hunger > 0.
 
 %% 
 %% 
 %% 
 
 isTooOld(Rabbit) ->
-	Rabbit#rabbit2.age >= 70.
+	Rabbit#rabbit.age >= 70.
 
 %% 
 %% 
 %% 
 
 isTooHungry(Rabbit) ->
-	Rabbit#rabbit2.hunger >= 5.
+	Rabbit#rabbit.hunger >= 5.
 
 %% 
 %% 
 %% 
 
-createStaticMap(Size) ->
-%% 	array:new(Size, {default,array:new(Size)}).
- 	array:new(Size, {default,array:new(Size,{default, {5,free,none}})}).
-
-
-getMap(_Rabbit) ->
-	createStaticMap(10).
+getMap() ->
+	receive
+		{map, [H|L]} ->
+			{Grass, Type} = lists:nth(5, [H|L]),
+			{Grass, Type}
+	end.
 	
-%% 	PID = Rabbit#rabbit2.spid,
+%% 	PID = Rabbit#rabbit.spid,
 %% 	PID ! {get, self()},
 %% 	receive
 %% 		{map, Array} ->
@@ -171,11 +168,11 @@ checkToDie(Rabbit) ->
 
 doTick(Rabbit) ->
 	Rabbit2 = increaseAge(Rabbit),
-	%% 	PID = Rabbit#rabbit2.spid,
-	{Rabbit3, _, _, Ate} = eat(Rabbit2),
+ 	PID = Rabbit#rabbit.spid,
+	{Rabbit3, Ate} = eat(Rabbit2),
 	if
 		Ate == gotFood ->
-			%% PID ! {eat, self(), X, Y};
+ 			PID ! {eat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
 			Rabbit3;
 		true ->
 			findNewSquare(Rabbit3)
@@ -184,6 +181,7 @@ doTick(Rabbit) ->
 %% 
 %% 
 %% 
+
 preloop(Rabbit) ->
 	init(),
 	loop(Rabbit).
@@ -202,7 +200,7 @@ loop(Rabbit) ->
 			Sender ! {self(), Rabbit},
 			loop(Rabbit);
 		{Sender, getCoords} ->
-			Sender ! {self(), {Rabbit#rabbit2.x, Rabbit#rabbit2.y}},
+			Sender ! {self(), {Rabbit#rabbit.x, Rabbit#rabbit.y}},
 			loop(Rabbit);
 		{_, die} ->
 			exit(killed)
@@ -257,7 +255,11 @@ test() ->
 	sendTick(KaninPid),
 	{X, Y} = getCoords(KaninPid),
  	RabbitInfo = getInfo(KaninPid),
-	io:format("Rabbit (~w)~nAge: ~w~nHunger: ~w~n", [KaninPid, RabbitInfo#rabbit2.age, RabbitInfo#rabbit2.hunger]),
+	io:format("Rabbit (~w)~nAge: ~w~nHunger: ~w~n", [KaninPid, RabbitInfo#rabbit.age, RabbitInfo#rabbit.hunger]),
 	io:format("x: ~w~ny: ~w~n", [X, Y]),
 	execute(KaninPid),
 	test_finished.
+
+
+%% out som atom för vargarna när de ska äta om ruta är utanför kartan, tex hörn och kanter
+%% istället för tick, när jag väntar matchning mot death osv, så kör en after och då börjar jag loopa igen så ny "doTick" startar

@@ -2,27 +2,16 @@ package raw.java.j_int_java;
 
 import com.ericsson.otp.erlang.OtpErlangPid;
 
-public class Message {
-	private final String type;
+public class Message extends MessageSuper {
 	private final int[] values;
-	private final OtpErlangPid pid;
 	
 	public int[] getValues() {
 		return values;
 	}
 
-	public OtpErlangPid getPid() {
-		return pid;
-	}
-	
-	public String getType() {
-		return this.type;
-	}
-	
 	public Message(String type, OtpErlangPid pid, int[] args){
-		this.type = type;
+		super(type, pid);
 		this.values = args;
-		this.pid = pid;
 	}
 	
 //	public Message(String type, int value1) {

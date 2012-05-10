@@ -14,33 +14,33 @@ public class Communicator {
 		new Thread(receiver).start();
 		System.out.println("Gui_receive started");
 		boolean hold = true;
-		while (hold) {
-			if (this.pid == null) {
-				
-			} else {
-				hold = false;
-			}
-		}
-		System.out.println(this.pid.toString());
+//		while (hold) {
+//			if (this.pid == null) {
+//				
+//			} else {
+//				hold = false;
+//			}
+//		}
+//		System.out.println(this.pid.toString());
 		
 		sender = new Gui_send(outGoing, pid);
 		new Thread(sender).start();
 
 	}
 	
-	public void send(Message m) {
+	public void send(MessageSuper m) {
 		outGoing.put(m);
 	}
 	
-	public Message getSend() {
+	public MessageSuper getSend() {
 		return outGoing.get();
 	}
 	
-	public Message receive() {
+	public MessageSuper receive() {
 		return inComming.get();
 	}
 	
-	public void putReceive(Message m) {
+	public void putReceive(MessageSuper m) {
 		inComming.put(m);
 	}
 	

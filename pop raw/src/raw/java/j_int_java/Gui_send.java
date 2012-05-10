@@ -1,7 +1,7 @@
 package raw.java.j_int_java;
 
 import java.io.IOException;
-
+import raw.java.map.MapNode;
 import com.ericsson.otp.erlang.*;
 
 public class Gui_send implements Runnable{
@@ -14,7 +14,7 @@ public class Gui_send implements Runnable{
 	public Gui_send(FIFO queue, OtpErlangPid pid) {
 		this.queue = queue;
 		this.pid = pid;
-		
+
 		try {
 			init();
 		} catch (IOException e) {
@@ -22,7 +22,7 @@ public class Gui_send implements Runnable{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void init() throws IOException {
 		OtpNode node = new OtpNode(nodeName, cookie);
 		mbox = node.createMbox();
@@ -34,19 +34,49 @@ public class Gui_send implements Runnable{
 			mbox.send(this.pid , message);
 		}
 	}
-	
-	private OtpErlangTuple enCode(Message msg) {
-		String sType = msg.getType();
-		int[] values = msg.getValues();
-		int size = values.length;
-		System.out.println("value size: " + size);
-		OtpErlangObject[] message = new OtpErlangObject[size+2];
-		System.out.println("message size" + message.length);
-		message[0] = new OtpErlangAtom(sType);
-		message[1] = msg.getPid();
-		for (int i = 2; i <= size+1; i++) {
-			message[i] = new OtpErlangInt(values[i-2]);
+
+	private OtpErlangTuple enCode(MessageSuper msgReceive) {
+		OtpErlangTuple answer = null;
+		if (msgReceive instanceof Message) {
+			Message msg = (Message) msgReceive;
+			String sType = msg.getType();
+			int[] values = msg.getValues();
+			int size = values.length;
+			OtpErlangObject[] message = new OtpErlangObject[size+2];
+			message[0] = new OtpErlangAtom(sType);
+			message[1] = msg.getPid();
+			for (int i = 2; i <= size+1; i++) {
+				message[i] = new OtpErlangInt(values[i-2]);
+			}
+			answer = new OtpErlangTuple(message);
+		} else if (msgReceive instanceof SendMessage) {
+			SendMessage msg = (SendMessage) msgReceive;
+			String sType = msg.getType();
+			MapNode[] map = msg.getMap();
+			OtpErlangObject[] list = new OtpErlangObject[9];
+			for (int i = 0; i < 9; i++) {
+				if (map[i] != null) {
+					OtpErlangObject[] tuple = new OtpErlangObject[2];
+					tuple[0] = new OtpErlangInt(map[i].getGrassLevel());
+					int type = map[i].getType();
+					if (type == MapNode.NONE) {
+						tuple[1] = new OtpErlangAtom("none");
+					} else if (type == MapNode.RABBIT) {
+						tuple[1] = new OtpErlangAtom("rabbit");
+					} else if (type == MapNode.WOLF) {
+						tuple[1] = new OtpErlangAtom("wolf");
+					}
+					list[i] = new OtpErlangTuple(tuple);
+				} else {
+					list[i] = new OtpErlangTuple(new OtpErlangAtom("out"));
+				}
+			}
+			OtpErlangObject[] message = new OtpErlangObject[3];
+			message[0] = new OtpErlangAtom(sType);
+			message[1] = msg.getPid();
+			message[2] = new OtpErlangList(list);
+			answer = new OtpErlangTuple(message);
 		}
-		return new OtpErlangTuple(message);
+		return answer;
 	}
 }

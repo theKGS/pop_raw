@@ -8,15 +8,16 @@ import raw.java.map.Map;
  * Listener for the reset button
  */
 
-public class AL_ResetButton implements ActionListener{	
+public class AL_InitButton implements ActionListener{	
 	private Map mp;
 	
-	public AL_ResetButton(Map map) {
+	public AL_InitButton(Map map) {
 		mp = map;
 	}
 
 	/**
-	 * Called by the reset button
+	 * Called by the init button
+	 * Resets simulation with new seed.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
