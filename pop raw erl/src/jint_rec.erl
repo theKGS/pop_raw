@@ -12,9 +12,11 @@ server(SendPid) ->
 			rabbits:new({X, Y}, SendPid),
 			server(SendPid);
 		{A,Pid, B} ->
+			io:format("Type ~s~n", [A]),
 			Pid ! {A, B},
 			server(SendPid);
 		{A, Pid} ->
+			io:format("Type ~s~n", [A]),
 			Pid ! A,
 			server(SendPid)
 	end.
