@@ -10,8 +10,7 @@
 %%
 %% Exported Functions
 %%
--export([loop/1, test/0, mate/0, move/2, checkMate/1, new/2]).
-
+-export([preloop/1, loop/1, test/0, mate/0, move/2, checkMate/1, new/2, createStaticMap/1]).
 
 %% 
 %% Defining a rabbit record
@@ -29,7 +28,7 @@
 
 
 new({X, Y}, SenderPID) ->
-	spawn(rabbits, loop, [#rabbit2{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]).
+	spawn(rabbits, preloop, [#rabbit2{age = 0, hunger = 4, x = X, y = Y, spid = SenderPID}]).
 
 
 		
@@ -37,8 +36,8 @@ new({X, Y}, SenderPID) ->
 %% 
 %% 
 
-%% increaseAge(Rabbit) ->
-%% 	Rabbit#rabbit{age = Rabbit#rabbit.age + 1}.
+ increaseAge(Rabbit) ->
+	Rabbit#rabbit2{age = Rabbit#rabbit2.age + 1}.
 
 %% 
 %% 
@@ -61,14 +60,16 @@ findNewSquare(Rabbit) ->
 		4 ->
 			{X2, Y2} = {X, Y + 1}
 	end,
-	PID = Rabbit#rabbit2.spid,
-	PID ! {move, self(), X, Y, X2, Y2},
-	receive
-		yes ->
-			move(Rabbit, {X2, Y2});
-		no ->
-			findNewSquare(Rabbit)
-	end.
+	move(Rabbit, {X2, Y2}).
+
+%% 	PID = Rabbit#rabbit2.spid,
+%% 	PID ! {move, self(), X, Y, X2, Y2},
+%% 	receive
+%% 		yes ->
+%% 			move(Rabbit, {X2, Y2});
+%% 		no ->
+%% 			findNewSquare(Rabbit)
+%% 	end.
 
 							
 %% 
@@ -76,14 +77,15 @@ findNewSquare(Rabbit) ->
 %% 
 
 eat(Rabbit) ->
-	Map = getMap(Rabbit),
+%% 	Map = getMap(Rabbit),
 	{X, Y} = {Rabbit#rabbit2.x, Rabbit#rabbit2.y},
-	{Grass, _, _} = array:get(Y,array:get(X, Map)),
+%% 	{Grass, _, _} = array:get(Y,array:get(X, Map)),
+	Grass = 5,
 	case isHungry(Rabbit) and (Grass > 0) of
 		true ->
-			{Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger - 1}, X, Y, food};
+			{Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger - 1}, X, Y, gotFood};
 		false ->
-			{Rabbit, X, Y, noFood}
+			{Rabbit#rabbit2{hunger = Rabbit#rabbit2.hunger + 1}, X, Y, noFood}
 	end.
 	
 
@@ -119,7 +121,7 @@ checkMate(Rabbit) ->
 %% 
 
 isHungry(Rabbit) ->
-	Rabbit#rabbit2.hunger /= 0.
+	Rabbit#rabbit2.hunger > 0.
 
 %% 
 %% 
@@ -139,13 +141,28 @@ isTooHungry(Rabbit) ->
 %% 
 %% 
 
+createStaticMap(Size) ->
+%% 	array:new(Size, {default,array:new(Size)}).
+ 	array:new(Size, {default,array:new(Size,{default, {5,free,none}})}).
 
-getMap(Rabbit) ->
-	PID = Rabbit#rabbit2.spid,
-	PID ! {get, self()},
-	receive
-		{map, Array} ->
-			Array
+
+getMap(_Rabbit) ->
+	createStaticMap(10).
+	
+%% 	PID = Rabbit#rabbit2.spid,
+%% 	PID ! {get, self()},
+%% 	receive
+%% 		{map, Array} ->
+%% 			Array
+%% 	end.
+
+
+checkToDie(Rabbit) ->
+	case isTooOld(Rabbit) or isTooHungry(Rabbit) of
+		true ->
+			true;
+		false ->
+		 	false
 	end.
 
 %% 
@@ -153,38 +170,34 @@ getMap(Rabbit) ->
 %% 
 
 doTick(Rabbit) ->
-	NewAge = Rabbit#rabbit2.age + 1,
-	PID = Rabbit#rabbit2.spid,
-	case isHungry(Rabbit) of
+	Rabbit2 = increaseAge(Rabbit),
+	%% 	PID = Rabbit#rabbit2.spid,
+	{Rabbit3, _, _, Ate} = eat(Rabbit2),
+	if
+		Ate == gotFood ->
+			%% PID ! {eat, self(), X, Y};
+			Rabbit3;
 		true ->
-			{Rabbit, X, Y, Z} = eat(Rabbit),
-			if
-				Z == food ->
-					PID ! {eat, self(), X, Y};
-				true ->
-					findNewSquare(Rabbit)							
-			end,
-			NewHunger = Rabbit#rabbit2.hunger - 1;
-		false ->
-			NewHunger = Rabbit#rabbit2.hunger + 1,
-			findNewSquare(Rabbit)
- 			
-	end,
-	case isTooOld(Rabbit) or isTooHungry(Rabbit) of
-		true ->
-			exit(killed);
-		false ->
-		 	Rabbit#rabbit2{age = NewAge, hunger = NewHunger}
+			findNewSquare(Rabbit3)
 	end.
 
 %% 
 %% 
 %% 
+preloop(Rabbit) ->
+	init(),
+	loop(Rabbit).
 
 loop(Rabbit) ->
 	receive
 		{_, tick} ->
-			loop(doTick(Rabbit));
+			Rabbit2 = doTick(Rabbit),
+			case checkToDie(Rabbit2) of
+				true ->
+					exit(died);
+				false ->
+					loop(Rabbit2)
+			end;
 		{Sender, getInfo} ->
 			Sender ! {self(), Rabbit},
 			loop(Rabbit);
@@ -219,13 +232,31 @@ getCoords(Pid) ->
 execute(Pid) ->
 	Pid ! {self(), die}.
 
+
+init() ->
+	{A1, A2, A3} = now(),
+	Mega = lists:nth(2, pid_to_list(self())),
+	random:seed(A1 + Mega, A2 + Mega, A3 + Mega).
+
 test() ->
-	KaninPid = new({1, 1}, self()),
+	init(),
+	KaninPid = new({5, 5}, self()),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
+	sendTick(KaninPid),
 	sendTick(KaninPid),
 	sendTick(KaninPid),
 	sendTick(KaninPid),
 	{X, Y} = getCoords(KaninPid),
-	RabbitInfo = getInfo(KaninPid),
+ 	RabbitInfo = getInfo(KaninPid),
 	io:format("Rabbit (~w)~nAge: ~w~nHunger: ~w~n", [KaninPid, RabbitInfo#rabbit2.age, RabbitInfo#rabbit2.hunger]),
 	io:format("x: ~w~ny: ~w~n", [X, Y]),
 	execute(KaninPid),
