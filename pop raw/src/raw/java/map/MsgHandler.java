@@ -100,7 +100,7 @@ public class MsgHandler {
 			}
 			if (matePossible && newSpot != null) {
 				int r = (int) (Math.random() * 1000);
-				if (r > 700) {
+				if (r > 300) {
 					map.getMapArray()[newSpot[0]][newSpot[1]].setType(mateType);
 					if (mateType == MapNode.RABBIT) {
 						mErlCom.send(new Message("newRabbit", null, newSpot));

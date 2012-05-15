@@ -45,6 +45,7 @@ public class Map extends Thread {
 	private Random r;
 	private long Seed;
 	private FakeMsgSender mFakeMsgSender;
+	private GrassGrower grassGrower;
 
 	/**
 	 * Constructor for the map class
@@ -58,7 +59,7 @@ public class Map extends Thread {
 		if (udpLis != null) {
 			this.mUpdtLis = udpLis;
 		}
-		this.mapSize = 30; //Size;
+		this.mapSize = 50; //Size;
 		this.Seed = Seed; //Seed;
 		mapArray = new MapNode[mapSize][mapSize];
 
@@ -115,7 +116,7 @@ public class Map extends Thread {
 
 //		mFakeMsgSender = new FakeMsgSender(mErlCom, this);
 
-		mMsgThrExec = new MessageThreadExecutor(1000000, 4, 10, 10);
+		mMsgThrExec = new MessageThreadExecutor(1000000, 2, 4, 10);
 
 	}
 
@@ -138,6 +139,8 @@ public class Map extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		grassGrower = new GrassGrower(this, 10000, mUpdtLis);
+		mMsgThrExec.execute(grassGrower);
 		//mFakeMsgSender.start();
 		while (running) {
 			if (paused) {
@@ -168,7 +171,6 @@ public class Map extends Thread {
 		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
 			System.out.println("stopping");
 			this.running = false;
-			// System.exit(0);
 		} else if (nextMessage.getType().equalsIgnoreCase("new")){
 			int[] coords = ((Message)nextMessage).getValues();
 			synchronized (mapArray[coords[0]][coords[1]]) {
@@ -176,9 +178,11 @@ public class Map extends Thread {
 				mErlCom.send(new Message("start", nextMessage.getPid(), null));
 			}
 		} else if (nextMessage.getType().equalsIgnoreCase("death")){
+			
 			int[] coords = ((Message)nextMessage).getValues();
 			synchronized (mapArray[coords[0]][coords[1]]) {
 				mapArray[coords[0]][coords[1]].setType(MapNode.NONE);
+				mapArray[coords[0]][coords[1]].setPid(null);
 				mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
 			}
 		}
