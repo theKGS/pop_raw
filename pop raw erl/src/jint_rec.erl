@@ -10,7 +10,7 @@ server(SendPid) ->
 		{newRabbit, _Pid, X, Y} ->
 			rabbits:new({X, Y}, SendPid),
 			server(SendPid);
-		{newWolf, _Pid, X, Y} ->
+		{newWolf, _Pid, _X, _Y} ->
 			%% TODO New wolves
 			server(SendPid);
 		{A,Pid, B} ->
