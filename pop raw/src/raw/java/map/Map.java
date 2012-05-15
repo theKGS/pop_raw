@@ -58,7 +58,7 @@ public class Map extends Thread {
 		if (udpLis != null) {
 			this.mUpdtLis = udpLis;
 		}
-		this.mapSize = Size; //Size;
+		this.mapSize = 30; //Size;
 		this.Seed = Seed; //Seed;
 		mapArray = new MapNode[mapSize][mapSize];
 
@@ -95,7 +95,7 @@ public class Map extends Thread {
 					type %= 3;
 				if (type == MapNode.RABBIT) {
 					System.out.println("Sending new: " + i  + ", " + j);
-					mErlCom.send(new Message("new", null, new int[] { i, j }));
+					mErlCom.send(new Message("newRabbit", null, new int[] { i, j }));
 					
 					MessageSuper msg = mErlCom.receive();
 					System.out.println("got send: " + msg.getPid());
@@ -115,7 +115,7 @@ public class Map extends Thread {
 
 //		mFakeMsgSender = new FakeMsgSender(mErlCom, this);
 
-		mMsgThrExec = new MessageThreadExecutor(1000000, 100, 500, 10);
+		mMsgThrExec = new MessageThreadExecutor(1000000, 4, 10, 10);
 
 	}
 
@@ -169,6 +169,18 @@ public class Map extends Thread {
 			System.out.println("stopping");
 			this.running = false;
 			// System.exit(0);
+		} else if (nextMessage.getType().equalsIgnoreCase("new")){
+			int[] coords = ((Message)nextMessage).getValues();
+			synchronized (mapArray[coords[0]][coords[1]]) {
+				mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
+				mErlCom.send(new Message("start", nextMessage.getPid(), null));
+			}
+		} else if (nextMessage.getType().equalsIgnoreCase("death")){
+			int[] coords = ((Message)nextMessage).getValues();
+			synchronized (mapArray[coords[0]][coords[1]]) {
+				mapArray[coords[0]][coords[1]].setType(MapNode.NONE);
+				mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
+			}
 		}
 //		System.out.println("Message handled");
 	}

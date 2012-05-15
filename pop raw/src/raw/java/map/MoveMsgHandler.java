@@ -24,7 +24,7 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 			mErlCom.send(new Message("no", pid, null));
 		} else {
 			
-			//mate();
+			mate();
 			if (compareCoordsArr(coords)) {
 				synchronized (map.getMapArray()[coords[X1]][coords[Y1]]) {
 					synchronized (map.getMapArray()[coords[X2]][coords[Y2]]) {

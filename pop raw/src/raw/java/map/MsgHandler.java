@@ -26,7 +26,7 @@ public class MsgHandler {
 			UpdateListener updtLis) {
 		this.pid = msg.getPid();
 		this.coords = msg.getValues();
-		
+
 		this.mErlCom = com;
 		this.map = map;
 		this.mUpdtLis = updtLis;
@@ -100,8 +100,15 @@ public class MsgHandler {
 			}
 			if (matePossible && newSpot != null) {
 				int r = (int) (Math.random() * 1000);
-				if (r > 700)
+				if (r > 700) {
 					map.getMapArray()[newSpot[0]][newSpot[1]].setType(mateType);
+					if (mateType == MapNode.RABBIT) {
+						mErlCom.send(new Message("newRabbit", null, newSpot));
+					} else {
+						mErlCom.send(new Message("newWolf", null, newSpot));
+					}
+				}
+
 			}
 		}
 
