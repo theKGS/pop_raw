@@ -207,13 +207,15 @@ loop(Rabbit) ->
 			exit(killed)
 		after 200 ->
 			Rabbit2 = doTick(Rabbit),
-			loop(Rabbit2)
-%% 			case checkToDie(Rabbit2) of
-%% 				true ->
-%% 					exit(died);
-%% 				false ->
-%% 					loop(Rabbit2)
-%% 			end
+			loop(Rabbit2),
+ 			case checkToDie(Rabbit2) of
+ 				true ->
+					PID = Rabbit2#rabbit.spid,
+					PID ! {death, Rabbit2#rabbit.x, Rabbit2#rabbit.y},
+ 					exit(died);
+ 				false ->
+ 					loop(Rabbit2)
+ 			end
 	end.
 
 %% 
