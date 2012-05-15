@@ -211,7 +211,7 @@ loop(Rabbit) ->
  			case checkToDie(Rabbit2) of
  				true ->
 					PID = Rabbit2#rabbit.spid,
-					PID ! {death, Rabbit2#rabbit.x, Rabbit2#rabbit.y},
+					PID ! {death, self(), Rabbit2#rabbit.x, Rabbit2#rabbit.y},
  					exit(died);
  				false ->
  					loop(Rabbit2)
