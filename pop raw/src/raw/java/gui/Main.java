@@ -18,7 +18,11 @@ public class Main implements Runnable, UpdateListener{
 	private static MapPanel mapDisplayPanel;
     private JTextField textFieldSize;
     private JTextField textFieldSeed;
-
+    private int currentMouseX;
+    private int currentMouseY;
+    
+    private int offsetX;
+    private int offsetY;
     
 	/**
 	 * The Swing thread
