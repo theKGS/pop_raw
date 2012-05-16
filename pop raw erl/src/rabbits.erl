@@ -10,7 +10,8 @@
 %%
 %% Exported Functions
 %%
--export([preloop/1, loop/1, test/0, newRabbit/2]).
+%% -export([preloop/1, loop/1, test/0, newRabbit/2]).
+-compile(exportall).
 
 %% 
 %% Defining a rabbit record
