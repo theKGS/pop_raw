@@ -46,25 +46,61 @@ move(Rabbit, {X, Y}) ->
 		no ->
 			loop(Rabbit)
 	end.
+parseList(_,[],_,Acc)->
+	Acc;
+parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
+	if Type =:= none ->
+		   case ListIndex of
+			   1->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y-1}]++Acc);
+			   2->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y-1}]++Acc);
+			   3->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y-1}]++Acc);
+			   4->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y}]++Acc);
+			   5->
+				   parseList(Rabbit,T,ListIndex+1, Acc);
+			   6->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y}]++Acc);
+			   7->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y+1}]++Acc);
+			   8->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y+1}]++Acc);
+			   9->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y+1}]++Acc)
+		   end;
+	   Type =/= none ->
+		   parseList(Rabbit, T, ListIndex+1, Acc)
+	end.
+	
+	maxGrass([], Acc, _CurrMax, Length) ->
+		{Length, Acc};
+	maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
+		if (Grass > CurrMax) ->
+			   maxGrass(T, [{Grass,X,Y}], Grass, 1);
+		   Grass == CurrMax ->
+			   maxGrass(T, [{Grass,X,Y}]++Acc, CurrMax, Length+1);
+		   Grass < CurrMax ->
+			   maxGrass(T, Acc, CurrMax, Length)
+		end.
+	
+
+
 
 %% 
 %% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
 %% 
 
-findNewSquare(Rabbit) ->
-	Dir = random:uniform(4),
-	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
-	case Dir of
-		1 ->
-			{X2, Y2} = {X - 1, Y};
-		2 ->
-			{X2, Y2} = {X, Y - 1};
-		3 ->
-			{X2, Y2} = {X + 1, Y};
-		4 ->
-			{X2, Y2} = {X, Y + 1}
-	end,
-	move(Rabbit, {X2, Y2}).
+findNewSquare(Rabbit, MapList) ->
+	{Length, PossibleSquares} = maxGrass(parseList(Rabbit, MapList, 1, []),[],0,0),
+	if(Length =/= 0)->
+		Dir = random:uniform(Length),
+		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
+		move(Rabbit, {X2, Y2});
+	  true ->
+		  loop(Rabbit)
+	end.
 
 %% 	PID = Rabbit#rabbit.spid,
 %% 	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, X, Y, X2, Y2},
@@ -81,14 +117,14 @@ findNewSquare(Rabbit) ->
 %% 
 
 eat(Rabbit) ->
-	{Grass, _} = getMap(Rabbit),
+	{Grass, _, List} = getMap(Rabbit),
 %% 	Grass = 5,
 %% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
 	case isHungry(Rabbit) and (Grass > 0) of
 		true ->
-			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood};
+			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood, List};
 		false ->
-			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger + 1}, noFood}
+			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger + 1}, noFood, List}
 	end.
 	
 
@@ -149,7 +185,7 @@ getMap(Rabbit) ->
 	receive
 		{map, List} ->
 			{Grass, Type} = lists:nth(5, List),
-			{Grass, Type}
+			{Grass, Type, List}
 	end.
 	
 %% 	PID = Rabbit#rabbit.spid,
@@ -175,13 +211,13 @@ checkToDie(Rabbit) ->
 doTick(Rabbit) ->
 	Rabbit2 = increaseAge(Rabbit),
  	PID = Rabbit#rabbit.spid,
-	{Rabbit3, Ate} = eat(Rabbit2),
+	{Rabbit3, Ate, List} = eat(Rabbit2),
 	if
 		Ate == gotFood ->
  			PID ! {eat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
 			Rabbit3;
 		true ->
-			findNewSquare(Rabbit3)
+			findNewSquare(Rabbit3, List)
 	end.
 
 %% 
@@ -206,15 +242,14 @@ loop(Rabbit) ->
 		{_, die} ->
 			exit(killed)
 		after 200 ->
-			Rabbit2 = doTick(Rabbit),
-			loop(Rabbit2),
- 			case checkToDie(Rabbit2) of
+ 			case checkToDie(Rabbit) of
  				true ->
-					PID = Rabbit2#rabbit.spid,
-					PID ! {death, self(), Rabbit2#rabbit.x, Rabbit2#rabbit.y},
+					PID = Rabbit#rabbit.spid,
+					PID ! {death, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
  					exit(died);
  				false ->
- 					loop(Rabbit2)
+ 					Rabbit2 = doTick(Rabbit),
+					loop(Rabbit2)
  			end
 	end.
 

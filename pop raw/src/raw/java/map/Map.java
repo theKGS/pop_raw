@@ -139,7 +139,7 @@ public class Map extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		grassGrower = new GrassGrower(this, 10000, mUpdtLis);
+		grassGrower = new GrassGrower(this, 15000, mUpdtLis);
 		mMsgThrExec.execute(grassGrower);
 		//mFakeMsgSender.start();
 		while (running) {
