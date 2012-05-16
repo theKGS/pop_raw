@@ -20,8 +20,8 @@
 %% @doc Increases Rabbit's/Wolf's age by 1.
 %% 
 
-increaseAge({atom, Creature}) ->
-	case atom of
+increaseAge({Atom, Creature}) ->
+	case Atom of
 		rabbit ->
 			Creature#rabbit{age = Creature#rabbit.age + 1};
 		wolf ->
@@ -32,8 +32,8 @@ increaseAge({atom, Creature}) ->
 %% @doc Updates Rabbit's/Wolf's coordinates to {X, Y}.
 %% 
 
-move({atom, Creature, {X, Y}}) ->
-	case atom of
+move({Atom, Creature, {X, Y}}) ->
+	case Atom of
 		rabbit ->
 			PID = Creature#rabbit.spid,
 			PID ! {move, self(), Creature#rabbit.age, Creature#rabbit.hunger, Creature#rabbit.x, Creature#rabbit.y, X, Y },
@@ -89,8 +89,8 @@ checkMate(Rabbit) ->
 %% 
 %% 
 
-isHungry({atom, Creature}) ->
-	case atom of
+isHungry({Atom, Creature}) ->
+	case Atom of
 		rabbit ->
 			Creature#rabbit.hunger > 0;
 		wolf ->
@@ -101,8 +101,8 @@ isHungry({atom, Creature}) ->
 %% 
 %% 
 
-isTooOld({atom, Creature}) ->
-	case atom of
+isTooOld({Atom, Creature}) ->
+	case Atom of
 		rabbit ->
 			Creature#rabbit.age >= 70;
 		wolf ->
@@ -113,8 +113,8 @@ isTooOld({atom, Creature}) ->
 %% 
 %% 
 
-isTooHungry({atom, Creature}) ->
-	case atom of 
+isTooHungry({Atom, Creature}) ->
+	case Atom of 
 		rabbit ->
 			Creature#rabbit.hunger >= 5;
 		wolf ->
@@ -125,8 +125,8 @@ isTooHungry({atom, Creature}) ->
 %% 
 %% 
 
-checkToDie({atom, Creature}) ->
-	case isTooOld({atom, Creature}) or isTooHungry({atom, Creature}) of
+checkToDie({Atom, Creature}) ->
+	case isTooOld({Atom, Creature}) or isTooHungry({Atom, Creature}) of
 		true ->
 			true;
 		false ->
