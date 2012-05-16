@@ -10,7 +10,7 @@
 %%
 %% Exported Functions
 %%
--export([preloop/1, loop/1, test/0, mate/0, move/2, checkMate/1, new/2]).
+-export([preloop/1, loop/1, test/0, newRabbit/2]).
 
 %% 
 %% Defining a rabbit record
@@ -21,31 +21,16 @@
 %% @doc Spwans a new rabbit process.
 %% 
 
-new({X, Y}, SenderPID) ->
+newRabbit({X, Y}, SenderPID) ->
 	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
 	SenderPID ! {new, PID, X, Y}.
 		
-%% 
-%% @doc Increases Rabbit's age by 1.
-%% 
 
- increaseAge(Rabbit) ->
-	Rabbit#rabbit{age = Rabbit#rabbit.age + 1}.
 
 %% 
-%% @doc Updates Rabbit's coordinates to {X, Y}.
+%% 
 %% 
 
-move(Rabbit, {X, Y}) ->
-	PID = Rabbit#rabbit.spid,
-	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, Rabbit#rabbit.x, Rabbit#rabbit.y, X, Y },
-	receive
-		yes ->
-			NewRabbit = Rabbit#rabbit{x = X, y = Y},
-			loop(NewRabbit);
-		no ->
-			loop(Rabbit)
-	end.
 parseList(_,[],_,Acc)->
 	Acc;
 parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
@@ -74,18 +59,20 @@ parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
 		   parseList(Rabbit, T, ListIndex+1, Acc)
 	end.
 	
-	maxGrass([], Acc, _CurrMax, Length) ->
-		{Length, Acc};
-	maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
-		if (Grass > CurrMax) ->
-			   maxGrass(T, [{Grass,X,Y}], Grass, 1);
-		   Grass == CurrMax ->
-			   maxGrass(T, [{Grass,X,Y}]++Acc, CurrMax, Length+1);
-		   Grass < CurrMax ->
-			   maxGrass(T, Acc, CurrMax, Length)
-		end.
-	
+%% 
+%% 
+%% 
 
+maxGrass([], Acc, _CurrMax, Length) ->
+	{Length, Acc};
+maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
+	if (Grass > CurrMax) ->
+		   maxGrass(T, [{Grass,X,Y}], Grass, 1);
+	   Grass == CurrMax ->
+		   maxGrass(T, [{Grass,X,Y}]++Acc, CurrMax, Length+1);
+	   Grass < CurrMax ->
+		   maxGrass(T, Acc, CurrMax, Length)
+	end.
 
 
 %% 
@@ -97,7 +84,7 @@ findNewSquare(Rabbit, MapList) ->
 	if(Length =/= 0)->
 		Dir = random:uniform(Length),
 		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
-		move(Rabbit, {X2, Y2});
+		randw:move({rabbit, Rabbit, {X2, Y2}});
 	  true ->
 		  loop(Rabbit)
 	end.
@@ -120,61 +107,13 @@ eat(Rabbit) ->
 	{Grass, _, List} = getMap(Rabbit),
 %% 	Grass = 5,
 %% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
-	case isHungry(Rabbit) and (Grass > 0) of
+	case randw:isHungry({rabbit, Rabbit}) and (Grass > 0) of
 		true ->
 			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood, List};
 		false ->
 			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger + 1}, noFood, List}
 	end.
 	
-
-%% 
-%% 
-%% 
-
-mate() -> 
-	P = random:uniform(10),
-	if
-		P >= 3 ->
-			true;
-		P < 3 ->
-			false
-	end.
-
-%% 
-%% 
-%% 
-
-checkMate(Rabbit) ->
-	Hunger = Rabbit#rabbit.hunger,
-	Age = Rabbit#rabbit.age,
-	if
-		(Age >= 7) and (Hunger =< 3) ->
-			true;
-		true ->
-			false
-	end.
-
-%% 
-%% 
-%% 
-
-isHungry(Rabbit) ->
-	Rabbit#rabbit.hunger > 0.
-
-%% 
-%% 
-%% 
-
-isTooOld(Rabbit) ->
-	Rabbit#rabbit.age >= 70.
-
-%% 
-%% 
-%% 
-
-isTooHungry(Rabbit) ->
-	Rabbit#rabbit.hunger >= 5.
 
 %% 
 %% 
@@ -196,20 +135,10 @@ getMap(Rabbit) ->
 %% 	end.
 
 
-checkToDie(Rabbit) ->
-	case isTooOld(Rabbit) or isTooHungry(Rabbit) of
-		true ->
-			true;
-		false ->
-		 	false
-	end.
 
-%% 
-%% 
-%% 
 
 doTick(Rabbit) ->
-	Rabbit2 = increaseAge(Rabbit),
+	Rabbit2 = randw:increaseAge({rabbit, Rabbit}),
  	PID = Rabbit#rabbit.spid,
 	{Rabbit3, Ate, List} = eat(Rabbit2),
 	if
@@ -242,7 +171,7 @@ loop(Rabbit) ->
 		{_, die} ->
 			exit(killed)
 		after 200 ->
- 			case checkToDie(Rabbit) of
+ 			case randw:checkToDie({rabbit, Rabbit}) of
  				true ->
 					PID = Rabbit#rabbit.spid,
 					PID ! {death, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
@@ -285,7 +214,7 @@ init() ->
 
 test() ->
 	init(),
-	KaninPid = new({5, 5}, self()),
+	KaninPid = newRabbit({5, 5}, self()),
 	sendTick(KaninPid),
 	sendTick(KaninPid),
 	sendTick(KaninPid),
