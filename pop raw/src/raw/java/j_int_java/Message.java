@@ -14,6 +14,11 @@ public class Message extends MessageSuper {
 		this.values = args;
 	}
 	
+	public Message(String type, String mail, OtpErlangPid pid, int[] args){
+		super(type, mail, pid);
+		this.values = args;
+	}
+	
 //	public Message(String type, int value1) {
 //		this.type = type;
 //		this.values = new int[1];
