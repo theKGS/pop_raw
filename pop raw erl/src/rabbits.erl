@@ -10,8 +10,8 @@
 %%
 %% Exported Functions
 %%
-%% -export([preloop/1, loop/1, test/0, newRabbit/2]).
--compile(exportall).
+-export([newRabbit/2, parseList/4, maxGrass/4, findNewSquare/2, eat/1, getMap/1, doTick/1, preloop/1, loop/1, test/0, sendTick/1, getInfo/1, getCoords/1, execute/1, init/0]).
+%% -compile(exportall).
 
 %% 
 %% Defining a rabbit record

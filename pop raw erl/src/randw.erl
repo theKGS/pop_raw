@@ -10,8 +10,8 @@
 %%
 %% Exported Functions
 %%
-%% -export([preloop/1, loop/1, test/0, mate/0, move/2, checkMate/1, new/2]).
--compile(exportall).
+-export([increaseAge/1, move/1, mate/0, checkMate/1, isHungry/1, isTooOld/1, isTooHungry/1, checkToDie/1]).
+%% -compile(exportall).
 
 -record(rabbit, {age=0, hunger=0, x=none, y=none, spid=none}).
 -record(wolf, {age=0, hunger=0, x=none, y=none, spid=none}).
