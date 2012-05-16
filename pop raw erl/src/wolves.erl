@@ -1,7 +1,7 @@
 %% Author: Linnea
 %% Created: 3 maj 2012
 %% Description: TODO: Add description to rabbits
--module(rabbits).
+-module(wolves).
 
 %%
 %% Include files
@@ -10,70 +10,22 @@
 %%
 %% Exported Functions
 %%
--export([newRabbit/2, parseList/4, maxGrass/4, findNewSquare/2, eat/1, getMap/1, doTick/1, preloop/1, loop/1, test/0, sendTick/1, getInfo/1, getCoords/1, execute/1, init/0]).
-%% -compile(exportall).
+-export([preloop/1, loop/1, test/0, newRabbit/2]).
 
 %% 
 %% Defining a rabbit record
 %% 
--record(rabbit, {age=0, hunger=0, x=none, y=none, spid=none}).
+-record(wolf, {age=0, hunger=0, x=none, y=none, spid=none}).
 
 %% 
 %% @doc Spwans a new rabbit process.
 %% 
 
-newRabbit({X, Y}, SenderPID) ->
-	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
+newWolf({X, Y}, SenderPID) ->
+	PID = spawn(wolves, preloop, [#wolf{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
 	SenderPID ! {new, PID, X, Y}.
 		
 
-
-%% 
-%% 
-%% 
-
-parseList(_,[],_,Acc)->
-	Acc;
-parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
-	if Type =:= none ->
-		   case ListIndex of
-			   1->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y-1}]++Acc);
-			   2->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y-1}]++Acc);
-			   3->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y-1}]++Acc);
-			   4->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y}]++Acc);
-			   5->
-				   parseList(Rabbit,T,ListIndex+1, Acc);
-			   6->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y}]++Acc);
-			   7->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y+1}]++Acc);
-			   8->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y+1}]++Acc);
-			   9->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y+1}]++Acc)
-		   end;
-	   Type =/= none ->
-		   parseList(Rabbit, T, ListIndex+1, Acc)
-	end.
-	
-%% 
-%% 
-%% 
-
-maxGrass([], Acc, _CurrMax, Length) ->
-	{Length, Acc};
-maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
-	if (Grass > CurrMax) ->
-		   maxGrass(T, [{Grass,X,Y}], Grass, 1);
-	   Grass == CurrMax ->
-		   maxGrass(T, [{Grass,X,Y}]++Acc, CurrMax, Length+1);
-	   Grass < CurrMax ->
-		   maxGrass(T, Acc, CurrMax, Length)
-	end.
 
 
 %% 
@@ -138,37 +90,37 @@ getMap(Rabbit) ->
 
 
 
-doTick(Rabbit) ->
-	Rabbit2 = randw:increaseAge({rabbit, Rabbit}),
- 	PID = Rabbit#rabbit.spid,
-	{Rabbit3, Ate, List} = eat(Rabbit2),
+doTick(Wolf) ->
+	Wolf2 = randw:increaseAge({wolf, Wolf}),
+ 	PID = Wolf#wolf.spid,
+	{Wolf3, Ate, List} = eat(Wolf2),
 	if
 		Ate == gotFood ->
- 			PID ! {eat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
-			Rabbit3;
+ 			PID ! {eat, self(), Wolf3#wolf.age, Wolf3#wolf.hunger, Wolf3#wolf.x, Wolf3#wolf.y},
+			Wolf3;
 		true ->
-			findNewSquare(Rabbit3, List)
+			findNewSquare(Wolf3, List)
 	end.
 
 %% 
 %% 
 %% 
 
-preloop(Rabbit) ->
+preloop(Wolf) ->
 	receive
 		start ->
 			init(),
-			loop(Rabbit)
+			loop(Wolf)
 	end.
 
-loop(Rabbit) ->
+loop(Wolf) ->
 	receive
 		{Sender, getInfo} ->
-			Sender ! {self(), Rabbit},
-			loop(Rabbit);
+			Sender ! {self(), Wolf},
+			loop(Wolf);
 		{Sender, getCoords} ->
-			Sender ! {self(), {Rabbit#rabbit.x, Rabbit#rabbit.y}},
-			loop(Rabbit);
+			Sender ! {self(), {Wolf#wolf.x, Wolf#wolf.y}},
+			loop(Wolf);
 		{_, die} ->
 			exit(killed)
 		after 200 ->
