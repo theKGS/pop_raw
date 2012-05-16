@@ -1,6 +1,7 @@
 package raw.java.gui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,6 +19,9 @@ public class MapPanel extends JPanel {
 	static int TILEHEIGHT = 16;
 	private int SIZE = 16;
 
+	private int scrollCoordinateX;
+	private int scrollCoordinateY;
+	
 	private boolean VisibleWolves;
 	private boolean VisibleRabbits;
 	private boolean VisibleGrass;
@@ -25,6 +29,7 @@ public class MapPanel extends JPanel {
 	private BufferedImage IconRabbit;
 	private BufferedImage IconWolf;
 	private Map map;
+	
 	private MapNode[][] nodes; 
 	private Main mainRef;
 	
@@ -36,6 +41,11 @@ public class MapPanel extends JPanel {
 			ex.printStackTrace();
 		}
 		
+		// creates a mouse listener
+		ML_MouseListener ml = new ML_MouseListener(this);
+		this.addMouseMotionListener(ml);
+		this.addMouseListener(ml);
+		this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 
 	/**
@@ -48,66 +58,71 @@ public class MapPanel extends JPanel {
 		Color c = new Color(0, 0, 0);
 		g.drawImage(IconRabbit, 0, 0, 48, 48, new Color (255, 0, 255), null);
 		
+		int tempMapSize = 16;
+		
 		g.setColor(c);
 		g.fillRect(0, 0, 700, 700);
 
+		c = new Color(255, 255, 0);
+		
+		int divW = this.getParent().getWidth()/2;
+		int divH = this.getParent().getHeight()/2;
+		
+		g.setColor(c);
+		//g.fillRect((-tempMapSize/2) * SIZE + divW + scrollCoordinateX, (-tempMapSize/2) * SIZE + divH + scrollCoordinateY, SIZE, SIZE);
+		//g.fillRect((tempMapSize/2-1) * SIZE + divW + scrollCoordinateX, (tempMapSize/2-1) * SIZE + divH +scrollCoordinateY, SIZE, SIZE);
+		
 		for (int y = 0; y < map.getMapSize(); y++) {
 			for (int x = 0; x < map.getMapSize(); x++) {
-				// g.drawImage(IconRabbit, x*TILEWIDTH,y*TILEHEIGHT , null); //
-				// see javadoc for more info on
-
 				// Draw grass
 				if (nodes[x][y].getType() == MapNode.NONE) {
 					if (VisibleGrass) {
 						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateY, SIZE, SIZE);
 					} else {
 						c = new Color(0, 0, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateY, SIZE, SIZE);
 					}
 				}
-
 				// Draw wolves
 				if (nodes[x][y].getType() == MapNode.WOLF) {
 					if (VisibleWolves) {
 						c = new Color(255, 0, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
-					} else if (VisibleGrass) { // draw grass instead of
-												// wolves
-												// when wolves are
-						// hidden
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateY, SIZE, SIZE);
+					} else if (VisibleGrass) { 
+						// draw grass instead of
+						// wolves when wolves are hidden
 						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateY, SIZE, SIZE);
 					} else { // draw nothing if grass and wolves are hidden
 						c = new Color(0, 0, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+						g.fillRect(x * SIZE+ divW + scrollCoordinateX, y * SIZE+ divW + scrollCoordinateY, SIZE, SIZE);
 					}
 				}
-
 				// Draw rabbits
 				if (nodes[x][y].getType() == MapNode.RABBIT) {
 					if (VisibleRabbits) {
 						c = new Color(0, 0, 255);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
-					} else if (VisibleGrass) { // draw grass instead of
-												// rabbits
-												// when rabbits are
-						// hidden and grass is visible
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateY, SIZE, SIZE);
+					} else if (VisibleGrass) { 
+						// draw grass instead of rabbits
+						// when rabbits are hidden and grass is visible
 						c = new Color(0, nodes[x][y].getGrassLevel() * 40, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateY, SIZE, SIZE);
 					} else { // draw nothing if grass and rabbits are hidden
 						c = new Color(0, 0, 0);
 						g.setColor(c);
-						g.fillRect(x * SIZE, y * SIZE, SIZE, SIZE);
+						g.fillRect(x * SIZE + divW + scrollCoordinateX, y * SIZE + divW + scrollCoordinateX, SIZE, SIZE);
 					}
 				}
+			
 			}
 		}
 	}
@@ -143,5 +158,11 @@ public class MapPanel extends JPanel {
 	
 	public void setMain(Main mref){
 		mainRef = mref;
+	}
+
+	public void updateMousePosition(int x, int y) {
+		this.scrollCoordinateX += x;
+		this.scrollCoordinateY += y;
+		this.repaint();
 	}
 }
