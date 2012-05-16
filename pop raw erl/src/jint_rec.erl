@@ -8,7 +8,7 @@ setup(SendPid) ->
 server(SendPid) ->
 	receive
 		{newRabbit, _Pid, X, Y} ->
-			rabbits:new({X, Y}, SendPid),
+			rabbits:newRabbit({X, Y}, SendPid),
 			server(SendPid);
 		{newWolf, _Pid, _X, _Y} ->
 			%% TODO New wolves
