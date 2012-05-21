@@ -1,9 +1,6 @@
 package raw.java.gui;
 
-import java.awt.Dialog;
-
 import javax.swing.*;
-import raw.java.j_int_java.Communicator;
 import raw.java.map.Map;
 import raw.java.map.MapNode;
 
@@ -18,11 +15,6 @@ public class Main implements Runnable, UpdateListener{
 	private static MapPanel mapDisplayPanel;
     private JTextField textFieldSize;
     private JTextField textFieldSeed;
-    private int currentMouseX;
-    private int currentMouseY;
-    
-    private int offsetX;
-    private int offsetY;
     
 	/**
 	 * The Swing thread
@@ -99,7 +91,7 @@ public class Main implements Runnable, UpdateListener{
         jSl.setPaintTicks(true);
         
         JSlider zoomSlider = new JSlider();
-        zoomSlider.setBounds(0, 200, 200, 70);
+        zoomSlider.setBounds(0, 200, 200, 60);
         zoomSlider.setMaximum(64);
         zoomSlider.setMinimum(1);  
         zoomSlider.setValue(7);
@@ -114,8 +106,8 @@ public class Main implements Runnable, UpdateListener{
          */
         JTextField textFieldSize = new JTextField();
         JTextField textFieldSeed = new JTextField();
-        textFieldSize.setBounds(16, 250, 64, 24);
-        textFieldSeed.setBounds(116, 250, 64, 24);
+        textFieldSize.setBounds(16, 260, 64, 24);
+        textFieldSeed.setBounds(116, 260, 64, 24);
         textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
         textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener());
         
