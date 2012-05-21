@@ -26,7 +26,7 @@ public class MapPanel extends JPanel {
 	private Map map;
 
 	private MapNode[][] nodes;
-	private Main mainRef;
+	private RabbitsAndWolves mainRef;
 
 	public MapPanel() {
 		/*
@@ -168,7 +168,7 @@ public class MapPanel extends JPanel {
 		nodes = map.getMapArray();
 	}
 
-	public void setMain(Main mref) {
+	public void setMain(RabbitsAndWolves mref) {
 		mainRef = mref;
 	}
 
