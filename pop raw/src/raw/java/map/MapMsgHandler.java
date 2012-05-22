@@ -4,8 +4,6 @@ import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.j_int_java.SendMessage;
 
-import com.ericsson.otp.erlang.OtpErlangPid;
-
 public class MapMsgHandler extends MsgHandler implements Runnable {
 
 
@@ -19,8 +17,8 @@ public class MapMsgHandler extends MsgHandler implements Runnable {
 	 * @param mapArray
 	 *            the representation of the map
 	 */
-	public MapMsgHandler(Message msg, Communicator mErlCom, Map map) {
-		super(msg, mErlCom, map, null);
+	public MapMsgHandler(Message msg, Communicator mErlCom, Map map, MessagePool msgPool) {
+		super(msg, mErlCom, map, null, msgPool);
 	}
 
 	@Override
@@ -40,5 +38,6 @@ public class MapMsgHandler extends MsgHandler implements Runnable {
 			}
 		}
 		mErlCom.send(new SendMessage("map", pid, squares));
+		msgPool.AddMapToStack(this);
 	}
 }

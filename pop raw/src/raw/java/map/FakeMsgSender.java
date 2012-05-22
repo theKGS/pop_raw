@@ -1,6 +1,5 @@
 package raw.java.map;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import raw.java.j_int_java.Communicator;

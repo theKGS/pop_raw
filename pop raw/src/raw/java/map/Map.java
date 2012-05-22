@@ -3,13 +3,13 @@ package raw.java.map;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.ericsson.otp.erlang.OtpErlangPid;
-
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.j_int_java.MessageSuper;
 import raw.java.map.threadpool.MessageThreadExecutor;
+
+import com.ericsson.otp.erlang.OtpErlangPid;
 
 public class Map extends Thread {
 	private int simulationSpeed = 0;
@@ -21,7 +21,16 @@ public class Map extends Thread {
 	public void setSimulationSpeed(int simulationSpeed) {
 		this.simulationSpeed = simulationSpeed;
 	}
-
+	public static final int RABBITMAP = 0;
+	public static final int RABBITEAT = 1;
+	public static final int MOVE = 2;
+	public static final int STOP = 3;
+	public static final int NEW = 4;
+	public static final int DEATH = 5;
+	public static final int WOLFEAT = 6;
+	public static final int WOLFMAP = 7;
+	
+	
 	private int mapSize = 0;
 	private int amountOfGrass = 0;
 	private int speedOfGrassGrowth = 0;
@@ -44,8 +53,9 @@ public class Map extends Thread {
 	private UpdateListener mUpdtLis;
 	private Random r;
 	private long Seed;
-	private FakeMsgSender mFakeMsgSender;
+//	private FakeMsgSender mFakeMsgSender;
 	private GrassGrower grassGrower;
+	private MessagePool messagePool;
 
 	/**
 	 * Constructor for the map class
@@ -59,10 +69,10 @@ public class Map extends Thread {
 		if (udpLis != null) {
 			this.mUpdtLis = udpLis;
 		}
-		this.mapSize = 50; //Size;
-		this.Seed = Seed; //Seed;
+		this.mapSize = 50; // Size;
+		this.Seed = Seed; // Seed;
 		mapArray = new MapNode[mapSize][mapSize];
-
+		this.messagePool = new MessagePool();
 		// printMap();
 		setUp();
 	}
@@ -70,6 +80,7 @@ public class Map extends Thread {
 	/**
 	 * Prints the map to the console
 	 */
+	@SuppressWarnings("unused")
 	private void printMap() {
 		for (int y = 0; y < mapSize; y++) {
 			for (int x = 0; x < mapSize; x++) {
@@ -95,31 +106,45 @@ public class Map extends Thread {
 				else
 					type %= 3;
 				if (type == MapNode.RABBIT) {
-					System.out.println("Sending new: " + i  + ", " + j);
-					mErlCom.send(new Message("newRabbit", null, new int[] { i, j }));
-					
+					System.out.println("Sending new: " + i + ", " + j);
+					mErlCom.send(new Message("newRabbit", null, new int[] { i,
+							j }));
+
 					MessageSuper msg = mErlCom.receive();
 					System.out.println("got send: " + msg.getPid());
 					mapArray[i][j] = new MapNode(r.nextInt(6), type,
 							msg.getPid());
 					startReceivers.add(msg.getPid());
 				} else {
-					mapArray[i][j] = new MapNode(r.nextInt(6), MapNode.NONE,null);
+					mapArray[i][j] = new MapNode(r.nextInt(6), MapNode.NONE,
+							null);
 				}
 
 			}
 
 		}
-		for(OtpErlangPid pid : startReceivers){
+		for (OtpErlangPid pid : startReceivers) {
 			mErlCom.send(new Message("start", pid, null));
 		}
 
-//		mFakeMsgSender = new FakeMsgSender(mErlCom, this);
+		// mFakeMsgSender = new FakeMsgSender(mErlCom, this);
 
-		mMsgThrExec = new MessageThreadExecutor(1000000, 2, 4, 10);
+		mMsgThrExec = new MessageThreadExecutor(1000000, 10, 100, 10);
 
 	}
 
+	/**
+	 * Moves the type of node x1,y1 to x2,y2
+	 * 
+	 * @param x1
+	 *            x coordinate to move from
+	 * @param y1
+	 *            y coordinate to move from
+	 * @param x2
+	 *            x coordinate to move to
+	 * @param y2
+	 *            x coordinate to move to
+	 */
 	void moveNode(int x1, int y1, int x2, int y2) {
 		mapArray[x2][y2].setType(mapArray[x1][y1].getType());
 		mapArray[x1][y1].setType(MapNode.NONE);
@@ -131,24 +156,17 @@ public class Map extends Thread {
 	@Override
 	public void run() {
 		super.run();
-
 		try {
 			Thread.sleep(1000);
-
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		grassGrower = new GrassGrower(this, 15000, mUpdtLis);
 		mMsgThrExec.execute(grassGrower);
-		//mFakeMsgSender.start();
 		while (running) {
 			if (paused) {
 				continue;
 			}
-			// System.out.println("Getting next message");
-			// printMap();
-
 			handleNextMessage();
 
 		}
@@ -160,43 +178,46 @@ public class Map extends Thread {
 	private void handleNextMessage() {
 		nextMessage = mErlCom.receive();
 		if (nextMessage.getType().equalsIgnoreCase("get")) {
-			mMsgThrExec.execute(new MapMsgHandler((Message) nextMessage,
-					mErlCom, this));
+			mMsgThrExec.execute(messagePool.getMapRunnable((Message)nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
-			mMsgThrExec.execute(new MoveMsgHandler((Message) nextMessage,
-					mErlCom, this, mUpdtLis));
+			mMsgThrExec.execute(messagePool.getMoveRunnable((Message)nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("eat")) {
-			mMsgThrExec.execute(new EatMsgHandler((Message) nextMessage,
-					mErlCom, this, mUpdtLis));
+			mMsgThrExec.execute(messagePool.getEatRunnable((Message)nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
 			System.out.println("stopping");
 			this.running = false;
-		} else if (nextMessage.getType().equalsIgnoreCase("new")){
-			int[] coords = ((Message)nextMessage).getValues();
+		} else if (nextMessage.getType().equalsIgnoreCase("new")) {
+			int[] coords = ((Message) nextMessage).getValues();
 			synchronized (mapArray[coords[0]][coords[1]]) {
 				mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
 				mErlCom.send(new Message("start", nextMessage.getPid(), null));
 			}
-		} else if (nextMessage.getType().equalsIgnoreCase("death")){
-			
-			int[] coords = ((Message)nextMessage).getValues();
+		} else if (nextMessage.getType().equalsIgnoreCase("death")) {
+
+			int[] coords = ((Message) nextMessage).getValues();
 			synchronized (mapArray[coords[0]][coords[1]]) {
 				mapArray[coords[0]][coords[1]].setType(MapNode.NONE);
 				mapArray[coords[0]][coords[1]].setPid(null);
-				mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
+				mUpdtLis.update(coords[0], coords[1],
+						mapArray[coords[0]][coords[1]]);
 			}
 		}
-//		System.out.println("Message handled");
 	}
-
+	/**
+	 * Starts the simulation
+	 */
 	public void simulationStart() {
 		paused = false;
 	}
-
+	/**
+	 * Stops the simulation
+	 */
 	public void simulationStop() {
 		paused = true;
 	}
-
+	/**
+	 * Resets the simulation
+	 */
 	public void simulationReset() {
 		setUp();
 

@@ -32,14 +32,14 @@ newWolf({X, Y}, SenderPID) ->
 %% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
 %% 
 
-findNewSquare(Rabbit, MapList) ->
-	{Length, PossibleSquares} = maxGrass(parseList(Rabbit, MapList, 1, []),[],0,0),
+findNewSquare(Wolf, MapList) ->
+	{Length, PossibleSquares} = maxGrass(parseList(Wolf, MapList, 1, []),[],0,0),
 	if(Length =/= 0)->
 		Dir = random:uniform(Length),
 		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
-		randw:move({rabbit, Rabbit, {X2, Y2}});
+		randw:move({wolf, Wolf, {X2, Y2}});
 	  true ->
-		  loop(Rabbit)
+		  loop(Wolf)
 	end.
 
 %% 	PID = Rabbit#rabbit.spid,
@@ -56,15 +56,15 @@ findNewSquare(Rabbit, MapList) ->
 %% 
 %% 
 
-eat(Rabbit) ->
-	{Grass, _, List} = getMap(Rabbit),
+eat(Wolf) ->
+	{Grass, _, List} = getMap(Wolf),
 %% 	Grass = 5,
 %% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
-	case randw:isHungry({rabbit, Rabbit}) and (Grass > 0) of
+	case randw:isHungry({wolf, Wolf}) and (Grass > 0) of
 		true ->
-			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood, List};
+			{Wolf#wolf{hunger = Wolf#wolf.hunger - 1}, gotFood, List};
 		false ->
-			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger + 1}, noFood, List}
+			{Wolf#wolf{hunger = Wolf#wolf.hunger + 1}, noFood, List}
 	end.
 	
 
@@ -72,8 +72,8 @@ eat(Rabbit) ->
 %% 
 %% 
 
-getMap(Rabbit) ->
-	Rabbit#rabbit.spid ! {get, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
+getMap(Wolf) ->
+	Wolf#wolf.spid ! {get, self(), Wolf#wolf.x, Wolf#wolf.y},
 	receive
 		{map, List} ->
 			{Grass, Type} = lists:nth(5, List),
@@ -124,14 +124,14 @@ loop(Wolf) ->
 		{_, die} ->
 			exit(killed)
 		after 200 ->
- 			case randw:checkToDie({rabbit, Rabbit}) of
+ 			case randw:checkToDie({rabbit, Wolf}) of
  				true ->
-					PID = Rabbit#rabbit.spid,
-					PID ! {death, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
+					PID = Wolf#wolf.spid,
+					PID ! {death, self(), Wolf#wolf.x, Wolf#wolf.y},
  					exit(died);
  				false ->
- 					Rabbit2 = doTick(Rabbit),
-					loop(Rabbit2)
+ 					Wolf2 = doTick(Wolf),
+					loop(Wolf2)
  			end
 	end.
 
@@ -165,29 +165,7 @@ init() ->
 	Mega = lists:nth(2, pid_to_list(self())),
 	random:seed(A1 + Mega, A2 + Mega, A3 + Mega).
 
-test() ->
-	init(),
-	KaninPid = newRabbit({5, 5}, self()),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	{X, Y} = getCoords(KaninPid),
- 	RabbitInfo = getInfo(KaninPid),
-	io:format("Rabbit (~w)~nAge: ~w~nHunger: ~w~n", [KaninPid, RabbitInfo#rabbit.age, RabbitInfo#rabbit.hunger]),
-	io:format("x: ~w~ny: ~w~n", [X, Y]),
-	execute(KaninPid),
-	test_finished.
+
 
 
 %% out som atom för vargarna när de ska äta om ruta är utanför kartan, tex hörn och kanter

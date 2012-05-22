@@ -1,7 +1,5 @@
 package raw.java.map;
 
-import java.util.ArrayList;
-
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
@@ -16,23 +14,40 @@ public class MsgHandler {
 	public static final int X2 = 4;
 	public static final int Y2 = 5;
 
-	OtpErlangPid pid;
-	int[] coords;
-	Communicator mErlCom;
-	Map map;
-	UpdateListener mUpdtLis;
+	protected OtpErlangPid pid;
+	protected int[] coords;
+	protected Communicator mErlCom;
+	protected Map map;
+	protected UpdateListener mUpdtLis;
+	protected MessagePool msgPool;
 
+	/**
+	 * Super constructor called by all message handlers.
+	 * 
+	 * @param msg
+	 *            the message received from communicator
+	 * @param com
+	 *            the communicator
+	 * @param map
+	 *            map that created object
+	 * @param updtLis
+	 *            update lister
+	 */
 	public MsgHandler(Message msg, Communicator com, Map map,
-			UpdateListener updtLis) {
+			UpdateListener updtLis, MessagePool msgPool) {
 		this.pid = msg.getPid();
 		this.coords = msg.getValues();
-
+		this.msgPool = msgPool;
 		this.mErlCom = com;
 		this.map = map;
 		this.mUpdtLis = updtLis;
 	}
 
-	boolean mate() {
+	/**
+	 * Tries to mate with the current rabbit or wolf.
+	 * 
+	 */
+	protected boolean mate() {
 		int x = coords[X1];
 		int y = coords[Y1];
 
@@ -57,7 +72,18 @@ public class MsgHandler {
 		return false;
 	}
 
-	void syncAll(int[] cVector, int index) {
+	/**
+	 * Synchronizes all squares in cVector, from smallest array index to the
+	 * largest
+	 * 
+	 * @param cVector
+	 *            the int array containing all coordinates that shall be
+	 *            synchronized (x1,y1,x2,y2,...,xn,yn)
+	 * @param index
+	 *            due to recursion this index is used to get the correct
+	 *            cordinate pair
+	 */
+	protected void syncAll(int[] cVector, int index) {
 		if (index > cVector.length - 1) {
 			doMate(this.coords[X1], this.coords[Y1]);
 		}
@@ -75,7 +101,15 @@ public class MsgHandler {
 		}
 	}
 
-	void doMate(int x, int y) {
+	/**
+	 * Executes the mating
+	 * 
+	 * @param x
+	 *            x position to mate
+	 * @param y
+	 *            y position to mate
+	 */
+	protected void doMate(int x, int y) {
 		int mateType = map.getMapArray()[x][y].getType();
 		boolean matePossible = false;
 		int[] newSpot = null;
@@ -114,11 +148,13 @@ public class MsgHandler {
 
 	}
 
-	public int[][] getPossibleMates(int x, int y) {
-		// synchronized()
-		return null;
-	}
-
+	/**
+	 * Compares two coord pairs
+	 * 
+	 * @param coords
+	 *            array of coord pairs (x1,y1,x2,y2)
+	 * @return true if (x1,y1) < (x2,y2) false otherwise
+	 */
 	protected boolean compareCoordsArr(int[] coords) {
 		return coords[Y1] * map.getMapSize() + coords[X1] + map.getMapSize() < coords[Y2]
 				* map.getMapSize() + coords[X2] + map.getMapSize() ? true
@@ -126,9 +162,60 @@ public class MsgHandler {
 
 	}
 
+	/**
+	 * Sends update to the upådate listener
+	 * 
+	 * @param x
+	 *            x coord of the node
+	 * @param y
+	 *            y coord of the node
+	 * @param updtNode
+	 *            instance of the updated node
+	 */
 	protected void sendUpdate(int x, int y, MapNode updtNode) {
 		if (mUpdtLis != null) {
 			mUpdtLis.update(x, y, updtNode);
 		}
 	}
+
+	public OtpErlangPid getPid() {
+		return pid;
+	}
+
+	public void setPid(OtpErlangPid pid) {
+		this.pid = pid;
+	}
+
+	public int[] getCoords() {
+		return coords;
+	}
+
+	public void setCoords(int[] coords) {
+		this.coords = coords;
+	}
+
+	public Communicator getmErlCom() {
+		return mErlCom;
+	}
+
+	public void setmErlCom(Communicator mErlCom) {
+		this.mErlCom = mErlCom;
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public void setMap(Map map) {
+		this.map = map;
+	}
+
+	public UpdateListener getmUpdtLis() {
+		return mUpdtLis;
+	}
+
+	public void setmUpdtLis(UpdateListener mUpdtLis) {
+		this.mUpdtLis = mUpdtLis;
+	}
+	
 }

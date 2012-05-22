@@ -3,7 +3,6 @@ package raw.java.map;
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
-import raw.java.j_int_java.SendMessage;
 
 public class EatMsgHandler extends MsgHandler implements Runnable {
 
@@ -17,8 +16,8 @@ public class EatMsgHandler extends MsgHandler implements Runnable {
 	 * @param mapArray
 	 *            the map representation.
 	 */
-	public EatMsgHandler(Message msg, Communicator mErlCom, Map map,UpdateListener updtLis) {
-		super(msg, mErlCom, map, updtLis);
+	public EatMsgHandler(Message msg, Communicator mErlCom, Map map,UpdateListener updtLis, MessagePool msgPool) {
+		super(msg, mErlCom, map, updtLis, msgPool);
 	}
 
 	@Override
@@ -33,6 +32,7 @@ public class EatMsgHandler extends MsgHandler implements Runnable {
 				
 			}
 		}
+		msgPool.AddEatToStack(this);
 	}
 
 }

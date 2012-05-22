@@ -21,7 +21,6 @@ public class Communicator {
 		}
 		sender = new Gui_send(outGoing, pid);
 		new Thread(sender).start();
-
 	}
 	
 	public void send(MessageSuper m) {
