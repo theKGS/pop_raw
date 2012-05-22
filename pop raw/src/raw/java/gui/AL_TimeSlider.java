@@ -24,6 +24,5 @@ public class AL_TimeSlider implements ChangeListener{
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
 		mPanel.getMap().setSimulationSpeed(slider.getValue());
-		System.out.println(slider.getValue()+" ");
 	}
 }

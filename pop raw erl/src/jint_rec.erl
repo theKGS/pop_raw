@@ -12,8 +12,8 @@ server(SendPid) ->
 			rabbits:newRabbit({X, Y}, SendPid),
 			server(SendPid);
 		%% 8 = newWolf
-		{8, _Pid, _X, _Y} ->
-			%% TODO New wolves
+		{8, _Pid, X, Y} ->
+			wolves:newWolf({X, Y}, SendPid),
 			server(SendPid);
 		%% 0 = rabbitMap
 		{0,Pid, B} ->
