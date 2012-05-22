@@ -73,7 +73,6 @@ public class Gui_receive implements Runnable{
 		int[] values = new int[size - 2];
 		OtpErlangObject type = msg.elementAt(0);
 		OtpErlangObject pid = msg.elementAt(1);
-		System.out.println("Before OtpErlangLong test");
 		if (type instanceof OtpErlangLong) {
 			OtpErlangLong tempType = (OtpErlangLong) type;
 			sType = tempType.intValue();
