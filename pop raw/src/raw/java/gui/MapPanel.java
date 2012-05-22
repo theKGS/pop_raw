@@ -8,6 +8,11 @@ import javax.swing.JPanel;
 import raw.java.map.Map;
 import raw.java.map.MapNode;
 
+/**
+ * MapPanel object used to display the map.
+ * @author andreas
+ *
+ */
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	static int TILEWIDTH = 16; // width of a tile
@@ -49,10 +54,8 @@ public class MapPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		// g.drawImage(IconRabbit, 0, 0, null); // see javadoc for more info on
 		// g.drawImage(IconRabbit, 32, 32, null); // see javadoc for more info
-		Color c = new Color(0, 0, 0);
+		Color c = new Color(15, 0, 15);
 		// g.drawImage(IconRabbit, 0, 0, 48, 48, new Color (255, 0, 255), null);
-
-		int tempMapSize = 16;
 
 		g.setColor(c);
 		g.fillRect(0, 0, 700, 700);
@@ -60,7 +63,6 @@ public class MapPanel extends JPanel {
 		c = new Color(255, 255, 0);
 
 		float divW = this.getParent().getWidth() / 2;
-		float divH = this.getParent().getHeight() / 2;
 
 		g.setColor(c);
 		// g.fillRect((-tempMapSize/2) * SIZE + divW + scrollCoordinateX,
