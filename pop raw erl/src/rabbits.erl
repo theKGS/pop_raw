@@ -155,8 +155,9 @@ doTick(Rabbit) ->
 %% 
 
 preloop(Rabbit) ->
-	receive
+	receive	
 		start ->
+			io:format("Starting rabbit~n"),
 			init(),
 			loop(Rabbit)
 	end.

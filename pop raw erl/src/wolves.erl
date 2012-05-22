@@ -165,26 +165,6 @@ loop(Wolf) ->
 %% 
 %% 
 
-sendTick(Pid) ->
-	Pid ! {self(), tick}.
-
-getInfo(Pid) ->
-	Pid ! {self(), getInfo},
-	receive
-		{Pid, Rabbit} ->
-			Rabbit
-	end.
-
-getCoords(Pid) ->
-	Pid ! {self(), getCoords},
-	receive
-		{Pid, Coords} ->
-			Coords
-	end.
-	
-execute(Pid) ->
-	Pid ! {self(), die}.
-
 
 init() ->
 	{A1, A2, A3} = now(),

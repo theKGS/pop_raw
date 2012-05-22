@@ -46,7 +46,6 @@ public class Map extends Thread {
 	private int maxRabbitAge = 0;
 	private int rappitReprAge = 0;
 	private int rabbitReprSuccessProb = 0;
-	
 
 	MapNode[][] mapArray;
 	private boolean running = true;
@@ -112,8 +111,7 @@ public class Map extends Thread {
 					type %= 3;
 				if (type == MapNode.RABBIT) {
 					System.out.println("Sending new: " + i + ", " + j);
-					mErlCom.send(new Message(Map.NEW, null, new int[] { i,
-							j }));
+					mErlCom.send(new Message(Map.NEW, null, new int[] { i, j }));
 
 					MessageSuper msg = mErlCom.receive();
 					System.out.println("got send: " + msg.getPid());
@@ -181,10 +179,10 @@ public class Map extends Thread {
 	 * Starts the correct Runnable according to the current message.
 	 */
 	private void handleNextMessage() {
-		
+		System.out.println("Fetching next message");
 		nextMessage = mErlCom.receive();
 		System.out.println("Got message TYPE: " + nextMessage.getType());
-		if (nextMessage.getType()== Map.RABBITMAP) {
+		if (nextMessage.getType() == Map.RABBITMAP) {
 			mMsgThrExec.execute(messagePool.getMapRunnable(
 					(Message) nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType() == Map.MOVE) {
