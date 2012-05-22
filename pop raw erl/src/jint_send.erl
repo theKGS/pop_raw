@@ -24,6 +24,9 @@ send() ->
 		%% move = 2
 		{move, A, B, C, D, E} ->
 			{sparta, Address} ! {2, A, B, C, D, E};
+		%% newRabbit = 4
+		{newRabbit, A, B, C} ->
+			{sparta, Address} ! {4, A, B, C};
 		%% death = 5
 		{death, A, B, C} ->
 			{sparta, Address} ! {5, A, B, C};
@@ -32,6 +35,9 @@ send() ->
 			{sparta, Address} ! {6, A, B, C};
 		%% wolfMap = 7
 		{wolfMap, A, B, C} ->
-			{sparta, Address} ! {7, A, B, C}
+			{sparta, Address} ! {7, A, B, C};
+		%% newWolf = 8
+		{newWolf, A, B, C} ->
+			{sparta, Address} ! {8, A, B, C}
 	end,
 	send().
