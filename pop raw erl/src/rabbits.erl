@@ -85,6 +85,7 @@ findNewSquare(Rabbit, MapList) ->
 	if(Length =/= 0)->
 		Dir = random:uniform(Length),
 		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
+		io:format("sending move!!!!~n"),
 		randw:move({rabbit, Rabbit, {X2, Y2}});
 	  true ->
 		  loop(Rabbit)
@@ -112,6 +113,7 @@ eat(Rabbit) ->
 		true ->
 			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood, List};
 		false ->
+
 			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger + 1}, noFood, List}
 	end.
 	
@@ -144,6 +146,7 @@ doTick(Rabbit) ->
 	{Rabbit3, Ate, List} = eat(Rabbit2),
 	if
 		Ate == gotFood ->
+			io:format("Sending EAT~n"),
  			PID ! {rabbitEat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
 			Rabbit3;
 		true ->
@@ -156,7 +159,7 @@ doTick(Rabbit) ->
 
 preloop(Rabbit) ->
 	receive	
-		start ->
+		Start ->
 			io:format("Starting rabbit~n"),
 			init(),
 			loop(Rabbit)
