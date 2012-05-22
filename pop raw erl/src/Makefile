@@ -1,5 +1,5 @@
 
-SOURCES = jint_rec.erl jint_send.erl rabbits.erl
+SOURCES = jint_rec.erl jint_send.erl rabbits.erl wolves.erl
 NAME = -sname foo -setcookie thisissparta
 
 all:
