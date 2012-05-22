@@ -67,17 +67,15 @@ public class Gui_receive implements Runnable{
 	}
 	
 	private Message deCode(OtpErlangTuple msg) throws OtpErlangRangeException {
-		String sType;
+		int sType = -1;
 		OtpErlangPid pidTemp = null;
 		int size = msg.arity();
 		int[] values = new int[size - 2];
 		OtpErlangObject type = msg.elementAt(0);
 		OtpErlangObject pid = msg.elementAt(1);
-		if (type instanceof OtpErlangAtom) {
-			OtpErlangAtom tempType = (OtpErlangAtom) type;
-			sType = tempType.atomValue();
-		} else {
-			sType = "fail";
+		if (type instanceof OtpErlangLong) {
+			OtpErlangLong tempType = (OtpErlangLong) type;
+			sType = tempType.intValue();
 		}
 		if (pid instanceof OtpErlangPid) {
 			pidTemp = (OtpErlangPid) pid;

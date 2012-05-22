@@ -39,14 +39,14 @@ public class Gui_send implements Runnable{
 		OtpErlangTuple answer = null;
 		if (msgReceive instanceof Message) {
 			Message msg = (Message) msgReceive;
-			String sType = msg.getType();
+			int sType = msg.getType();
 			int[] values = msg.getValues();
 			int size = 0;
 			if (values != null) {
 				size = values.length;
 			}
 			OtpErlangObject[] message = new OtpErlangObject[size+2];
-			message[0] = new OtpErlangAtom(sType);
+			message[0] = new OtpErlangInt(sType);
 			if (msg.getPid() == null) {
 				message[1] = new OtpErlangAtom("null");
 			} else {
@@ -58,7 +58,7 @@ public class Gui_send implements Runnable{
 			answer = new OtpErlangTuple(message);
 		} else if (msgReceive instanceof SendMessage) {
 			SendMessage msg = (SendMessage) msgReceive;
-			String sType = msg.getType();
+			int sType = msg.getType();
 			MapNode[] map = msg.getMap();
 			OtpErlangObject[] list = new OtpErlangObject[9];
 			for (int i = 0; i < 9; i++) {
@@ -82,7 +82,7 @@ public class Gui_send implements Runnable{
 				}
 			}
 			OtpErlangObject[] message = new OtpErlangObject[3];
-			message[0] = new OtpErlangAtom(sType);
+			message[0] = new OtpErlangInt(sType);
 			message[1] = msg.getPid();
 			message[2] = new OtpErlangList(list);
 			answer = new OtpErlangTuple(message);
