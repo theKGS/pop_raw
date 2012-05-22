@@ -1,10 +1,12 @@
-package raw.java.map;
+package message_handelrs;
 
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.j_int_java.MessageSuper;
 import raw.java.j_int_java.SendMessage;
+import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 public class WolfMapMsgHandler extends MsgHandler implements Runnable
 {
@@ -35,8 +37,7 @@ public class WolfMapMsgHandler extends MsgHandler implements Runnable
         if (map.getMapArray()[x][y].getType() == MapNode.RABBIT && map.getMapArray()[x][y].getPid() != null)
         {
             mErlCom.send(new Message(Map.DEATH, map.getMapArray()[x][y].getPid(), null));
-            map.getMapArray()[x][y].setType(MapNode.NONE);
-            map.getMapArray()[x][y].setPid(null);
+            map.getMapArray()[x][y].clearNode();
             mUpdtLis.update(x, y, map.getMapArray()[x][y]);
         } else
         {

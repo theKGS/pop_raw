@@ -76,6 +76,14 @@ public class MapNode implements Lock
         this.pid = pid;
 
     }
+    public void clearNode(){
+        this.type = MapNode.NONE;
+        this.pid = null;
+    }
+    public void takeDataFrom(MapNode node){
+        type = node.getType();
+        pid = node.getPid();
+    }
 
     @Override
     public synchronized void lock()

@@ -1,8 +1,10 @@
-package raw.java.map;
+package message_handelrs;
 
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 public class MoveMsgHandler extends MsgHandler implements Runnable
 {
@@ -81,10 +83,8 @@ public class MoveMsgHandler extends MsgHandler implements Runnable
             mErlCom.send(new Message(Map.NO, pid, null));
         } else
         {
-            targetNode.setPid(currentNode.getPid());
-            targetNode.setType(currentNode.getType());
-            currentNode.setPid(null);
-            currentNode.setType(MapNode.NONE);
+            targetNode.takeDataFrom(currentNode);
+            currentNode.clearNode();
             mErlCom.send(new Message(Map.YES, pid, null));
 
         }

@@ -1,10 +1,11 @@
-package raw.java.map;
+package message_handelrs;
 
 import java.util.Stack;
 
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.map.Map;
 
 public class MessagePool
 {
@@ -14,6 +15,7 @@ public class MessagePool
     private Stack<MapMsgHandler> mapStack;
     private Stack<EatMsgHandler> eatStack;
     private Stack<WolfMapMsgHandler> wolfMapStack;
+    private Stack<WolfEatMsgHandler> wolfEatStack;
 
     public MessagePool()
     {
@@ -22,6 +24,7 @@ public class MessagePool
         rabbitMoveStack = new Stack<MoveMsgHandler>();
         newStack = new Stack<NewMsgHandler>();
         wolfMapStack = new Stack<WolfMapMsgHandler>();
+        wolfEatStack = new Stack<WolfEatMsgHandler>();
     }
 
     public EatMsgHandler getEatRunnable(Message msg, Communicator mErlCom,
@@ -155,5 +158,32 @@ public class MessagePool
     {
        this.wolfMapStack.push(wolffMapMsgHandler);
         
+    }
+    public WolfEatMsgHandler getWolfEatRunnable(Message msg, Communicator mErlCom,
+            Map map, UpdateListener updtLis, int requester)
+    {
+        synchronized (wolfEatStack)
+        {
+            if (!wolfEatStack.isEmpty())
+            {
+                WolfEatMsgHandler temp = wolfEatStack.pop();
+                temp.setCoords(msg.getValues());
+                temp.setPid(msg.getPid());
+                temp.setRequester(requester);
+                return temp;
+            } else
+            {
+                return new WolfEatMsgHandler(msg, mErlCom, map, updtLis, this,
+                        requester);
+            }
+        }
+    }
+
+    public void AddWolfEatToStack(WolfEatMsgHandler eatMsg)
+    {
+        synchronized (wolfEatStack)
+        {
+            wolfEatStack.push(eatMsg);
+        }
     }
 }

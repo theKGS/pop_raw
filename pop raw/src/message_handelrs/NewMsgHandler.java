@@ -1,7 +1,8 @@
-package raw.java.map;
+package message_handelrs;
 
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.map.Map;
 
 public class NewMsgHandler extends MsgHandler implements Runnable
 {

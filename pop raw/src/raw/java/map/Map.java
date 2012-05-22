@@ -3,6 +3,8 @@ package raw.java.map;
 import java.util.ArrayList;
 import java.util.Random;
 
+import message_handelrs.MessagePool;
+
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
@@ -46,7 +48,7 @@ public class Map extends Thread
     private int numberOfWolves = 0;
     private int maxWolfAge = 0;
     private int wolfReprAge = 4;
-    private int woldReprSuccessProb = 100;
+    private int woldReprSuccessProb = 0;
     private int numberOfRabbits = 0;
     private int maxRabbitAge = 0;
     private int rappitReprAge = 10;
@@ -244,7 +246,7 @@ public class Map extends Thread
                         MapNode.WOLF));
                 break;
             case Map.WOLFEAT:
-                mMsgThrExec.execute(messagePool.getEatRunnable(
+                mMsgThrExec.execute(messagePool.getWolfEatRunnable(
                         (Message) nextMessage, mErlCom, this, mUpdtLis,
                         MapNode.WOLF));
                 break;
@@ -257,6 +259,7 @@ public class Map extends Thread
                 synchronized (mapArray[coords[0]][coords[1]])
                 {
                     mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
+                    mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
                     mErlCom.send(new Message(Map.START, nextMessage.getPid(),
                             null));
                 }
@@ -266,6 +269,7 @@ public class Map extends Thread
                 synchronized (mapArray[coords[0]][coords[1]])
                 {
                     mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
+                    mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
                     mErlCom.send(new Message(Map.START, nextMessage.getPid(),
                             null));
                 }

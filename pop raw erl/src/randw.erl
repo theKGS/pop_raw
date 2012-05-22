@@ -25,7 +25,7 @@ increaseAge({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit{age = Creature#rabbit.age + 1};
 		wolf ->
-			Creature#wolf{age = Creature#wolf.age + 1, hunger = Creature#wolf.hunger-1}
+			Creature#wolf{age = Creature#wolf.age + 1}
 	end.
 
 %% 
@@ -121,7 +121,7 @@ isTooHungry({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit.hunger >= 5;
 		wolf ->
-			Creature#wolf.hunger >= 20
+			Creature#wolf.hunger >= 70
 	end.
 
 %% 

@@ -1,8 +1,11 @@
-package raw.java.map;
+package message_handelrs;
 
+import raw.java.gui.RabbitsAndWolves;
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
+import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 import com.ericsson.otp.erlang.OtpErlangPid;
 
@@ -65,24 +68,55 @@ public class MsgHandler
     {
         int x = coords[X1];
         int y = coords[Y1];
+        int[][] syncCoords = null;
+        if (requester == MapNode.RABBIT)
+        {
+            syncCoords = new int[][] { new int[] { x - 1, y - 1 },
 
-        int[] syncCoords = new int[] { x - 1, y - 1,
+            new int[] { x, y - 1 },
 
-        x, y - 1,
+            new int[] { x + 1, y - 1 },
 
-        x + 1, y - 1,
+            new int[] { x - 1, y },
 
-        x - 1, y,
+            new int[] { x, y },
 
-        x, y,
+            new int[] { x + 1, y },
 
-        x + 1, y,
+            new int[] { x - 1, y + 1 },
 
-        x - 1, y + 1,
+            new int[] { x, y + 1 },
 
-        x, y + 1,
+            new int[] { x + 1, y + 1 } };
+        } else if (requester == MapNode.WOLF)
+        {
+            syncCoords = new int[][] {
 
-        x + 1, y + 1 };
+            new int[] { x - 2, y - 2 }, new int[] { x - 1, y - 2 },
+                    new int[] { x, y - 2 },
+
+                    new int[] { x + 1, y - 2 }, new int[] { x + 2, y - 2 },
+
+                    new int[] { x - 2, y - 1 }, new int[] { x - 1, y - 1 },
+
+                    new int[] { x, y - 1 }, new int[] { x + 1, y - 1 },
+
+                    new int[] { x + 2, y - 1 }, new int[] { x - 2, y },
+
+                    new int[] { x - 1, y }, new int[] { x, y },
+
+                    new int[] { x + 1, y }, new int[] { x + 2, y },
+
+                    new int[] { x - 2, y + 1 }, new int[] { x - 1, y + 1 },
+
+                    new int[] { x, y + 1 }, new int[] { x + 1, y + 1 },
+
+                    new int[] { x + 2, y + 1 }, new int[] { x - 2, y + 2 },
+
+                    new int[] { x - 1, y + 2 }, new int[] { x, y + 2 },
+
+                    new int[] { x + 1, y + 2 }, new int[] { x + 2, y + 2 } };
+        }
         syncAll(syncCoords, 0);
         return false;
     }
@@ -98,28 +132,34 @@ public class MsgHandler
      *            due to recursion this index is used to get the correct
      *            cordinate pair
      */
-    protected void syncAll(int[] cVector, int index)
+    protected void syncAll(int[][] cVector, int index)
     {
-        if (index > cVector.length - 1)
+        try
         {
-            doMate(this.coords[X1], this.coords[Y1]);
-        }
-        if (index + 1 < cVector.length)
-        {
-            int x = cVector[index];
-            int y = cVector[index + 1];
-            if (x >= 0 && x < map.getMapSize() && y >= 0
-                    && y < map.getMapSize())
+            for (int[] i : cVector)
             {
-                synchronized (map.getMapArray()[x][y])
+                if (isInsideMap(i))
                 {
-                    syncAll(cVector, index + 2);
+                    map.getMapArray()[i[0]][i[1]].lock();
                 }
-            } else
+            }
+            doMate(this.coords[X1], this.coords[Y1]);
+        } finally
+        {
+            for (int[] i : cVector)
             {
-                syncAll(cVector, index + 2);
+                if (isInsideMap(i))
+                {
+                    map.getMapArray()[i[0]][i[1]].unlock();
+                }
             }
         }
+    }
+
+    private boolean isInsideMap(int[] i)
+    {
+        return (i[0] > 0 && i[0] < map.getMapSize() && i[1] > 0 && i[1] < map
+                .getMapSize());
     }
 
     /**
@@ -135,18 +175,34 @@ public class MsgHandler
         int mateType = map.getMapArray()[x][y].getType();
         boolean matePossible = false;
         int[] newSpot = null;
-        int minX = x > 0 ? -1 : 0;
-        int maxX = x < map.getMapSize() - 1 ? 2 : 1;
+        int minX = 0, minY = 0, maxX = 0, maxY = 0;
+        if (requester == MapNode.RABBIT)
+        {
+            minX = x > 0 ? -1 : 0;
+            maxX = x < map.getMapSize() - 1 ? 2 : 1;
 
-        int minY = y > 0 ? -1 : 0;
-        int maxY = y < map.getMapSize() - 1 ? 2 : 1;
+            minY = y > 0 ? -1 : 0;
+            maxY = y < map.getMapSize() - 1 ? 2 : 1;
+        } else if (requester == MapNode.WOLF)
+        {
+            minX = x > 0 ? (x > 1 ? -2 : -1) : 0;
+
+            maxX = x < map.getMapSize() - 1 ? (x < map.getMapSize() - 2 ? 2 : 1)
+                    : 1;
+
+            minY = y > 0 ? (y > 1 ? -2 : 1) : 0;
+            maxY = y < map.getMapSize() - 1 ? (y < map.getMapSize() - 2 ? 2 : 1)
+                    : 1;
+
+        }
         for (int i = minX; i < maxX; i++)
         {
             for (int j = minY; j < maxY; j++)
             {
                 if (map.getMapArray()[x + i][y + j].getType() != MapNode.NONE)
                 {
-                    if (map.getMapArray()[x + i][y + j].getType() != mateType)
+                    if (map.getMapArray()[x + i][y + j].getType() != mateType
+                            && requester == MapNode.RABBIT)
                     {
                         matePossible = false;
                     } else
@@ -164,17 +220,23 @@ public class MsgHandler
             int r = (int) (Math.random() * 1000);
             if (mateType == MapNode.RABBIT)
             {
-                if (r > map.getRabbitReprSuccessProb() && coords[AGE] > map.getRappitReprAge() && coords[HUNGER] < 3)
+                if (r > map.getRabbitReprSuccessProb()
+                        && coords[AGE] > map.getRappitReprAge()
+                        && coords[HUNGER] < 3)
                 {
-                    map.getMapArray()[newSpot[0]][newSpot[1]].setType(mateType);
+                    map.getMapArray()[newSpot[0]][newSpot[1]]
+                            .setType(MapNode.RABBIT);
                     mErlCom.send(new Message(Map.NEW, null, newSpot));
                 }
 
             } else
             {
-                if (r > map.getWoldReprSuccessProb() && coords[AGE] > map.getWolfReprAge() && coords[HUNGER] < 20)
+                if (r > map.getWoldReprSuccessProb()
+                        && coords[AGE] > map.getWolfReprAge()
+                        && coords[HUNGER] < 20)
                 {
-                    map.getMapArray()[newSpot[0]][newSpot[1]].setType(mateType);
+                    map.getMapArray()[newSpot[0]][newSpot[1]]
+                            .setType(MapNode.WOLF);
                     mErlCom.send(new Message(Map.NEWWOLF, null, newSpot));
                 }
             }

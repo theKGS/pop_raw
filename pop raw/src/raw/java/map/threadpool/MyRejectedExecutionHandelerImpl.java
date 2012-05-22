@@ -3,7 +3,8 @@ package raw.java.map.threadpool;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import raw.java.map.MsgHandler;
+import message_handelrs.MsgHandler;
+
 
 public class MyRejectedExecutionHandelerImpl implements
 		RejectedExecutionHandler {

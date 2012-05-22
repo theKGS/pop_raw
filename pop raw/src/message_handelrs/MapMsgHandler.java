@@ -1,9 +1,11 @@
-package raw.java.map;
+package message_handelrs;
 
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
 import raw.java.j_int_java.SendMessage;
+import raw.java.map.Map;
+import raw.java.map.MapNode;
 
 public class MapMsgHandler extends MsgHandler implements Runnable
 {
