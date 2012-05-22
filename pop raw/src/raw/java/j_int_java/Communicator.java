@@ -9,6 +9,9 @@ public class Communicator {
 	private Gui_receive receiver;
 	public OtpErlangPid pid = null;
 	
+	/**
+	 * 
+	 */
 	public Communicator() {
 		receiver = new Gui_receive(inComming, this);
 		new Thread(receiver).start();
