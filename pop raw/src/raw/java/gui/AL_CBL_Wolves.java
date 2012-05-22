@@ -20,7 +20,7 @@ public class AL_CBL_Wolves implements ItemListener {
 	}
 
 	/**
-	 * Tells the MapPanel instance to hide/unhide grass on the display.
+	 * Tells the MapPanel instance to hide/unhide wolves on the display.
 	 * @param e an event passed by the ItemSelectable.
 	 */
 	@Override

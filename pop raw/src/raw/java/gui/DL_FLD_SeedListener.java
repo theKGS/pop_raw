@@ -4,7 +4,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 /**
- * 
+ * This is a listener for the Seed text field.
  * @author andreas
  *
  */

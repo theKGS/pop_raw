@@ -31,7 +31,7 @@ public class MapPanel extends JPanel {
 	private Map map;
 
 	private MapNode[][] nodes;
-	private RabbitsAndWolves mainRef;
+	private UpdateListener mainRef;
 
 	/**
 	 * Constructor.
@@ -52,7 +52,7 @@ public class MapPanel extends JPanel {
 
 	/**
 	 * Draws the component.
-	 * @param g the Graphics object to use for drawing.
+	 * @param g  the Graphics object to use for drawing.
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
@@ -69,10 +69,6 @@ public class MapPanel extends JPanel {
 		float divW = this.getParent().getWidth() / 2;
 
 		g.setColor(c);
-		// g.fillRect((-tempMapSize/2) * SIZE + divW + scrollCoordinateX,
-		// (-tempMapSize/2) * SIZE + divH + scrollCoordinateY, SIZE, SIZE);
-		// g.fillRect((tempMapSize/2-1) * SIZE + divW + scrollCoordinateX,
-		// (tempMapSize/2-1) * SIZE + divH +scrollCoordinateY, SIZE, SIZE);
 
 		for (int y = 0; y < map.getMapSize(); y++) {
 			for (int x = 0; x < map.getMapSize(); x++) {
@@ -145,39 +141,79 @@ public class MapPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Sets visibility of wolves in the simulation on or off.
+	 * @param b  value to set the visibility to.
+	 */
 	public void setWolvesVisibility(boolean b) {
 		VisibleWolves = b;
 	}
 
+	/**
+	 * Sets visibility of rabbits in the simulation on or off.
+	 * @param b  value to set the visibility to.
+	 */
 	public void setRabbitsVisibility(boolean b) {
 		VisibleRabbits = b;
 	}
 
+	/**
+	 * Sets visibility of grass in the simulation on or off.
+	 * @param b  value to set the visibility to.
+	 */
 	public void setGrassVisibility(boolean b) {
 		VisibleGrass = b;
 	}
 
+	/**
+	 * Sets zoom value.
+	 * @param b  value to set the zoom to.
+	 */
 	public void setZoom(int size) {
 		SIZE = size;
 	}
 
+	/**
+	 * Adds a MapNode to the display with the given coordinates.
+	 * @param x  position at which to add the MapNode.
+	 * @param y  position at which to add the MapNode.
+	 * @param mn  the node to add to the MapPanel display
+	 */
 	public void addNode(int x, int y, MapNode mn) {
 		nodes[x][y] = mn;
 	}
 
+	/**
+	 * Retrieves a reference to the map.
+	 * @return  the map reference held.
+	 */
 	public Map getMap() {
 		return map;
 	}
 
+	/**
+	 * Creates a new map to replace the old using the given parameters.
+	 * @param size  size of the new map.
+	 * @param seed  seed for the random generator.
+	 */
 	public void newMap(int size, int seed) {
 		map = new Map(size, seed, mainRef);
 		nodes = map.getMapArray();
 	}
 
-	public void setMain(RabbitsAndWolves mref) {
+	/**
+	 * Sets an UpdateListener. It is not used directly by the MapPanel, but passed on to the Map.
+	 * @param mref  the UpdateListener.
+	 */
+	public void setUpdateListener(UpdateListener mref) {
 		mainRef = mref;
 	}
 
+	/**
+	 * Moves the display inside the MapPanel. 
+	 * @param x  amount of steps to move horizontally.
+	 * @param y  amount of steps to move vertically.
+	 */
 	public void updateMousePosition(int x, int y) {
 		this.scrollCoordinateX += x;
 		this.scrollCoordinateY += y;
