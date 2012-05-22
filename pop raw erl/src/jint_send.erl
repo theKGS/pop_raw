@@ -38,6 +38,9 @@ send() ->
 			{sparta, Address} ! {7, A, B, C};
 		%% newWolf = 8
 		{newWolf, A, B, C} ->
-			{sparta, Address} ! {8, A, B, C}
+			{sparta, Address} ! {8, A, B, C};
+		%% wolfMove = 13
+		{wolfMove, A, B, C, D, E, F, G} ->
+			{sparta, Address} ! {13, A, B, C, D, E, F, G}
 	end,
 	send().

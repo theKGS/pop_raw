@@ -23,7 +23,7 @@
 
 newWolf({X, Y}, SenderPID) ->
 	PID = spawn(wolves, preloop, [#wolf{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
-	SenderPID ! {new, PID, X, Y}.
+	SenderPID ! {newWolf, PID, X, Y}.
 		
 
 
@@ -33,9 +33,13 @@ newWolf({X, Y}, SenderPID) ->
 %% 
 
 findNewSquare(Wolf, MapList, Length) ->
-	Dir = random:uniform(Length),
-	{_, X,Y}= lists:nth(Dir, MapList),
-	randw:move({wolf, Wolf, {X, Y}}).
+	if(Length =/= 0)->
+		  Dir = random:uniform(Length),
+		  {_, X,Y}= lists:nth(Dir, MapList),
+		  randw:move({wolf, Wolf, {X, Y}});
+	  true ->
+		  loop(Wolf)
+	end.
 
 %% 	PID = Rabbit#rabbit.spid,
 %% 	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, X, Y, X2, Y2},
@@ -57,13 +61,17 @@ eat(Wolf, Map, Length) ->
 	Dir = random:uniform(Length),
 	{_, X, Y} = lists:nth(Dir, Map),
 	PID = Wolf#wolf.spid,
-	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, Wolf#wolf.y, X,Y},
+	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, Wolf#wolf.y, X, Y},
 	receive
-		yes ->
-			Wolf2 = Wolf#wolf{x = X, y = Y},
-			loop(Wolf2);
-		no ->
-			loop(Wolf)
+		{yes} ->
+			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 20};
+%% 			loop(Wolf2);
+		{eatMove} ->
+			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger+1};
+%% 			loop(Wolf2);
+		{no} ->
+			Wolf#wolf{hunger = Wolf#wolf.hunger+1}
+%% 			loop(Wolf)
 	end.
 	
 
@@ -72,9 +80,11 @@ eat(Wolf, Map, Length) ->
 %% 
 
 getMap(Wolf) ->
-	Wolf#wolf.spid ! {wolfGet, self(), Wolf#wolf.x, Wolf#wolf.y},
+	Wolf#wolf.spid ! {wolfMap, self(), Wolf#wolf.x, Wolf#wolf.y},
 	receive
-		{map, List} ->
+		{death}->
+			exit(killed);
+		{wolfMap, List} ->
 			List
 	end.
 	
@@ -92,40 +102,83 @@ getMap(Wolf) ->
 %% 16 17 18 19 20
 %% 21 22 23 24 25
 
-listFolderHelper(Type, {AccEat, AccMove, X, Y, Wolf}, NextX, NextY) 
-  when Type =:= rabbit->
-	{[{Type,Wolf#wolf.x+X,Wolf#wolf.y+Y}]++AccEat, 
-			 AccMove,NextX, NextY,Wolf};
-listFolderHelper(Type, {AccEat, AccMove, X, Y, Wolf}, NextX, NextY) 
-  when Type =:= none->
-	{AccEat, 
-			 [{Type,Wolf#wolf.x+X,Wolf#wolf.y+Y}]++AccMove,
-			 NextX, NextY,Wolf};
-listFolderHelper(_, {AccEat, AccMove, _, _, Wolf}, NextX, NextY)->
-	{AccEat, AccMove, NextX, NextY, Wolf}.
+%%{Food Type}
+parseList(_, [], Acc, _)->
+	Acc;
+parseList(Wolf, [{_,Type}|Map], Acc, Index)->
+	if Type =/= wolf ->
+		   case Index of
+			   1->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x - 2, Wolf#wolf.y-2}]++Acc, Index+1);
+			   2->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x - 1, Wolf#wolf.y-2}]++Acc, Index+1);
+			   3->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x, Wolf#wolf.y-2}]++Acc, Index+1);
+			   4->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x +1, Wolf#wolf.y-2}]++Acc, Index+1);
+			   5->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x +2, Wolf#wolf.y-2}]++Acc, Index+1);
+			   6->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-2, Wolf#wolf.y-1}]++Acc, Index+1);
+			   7->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x -1, Wolf#wolf.y-1}]++Acc, Index+1);
+			   8->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x , Wolf#wolf.y-1}]++Acc, Index+1);
+			   9->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x +1, Wolf#wolf.y-1}]++Acc, Index+1);
+			   10->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x + 2, Wolf#wolf.y-1}]++Acc, Index+1);
+			   11->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-2, Wolf#wolf.y}]++Acc, Index+1);
+			   12->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-1, Wolf#wolf.y}]++Acc, Index+1);
+			   13->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x, Wolf#wolf.y}]++Acc, Index+1);
+			   14->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+1, Wolf#wolf.y}]++Acc, Index+1);
+			   15->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+2, Wolf#wolf.y}]++Acc, Index+1);
+			   16->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-2, Wolf#wolf.y+1}]++Acc, Index+1);
+			   17->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-1, Wolf#wolf.y+1}]++Acc, Index+1);
+			   18->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x, Wolf#wolf.y+1}]++Acc, Index+1);
+			   19->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+1, Wolf#wolf.y+1}]++Acc, Index+1);
+			   20->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+2, Wolf#wolf.y+1}]++Acc, Index+1);
+			   21->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-2, Wolf#wolf.y+2}]++Acc, Index+1);
+			   22->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-1, Wolf#wolf.y+2}]++Acc, Index+1);
+			   23->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x, Wolf#wolf.y+2}]++Acc, Index+1);
+			   24->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+1, Wolf#wolf.y+2}]++Acc, Index+1);
+			   25->
+				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+2, Wolf#wolf.y+2}]++Acc, Index+1)
+		   end;
+	   true->
+		   parseList(Wolf, Map, Acc, Index+1)
+	end.
 
-listFolder({_, Type}, {AccEat, AccMove, X, Y, Wolf}) 
-  when X =:= 2->
-	NextX = 0,
-	NextY = Y+1,
-	listFolderHelper(Type,{AccEat, AccMove, X, Y, Wolf}, NextX, NextY).
-
-
-parseList(Wolf, Map)->
-	lists:foldl(fun(Next,AccIn) -> listFolder(Next,AccIn) end, 
-				{[],[],-2,-2,Wolf}, Map).
-doTick(Wolf) ->
-	Wolf2 = randw:increaseAge({wolf, Wolf}),
-	{Eatable, Movable} = parseList(Wolf, getMap(Wolf)),
+doTick(Wolf) ->	
+	{Eatable, Movable} = lists:splitwith(fun({A,_,_})-> A =:= rabbit end, parseList(Wolf, getMap(Wolf), [], 1)),
+	
+	%%lists:foldl(fun(Next, Acc)->io:format("~w~n", [Next]),Acc end, 0, Movable),
 	ELength = lists:foldl(fun(_,AccIn)-> AccIn+1 end, 0, Eatable),
-	MLength = lists:foldl(fun(next, AccIn)->AccIn+1 end, 0, Movable),
-	Hunger = randw:isHungry(Wolf2),
+	MLength = lists:foldl(fun(_, AccIn)->AccIn+1 end, 0, Movable),
+	Hunger = randw:isHungry({wolf,Wolf}),
+	
 	if Hunger > 0,  ELength > 0 ->
+		   
 		   eat(Wolf, Eatable, ELength);
 	   MLength > 0 ->
-		   findNewSquare(Wolf, Movable, MLength);
+		   Wolf2 =  Wolf#wolf{hunger = Wolf#wolf.hunger+1},
+		   findNewSquare(Wolf2, Movable, MLength);
 	   true->
-		   loop(Wolf2)
+		   Wolf
 	end.
 
 %% 
@@ -134,7 +187,8 @@ doTick(Wolf) ->
 
 preloop(Wolf) ->
 	receive
-		start ->
+		{start} ->
+			
 			init(),
 			loop(Wolf)
 	end.
@@ -147,17 +201,19 @@ loop(Wolf) ->
 		{Sender, getCoords} ->
 			Sender ! {self(), {Wolf#wolf.x, Wolf#wolf.y}},
 			loop(Wolf);
-		{_, die} ->
+		{death} ->
 			exit(killed)
 		after 200 ->
- 			case randw:checkToDie({rabbit, Wolf}) of
+ 			case randw:checkToDie({wolf, Wolf}) of
  				true ->
 					PID = Wolf#wolf.spid,
 					PID ! {death, self(), Wolf#wolf.x, Wolf#wolf.y},
  					exit(died);
  				false ->
+					
  					Wolf2 = doTick(Wolf),
-					loop(Wolf2)
+					randw:increaseAge({wolf, Wolf}),
+					loop(doTick(Wolf2))
  			end
 	end.
 

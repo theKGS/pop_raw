@@ -25,7 +25,7 @@ increaseAge({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit{age = Creature#rabbit.age + 1};
 		wolf ->
-			Creature#wolf{age = Creature#wolf.age + 1}
+			Creature#wolf{age = Creature#wolf.age + 1, hunger = Creature#wolf.hunger-1}
 	end.
 
 %% 
@@ -38,21 +38,24 @@ move({Atom, Creature, {X, Y}}) ->
 			PID = Creature#rabbit.spid,
 			PID ! {move, self(), Creature#rabbit.age, Creature#rabbit.hunger, Creature#rabbit.x, Creature#rabbit.y, X, Y },
 			receive
-				yes ->
-					NewRabbit = Creature#rabbit{x = X, y = Y},
-					rabbits:loop(NewRabbit);
-				no ->
-					rabbits:loop(Creature)
+				{death}->
+					exit(killed);
+				{yes} ->
+					NewRabbit = Creature#rabbit{x = X, y = Y};
+				{no} ->
+					Creature
 			end;
 		wolf ->
 			PID = Creature#wolf.spid,
-			PID ! {move, self(), Creature#wolf.age, Creature#wolf.hunger, Creature#wolf.x, Creature#wolf.y, X, Y },
+			PID ! {wolfMove, self(), Creature#wolf.age, Creature#wolf.hunger, Creature#wolf.x, Creature#wolf.y, X, Y },
 			receive
-				yes ->
-					NewWolf = Creature#wolf{x = X, y = Y},
-					wolvess:loop(NewWolf);
-				no ->
-					wolves:loop(Creature)
+				{death}->
+					exit(killed);
+				{yes} ->
+					
+					NewWolf = Creature#wolf{x = X, y = Y};
+				{no} ->
+					Creature
 			end
 	end.
 
@@ -106,7 +109,7 @@ isTooOld({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit.age >= 70;
 		wolf ->
-			Creature#wolf.age >= 40
+			Creature#wolf.age >= 100
 	end.
 
 %% 
@@ -118,7 +121,7 @@ isTooHungry({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit.hunger >= 5;
 		wolf ->
-			Creature#wolf.hunger >= 10
+			Creature#wolf.hunger >= 20
 	end.
 
 %% 

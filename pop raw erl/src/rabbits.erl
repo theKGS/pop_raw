@@ -54,7 +54,9 @@ parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
 			   8->
 				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y+1}]++Acc);
 			   9->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y+1}]++Acc)
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y+1}]++Acc);
+			   Def->
+				   parseList(Rabbit,T,ListIndex+1,Acc)
 		   end;
 	   Type =/= none ->
 		   parseList(Rabbit, T, ListIndex+1, Acc)
@@ -82,10 +84,10 @@ maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
 
 findNewSquare(Rabbit, MapList) ->
 	{Length, PossibleSquares} = maxGrass(parseList(Rabbit, MapList, 1, []),[],0,0),
+	
 	if(Length =/= 0)->
 		Dir = random:uniform(Length),
 		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
-		io:format("sending move!!!!~n"),
 		randw:move({rabbit, Rabbit, {X2, Y2}});
 	  true ->
 		  loop(Rabbit)
@@ -125,9 +127,12 @@ eat(Rabbit) ->
 getMap(Rabbit) ->
 	Rabbit#rabbit.spid ! {rabbitMap, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
 	receive
+		{death}->
+			exit(killed);
 		{rabbitMap, List} ->
 			{Grass, Type} = lists:nth(5, List),
 			{Grass, Type, List}
+		
 	end.
 	
 %% 	PID = Rabbit#rabbit.spid,
@@ -144,9 +149,9 @@ doTick(Rabbit) ->
 	Rabbit2 = randw:increaseAge({rabbit, Rabbit}),
  	PID = Rabbit#rabbit.spid,
 	{Rabbit3, Ate, List} = eat(Rabbit2),
+	
 	if
 		Ate == gotFood ->
-			io:format("Sending EAT~n"),
  			PID ! {rabbitEat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
 			Rabbit3;
 		true ->
@@ -159,8 +164,10 @@ doTick(Rabbit) ->
 
 preloop(Rabbit) ->
 	receive	
-		Start ->
-			io:format("Starting rabbit~n"),
+		{death}->
+			exit(killed);
+		{start} ->
+
 			init(),
 			loop(Rabbit)
 	end.
@@ -173,7 +180,7 @@ loop(Rabbit) ->
 		{Sender, getCoords} ->
 			Sender ! {self(), {Rabbit#rabbit.x, Rabbit#rabbit.y}},
 			loop(Rabbit);
-		{_, die} ->
+		{death} ->
 			exit(killed)
 		after 200 ->
  			case randw:checkToDie({rabbit, Rabbit}) of

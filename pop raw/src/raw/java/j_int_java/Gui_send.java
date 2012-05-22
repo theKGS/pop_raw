@@ -60,8 +60,8 @@ public class Gui_send implements Runnable{
 			SendMessage msg = (SendMessage) msgReceive;
 			int sType = msg.getType();
 			MapNode[] map = msg.getMap();
-			OtpErlangObject[] list = new OtpErlangObject[9];
-			for (int i = 0; i < 9; i++) {
+			OtpErlangObject[] list = new OtpErlangObject[map.length];
+			for (int i = 0; i < map.length; i++) {
 				if (map[i] != null) {
 					OtpErlangObject[] tuple = new OtpErlangObject[2];
 					tuple[0] = new OtpErlangInt(map[i].getGrassLevel());
