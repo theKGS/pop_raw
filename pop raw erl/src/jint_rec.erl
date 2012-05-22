@@ -34,5 +34,8 @@ server(SendPid) ->
 		%% 11 = start
 		{11, Pid} ->
 			Pid ! {start},
+			server(SendPid);
+		{12, Pid} ->
+			Pid ! {eatMove},
 			server(SendPid)
 	end.
