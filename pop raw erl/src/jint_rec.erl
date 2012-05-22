@@ -19,6 +19,10 @@ server(SendPid) ->
 		{0,Pid, B} ->
 			Pid ! {rabbitMap, B},
 			server(SendPid);
+		%% 5 = death
+		{5,Pid} ->
+			Pid ! {death},
+			server(SendPid);
 		%% 0 = wolfMap
 		{7,Pid, B} ->
 			Pid ! {wolfMap, B},
