@@ -9,7 +9,7 @@ public class FIFO {
 	private Node last;
 	
 	/**
-	 * Constructor, creates an empty queue.
+	 * Initializes the queue in an empty state.
 	 */
 	public FIFO() {
 		this.first = null;
@@ -39,7 +39,7 @@ public class FIFO {
 	}
 	/**
 	 * Puts a message in the queue.
-	 * @param Message m has to be of type MessageSuper.
+	 * @param m Message m has to be of type MessageSuper.
 	 */
 	public synchronized void put(MessageSuper m) {
 		Node ny = new Node(m, null);
@@ -65,8 +65,8 @@ public class FIFO {
 		
 		/**
 		 * Constructor, takes a MessageSuper and a Node.
-		 * @param m, MessageSuper
-		 * @param next, Node
+		 * @param m MessageSuper
+		 * @param next Node
 		 */
 		public Node(MessageSuper m, Node next) {
 			this.m = m;
@@ -74,7 +74,7 @@ public class FIFO {
 		}
 		/**
 		 * Sets a nodes next variable to n. 
-		 * @param n, the Node to set the next variable to.
+		 * @param n The Node to set the next variable to.
 		 */
 		public void setNext(Node n) {
 			this.next = n;
