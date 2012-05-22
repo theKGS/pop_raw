@@ -5,7 +5,9 @@ import raw.java.map.Map;
 import raw.java.map.MapNode;
 
 /**
- * 
+ * A application that runs a primitive simulation of rabbits & wolves wherein the 
+ * rabbits will eat grass and propagate, the wolves will eat the rabbits and the 
+ * grass will grow independently.
  * @author andreas
  *
  */
@@ -13,13 +15,14 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
 	static Map map;
 	private static RabbitsAndWolves se;
 	private static MapPanel mapDisplayPanel;
-    private JTextField textFieldSize;
-    private JTextField textFieldSeed;
+    private JTextField textFieldSize; // Text field for map size input
+    private JTextField textFieldSeed; // Text field for seed input
     
 	/**
 	 * The Swing thread
 	 */
-	@Override public void run() {
+	@Override
+	public void run() {
         // Create the window
         JFrame controlFrame = new JFrame ("Rabbits & Wolves");
         JFrame mapFrame = new JFrame ("Map");
@@ -33,26 +36,6 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         // Sets the behavior for when the window is closed
         controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mapFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                
-      /*	// dialog
-        JFrame startupFrame = new JFrame("This JFrame pwns all");
-        startupFrame.setLayout(null);
-        
-        JLabel dLabel = new JLabel("Set size and random seed");
-        dLabel.setBounds(10,10,220,10);
-        
-        JButton dOk = new JButton();
-        dOk.setBounds(10,30,60,20);
-        
-        startupFrame.getContentPane().add(dLabel);
-        startupFrame.getContentPane().add(dOk);
-        
-        startupFrame.setSize(300, 140);
-        startupFrame.setVisible(true);
-        startupFrame.setResizable(false);
-        mapFrame.setEnabled(false);
-        controlFrame.setEnabled(false);
-        startupFrame.setAlwaysOnTop(true);*/
         
         /*
          * Start, stop, reset -buttons
@@ -82,9 +65,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         zoomSlider.setValue(7);
         
         mapDisplayPanel.setBounds(0,0,400,400);
-        
         mapFrame.add(mapDisplayPanel);
-       // mapFrame.pack();
         
         /*
          * Text fields
