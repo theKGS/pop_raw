@@ -19,11 +19,11 @@ send() ->
 		{rabbitMap, A, B, C} ->
 			{sparta, Address} ! {0, A, B, C};
 		%% rabbitEat = 1
-		{rabbitEat, A, B, C} ->
-			{sparta, Address} ! {1, A, B, C};
+		{rabbitEat,A,B,C,D,E} ->
+			{sparta, Address} ! {1, A, B, C, D, E};
 		%% move = 2
-		{move, A, B, C, D, E} ->
-			{sparta, Address} ! {2, A, B, C, D, E};
+		{move, A, B, C, D, E, F, G} ->
+			{sparta, Address} ! {2, A, B, C, D, E, F, G};
 		%% newRabbit = 4
 		{newRabbit, A, B, C} ->
 			{sparta, Address} ! {4, A, B, C};
@@ -31,8 +31,8 @@ send() ->
 		{death, A, B, C} ->
 			{sparta, Address} ! {5, A, B, C};
 		%% wolfEat = 6
-		{wolfEat, A, B, C} ->
-			{sparta, Address} ! {6, A, B, C};
+		{wolfEat, A, B, C, D, E, F, G} ->
+			{sparta, Address} ! {6, A, B, C, D, E, F, G};
 		%% wolfMap = 7
 		{wolfMap, A, B, C} ->
 			{sparta, Address} ! {7, A, B, C};
