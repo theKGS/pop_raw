@@ -75,19 +75,6 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         tButton.setLocation(10, 10);
         tButton.setSize(40, 40);
         
-        /*
-         * Updates-per-minute slider
-         */
-        JSlider jSl = new JSlider();
-        jSl.setLabelTable(jSl.createStandardLabels(30));
-        jSl.setPaintLabels(true);
-        jSl.setPaintTicks(true);
-        jSl.setBounds(0, 70, 200, 70);        
-        jSl.setMaximum(120);
-        jSl.setMinimum(0);
-        jSl.setMajorTickSpacing(10);
-        jSl.setPaintTicks(true);
-        
         JSlider zoomSlider = new JSlider();
         zoomSlider.setBounds(0, 200, 200, 60);
         zoomSlider.setMaximum(64);
@@ -135,7 +122,6 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         controlFrame.getContentPane().add(rawButtonStart);
         controlFrame.getContentPane().add(rawButtonStop);
         controlFrame.getContentPane().add(rawButtonReset);
-        controlFrame.getContentPane().add(jSl);
         controlFrame.getContentPane().add(zoomSlider);
         
         controlFrame.getContentPane().add(cBoxWolves);
@@ -148,7 +134,6 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         rawButtonStart.addActionListener(new AL_StartButton(mapDisplayPanel));
         rawButtonStop.addActionListener(new AL_StopButton(mapDisplayPanel));
         rawButtonReset.addActionListener(new AL_InitButton(mapDisplayPanel));
-        jSl.addChangeListener(new AL_TimeSlider(mapDisplayPanel, jSl));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
         cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
