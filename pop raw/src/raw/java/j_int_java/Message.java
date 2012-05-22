@@ -14,7 +14,7 @@ public class Message extends MessageSuper {
 		this.values = args;
 	}
 	
-	public Message(int type, String mail, OtpErlangPid pid, int[] args){
+	public Message(int type, int mail, OtpErlangPid pid, int[] args){
 		super(type, mail, pid);
 		this.values = args;
 	}

@@ -4,16 +4,16 @@ import com.ericsson.otp.erlang.OtpErlangPid;
 
 public class MessageSuper {
 	private final int type;
-	private final String mailbox; 
+	private final int mailbox; 
 	private final OtpErlangPid pid;
 	
 	public MessageSuper(int type, OtpErlangPid pid) {
 		this.type = type;
-		this.mailbox = null;
+		this.mailbox = -1;
 		this.pid = pid;
 	}
 	
-	public MessageSuper(int type,String mailbox, OtpErlangPid pid) {
+	public MessageSuper(int type,int mailbox, OtpErlangPid pid) {
 		this.type = type;
 		this.mailbox = mailbox;
 		this.pid = pid;
@@ -25,5 +25,9 @@ public class MessageSuper {
 	
 	public int getType() {
 		return this.type;
+	}
+	
+	public int getMailbox() {
+		return this.mailbox;
 	}
 }
