@@ -9,12 +9,12 @@ public class Message extends MessageSuper {
 		return values;
 	}
 
-	public Message(String type, OtpErlangPid pid, int[] args){
+	public Message(int type, OtpErlangPid pid, int[] args){
 		super(type, pid);
 		this.values = args;
 	}
 	
-	public Message(String type, String mail, OtpErlangPid pid, int[] args){
+	public Message(int type, String mail, OtpErlangPid pid, int[] args){
 		super(type, mail, pid);
 		this.values = args;
 	}
