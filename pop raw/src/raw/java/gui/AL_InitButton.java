@@ -7,10 +7,13 @@ import raw.java.map.Map;
 /*
  * Listener for the reset button
  */
-
 public class AL_InitButton implements ActionListener{	
 	private MapPanel mPanel;
 	
+	/**
+	 * Constructor. Is passed a reference to a MapPanel.
+	 * @param mp  the MapPanel the check box will be linked to.
+	 */
 	public AL_InitButton(MapPanel mp) {
 		mPanel = mp;
 	}
@@ -24,6 +27,5 @@ public class AL_InitButton implements ActionListener{
 		//mPanel.getMap().simulationReset();
 		mPanel.newMap(80, 99);
 		mPanel.repaint();
-		System.out.println("RESET");
 	}
 }

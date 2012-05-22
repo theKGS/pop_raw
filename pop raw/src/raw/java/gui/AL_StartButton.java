@@ -21,6 +21,5 @@ public class AL_StartButton implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		mPanel.getMap().simulationStart();
-		System.out.println("START");
 	}
 }
