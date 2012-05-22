@@ -30,6 +30,10 @@ public class Map extends Thread {
 	public static final int DEATH = 5;
 	public static final int WOLFEAT = 6;
 	public static final int WOLFMAP = 7;
+	public static final int NEWWOLF = 8;
+	public static final int YES = 9;
+	public static final int NO = 10;
+	public static final int START = 11;
 
 	private int mapSize = 0;
 	private int amountOfGrass = 0;
@@ -42,6 +46,7 @@ public class Map extends Thread {
 	private int maxRabbitAge = 0;
 	private int rappitReprAge = 0;
 	private int rabbitReprSuccessProb = 0;
+	
 
 	MapNode[][] mapArray;
 	private boolean running = true;
@@ -107,7 +112,7 @@ public class Map extends Thread {
 					type %= 3;
 				if (type == MapNode.RABBIT) {
 					System.out.println("Sending new: " + i + ", " + j);
-					mErlCom.send(new Message("newRabbit", null, new int[] { i,
+					mErlCom.send(new Message(Map.NEW, null, new int[] { i,
 							j }));
 
 					MessageSuper msg = mErlCom.receive();
@@ -124,7 +129,7 @@ public class Map extends Thread {
 
 		}
 		for (OtpErlangPid pid : startReceivers) {
-			mErlCom.send(new Message("start", pid, null));
+			mErlCom.send(new Message(Map.START, pid, null));
 		}
 
 		// mFakeMsgSender = new FakeMsgSender(mErlCom, this);
@@ -176,26 +181,28 @@ public class Map extends Thread {
 	 * Starts the correct Runnable according to the current message.
 	 */
 	private void handleNextMessage() {
+		
 		nextMessage = mErlCom.receive();
-		if (nextMessage.getType().equalsIgnoreCase("get")) {
+		System.out.println("Got message TYPE: " + nextMessage.getType());
+		if (nextMessage.getType()== Map.RABBITMAP) {
 			mMsgThrExec.execute(messagePool.getMapRunnable(
 					(Message) nextMessage, mErlCom, this, mUpdtLis));
-		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
+		} else if (nextMessage.getType() == Map.MOVE) {
 			mMsgThrExec.execute(messagePool.getMoveRunnable(
 					(Message) nextMessage, mErlCom, this, mUpdtLis));
-		} else if (nextMessage.getType().equalsIgnoreCase("eat")) {
+		} else if (nextMessage.getType() == Map.RABBITEAT) {
 			mMsgThrExec.execute(messagePool.getEatRunnable(
 					(Message) nextMessage, mErlCom, this, mUpdtLis));
-		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
+		} else if (nextMessage.getType() == Map.STOP) {
 			System.out.println("stopping");
 			this.running = false;
-		} else if (nextMessage.getType().equalsIgnoreCase("new")) {
+		} else if (nextMessage.getType() == Map.NEW) {
 			int[] coords = ((Message) nextMessage).getValues();
 			synchronized (mapArray[coords[0]][coords[1]]) {
 				mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
-				mErlCom.send(new Message("start", nextMessage.getPid(), null));
+				mErlCom.send(new Message(Map.START, nextMessage.getPid(), null));
 			}
-		} else if (nextMessage.getType().equalsIgnoreCase("death")) {
+		} else if (nextMessage.getType() == Map.DEATH) {
 
 			int[] coords = ((Message) nextMessage).getValues();
 			synchronized (mapArray[coords[0]][coords[1]]) {

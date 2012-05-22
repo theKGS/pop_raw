@@ -24,7 +24,7 @@
 
 newRabbit({X, Y}, SenderPID) ->
 	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
-	SenderPID ! {new, PID, X, Y}.
+	SenderPID ! {newRabbit, PID, X, Y}.
 		
 
 
@@ -121,9 +121,9 @@ eat(Rabbit) ->
 %% 
 
 getMap(Rabbit) ->
-	Rabbit#rabbit.spid ! {get, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
+	Rabbit#rabbit.spid ! {rabbitMap, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
 	receive
-		{map, List} ->
+		{rabbitMap, List} ->
 			{Grass, Type} = lists:nth(5, List),
 			{Grass, Type, List}
 	end.
@@ -144,7 +144,7 @@ doTick(Rabbit) ->
 	{Rabbit3, Ate, List} = eat(Rabbit2),
 	if
 		Ate == gotFood ->
- 			PID ! {eat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
+ 			PID ! {rabbitEat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
 			Rabbit3;
 		true ->
 			findNewSquare(Rabbit3, List)

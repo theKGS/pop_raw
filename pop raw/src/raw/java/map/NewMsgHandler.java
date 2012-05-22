@@ -22,7 +22,7 @@ public class NewMsgHandler extends MsgHandler implements Runnable {
 	public void run() {
 		synchronized (map.getMapArray()[coords[0]][coords[1]]) {
 			map.getMapArray()[coords[0]][coords[1]].setPid(pid);
-			mErlCom.send(new Message("start", pid, null));
+			mErlCom.send(new Message(Map.START, pid, null));
 		}
 		msgPool.AddNewToStack(this);
 	}

@@ -137,9 +137,9 @@ public class MsgHandler {
 				if (r > 300) {
 					map.getMapArray()[newSpot[0]][newSpot[1]].setType(mateType);
 					if (mateType == MapNode.RABBIT) {
-						mErlCom.send(new Message("newRabbit", null, newSpot));
+						mErlCom.send(new Message(Map.NEW, null, newSpot));
 					} else {
-						mErlCom.send(new Message("newWolf", null, newSpot));
+						mErlCom.send(new Message(Map.NEWWOLF, null, newSpot));
 					}
 				}
 

@@ -32,15 +32,10 @@ newWolf({X, Y}, SenderPID) ->
 %% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
 %% 
 
-findNewSquare(Wolf, MapList) ->
-	{Length, PossibleSquares} = maxGrass(parseList(Wolf, MapList, 1, []),[],0,0),
-	if(Length =/= 0)->
-		Dir = random:uniform(Length),
-		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
-		randw:move({wolf, Wolf, {X2, Y2}});
-	  true ->
-		  loop(Wolf)
-	end.
+findNewSquare(Wolf, MapList, Length) ->
+	Dir = random:uniform(Length),
+	{_, X,Y}= lists:nth(Dir, MapList),
+	randw:move({wolf, Wolf, {X, Y}}).
 
 %% 	PID = Rabbit#rabbit.spid,
 %% 	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, X, Y, X2, Y2},
@@ -55,23 +50,20 @@ findNewSquare(Wolf, MapList) ->
 %% 
 %% 
 %% 
-foodAvailible(MapLis, Wolf)->
-	tbi.
 
 
-eat(Wolf, Map) ->
-	
-	
-	
-	
-	{Grass, _, List} = getMap(Wolf),
-%% 	Grass = 5,
-%% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
-	case randw:isHungry({wolf, Wolf}) and (Grass > 0) of
-		true ->
-			{Wolf#wolf{hunger = Wolf#wolf.hunger - 1}, gotFood, List};
-		false ->
-			{Wolf#wolf{hunger = Wolf#wolf.hunger + 1}, noFood, List}
+
+eat(Wolf, Map, Length) ->
+	Dir = random:uniform(Length),
+	{_, X, Y} = lists:nth(Dir, Map),
+	PID = Wolf#wolf.spid,
+	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, Wolf#wolf.y, X,Y},
+	receive
+		yes ->
+			Wolf2 = Wolf#wolf{x = X, y = Y},
+			loop(Wolf2);
+		no ->
+			loop(Wolf)
 	end.
 	
 
@@ -109,106 +101,31 @@ listFolderHelper(Type, {AccEat, AccMove, X, Y, Wolf}, NextX, NextY)
 	{AccEat, 
 			 [{Type,Wolf#wolf.x+X,Wolf#wolf.y+Y}]++AccMove,
 			 NextX, NextY,Wolf};
-listFolderHelper(Type, {AccEat, AccMove, X, Y, Wolf}, NextX, NextY)->
-	{AccEat, AccMove, X, Y, Wolf}.
+listFolderHelper(_, {AccEat, AccMove, _, _, Wolf}, NextX, NextY)->
+	{AccEat, AccMove, NextX, NextY, Wolf}.
 
 listFolder({_, Type}, {AccEat, AccMove, X, Y, Wolf}) 
   when X =:= 2->
 	NextX = 0,
 	NextY = Y+1,
-	case Type of
-		rabbit ->
-			
-		none ->
-			
-	end.
+	listFolderHelper(Type,{AccEat, AccMove, X, Y, Wolf}, NextX, NextY).
 
 
-parseList(_,[],_,Acc)->
-	Acc;
-parseList(Wolf, [{_, Type}|T], ListIndex, AccEat, AccMove) ->
-	case ListIndex of
-		1->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x-2,Wolf#wolf.y-2},
-									AccEat, AccMove, Type),
-			parseList(
-			  Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		2->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x-1,Wolf#wolf.y-2},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		3->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x,Wolf#wolf.y-2},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		4->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x+1,Wolf#wolf.y-2},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		5->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x+2,Wolf#wolf.y-2},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		6->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x-2,Wolf#wolf.y-1},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		7->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x-1,Wolf#wolf.y-1},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		8->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x,Wolf#wolf.y-1},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		9->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x+1,Wolf#wolf.y-1},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		10->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x+2,Wolf#wolf.y-1},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-		11->
-			{NewAccEat, NewAccMove} = parseListHelper(
-									{Type,Wolf#wolf.x-2,Wolf#wolf.y},
-									AccEat, AccMove, Type),
-		   	parseList(
-			 Wolf,T,ListIndex+1,NewAccEat, NewAccMove,  Type);
-			
-
-	 
-	   end.
+parseList(Wolf, Map)->
+	lists:foldl(fun(Next,AccIn) -> listFolder(Next,AccIn) end, 
+				{[],[],-2,-2,Wolf}, Map).
 doTick(Wolf) ->
 	Wolf2 = randw:increaseAge({wolf, Wolf}),
- 	PID = Wolf#wolf.spid,
-	Map = getMap(Wolf),
-	{Wolf3, Ate, List} = eat(Wolf2, Map),
-	if
-		Ate == gotFood ->
- 			PID ! {wolfEat, self(), Wolf3#wolf.age, Wolf3#wolf.hunger, Wolf3#wolf.x, Wolf3#wolf.y},
-			Wolf3;
-		true ->
-			findNewSquare(Wolf3, List)
+	{Eatable, Movable} = parseList(Wolf, getMap(Wolf)),
+	ELength = lists:foldl(fun(_,AccIn)-> AccIn+1 end, 0, Eatable),
+	MLength = lists:foldl(fun(next, AccIn)->AccIn+1 end, 0, Movable),
+	Hunger = randw:isHungry(Wolf2),
+	if Hunger > 0,  ELength > 0 ->
+		   eat(Wolf, Eatable, ELength);
+	   MLength > 0 ->
+		   findNewSquare(Wolf, Movable, MLength);
+	   true->
+		   loop(Wolf2)
 	end.
 
 %% 

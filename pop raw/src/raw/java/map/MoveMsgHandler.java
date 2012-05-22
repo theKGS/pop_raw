@@ -30,7 +30,7 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 				|| coords[Y2] >= map.getMapSize()) {
 			// System.out.println("MoveTarget coords:" + coords[X2] + " , " +
 			// coords[Y2]);
-			mErlCom.send(new Message("no", pid, null));
+			mErlCom.send(new Message(Map.NO, pid, null));
 		} else {
 
 			mate();
@@ -74,13 +74,13 @@ public class MoveMsgHandler extends MsgHandler implements Runnable {
 		MapNode currentNode = map.getMapArray()[coords[X1]][coords[Y1]];
 		MapNode targetNode = map.getMapArray()[coords[X2]][coords[Y2]];
 		if (targetNode.getType() != MapNode.NONE) {
-			mErlCom.send(new Message("no", pid, null));
+			mErlCom.send(new Message(Map.NO, pid, null));
 		} else {
 			targetNode.setPid(currentNode.getPid());
 			targetNode.setType(currentNode.getType());
 			currentNode.setPid(null);
 			currentNode.setType(MapNode.NONE);
-			mErlCom.send(new Message("yes", pid, null));
+			mErlCom.send(new Message(Map.YES, pid, null));
 
 		}
 		// System.out.println("Move handled");

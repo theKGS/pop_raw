@@ -37,7 +37,7 @@ public class MapMsgHandler extends MsgHandler implements Runnable {
 				index++;
 			}
 		}
-		mErlCom.send(new SendMessage("map", pid, squares));
+		mErlCom.send(new SendMessage(Map.RABBITMAP, pid, squares));
 		msgPool.AddMapToStack(this);
 	}
 }
