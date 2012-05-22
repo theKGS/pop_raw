@@ -1,7 +1,5 @@
 package raw.java.j_int_java;
 
-import java.util.*;
-
 //Interface List<Message>;
 /**
  * FIFO queue.

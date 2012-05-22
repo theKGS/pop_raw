@@ -21,6 +21,7 @@ public class Map extends Thread {
 	public void setSimulationSpeed(int simulationSpeed) {
 		this.simulationSpeed = simulationSpeed;
 	}
+
 	public static final int RABBITMAP = 0;
 	public static final int RABBITEAT = 1;
 	public static final int MOVE = 2;
@@ -29,8 +30,7 @@ public class Map extends Thread {
 	public static final int DEATH = 5;
 	public static final int WOLFEAT = 6;
 	public static final int WOLFMAP = 7;
-	
-	
+
 	private int mapSize = 0;
 	private int amountOfGrass = 0;
 	private int speedOfGrassGrowth = 0;
@@ -53,7 +53,7 @@ public class Map extends Thread {
 	private UpdateListener mUpdtLis;
 	private Random r;
 	private long Seed;
-//	private FakeMsgSender mFakeMsgSender;
+	// private FakeMsgSender mFakeMsgSender;
 	private GrassGrower grassGrower;
 	private MessagePool messagePool;
 
@@ -178,11 +178,14 @@ public class Map extends Thread {
 	private void handleNextMessage() {
 		nextMessage = mErlCom.receive();
 		if (nextMessage.getType().equalsIgnoreCase("get")) {
-			mMsgThrExec.execute(messagePool.getMapRunnable((Message)nextMessage, mErlCom, this, mUpdtLis));
+			mMsgThrExec.execute(messagePool.getMapRunnable(
+					(Message) nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("move")) {
-			mMsgThrExec.execute(messagePool.getMoveRunnable((Message)nextMessage, mErlCom, this, mUpdtLis));
+			mMsgThrExec.execute(messagePool.getMoveRunnable(
+					(Message) nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("eat")) {
-			mMsgThrExec.execute(messagePool.getEatRunnable((Message)nextMessage, mErlCom, this, mUpdtLis));
+			mMsgThrExec.execute(messagePool.getEatRunnable(
+					(Message) nextMessage, mErlCom, this, mUpdtLis));
 		} else if (nextMessage.getType().equalsIgnoreCase("stop")) {
 			System.out.println("stopping");
 			this.running = false;
@@ -203,18 +206,21 @@ public class Map extends Thread {
 			}
 		}
 	}
+
 	/**
 	 * Starts the simulation
 	 */
 	public void simulationStart() {
 		paused = false;
 	}
+
 	/**
 	 * Stops the simulation
 	 */
 	public void simulationStop() {
 		paused = true;
 	}
+
 	/**
 	 * Resets the simulation
 	 */

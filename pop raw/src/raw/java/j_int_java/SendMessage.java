@@ -11,7 +11,7 @@ public class SendMessage extends MessageSuper{
 		this.map = map;
 	}
 	
-	public SendMessage(int type,String mail, OtpErlangPid pid, MapNode[] map){
+	public SendMessage(int type, int mail, OtpErlangPid pid, MapNode[] map){
 		super(type, mail, pid);
 		this.map = map;
 	}
