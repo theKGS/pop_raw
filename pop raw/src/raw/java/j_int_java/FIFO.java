@@ -1,24 +1,23 @@
 package raw.java.j_int_java;
 
-//Interface List<Message>;
 /**
  * FIFO queue.
- * @author 
- *
+ * @author group 8
  */
 public class FIFO {
 	private Node first;
 	private Node last;
+	
 	/**
-	 * Konstruktorn som g�r ingenting.
+	 * Constructor, creates an empty queue.
 	 */
 	public FIFO() {
 		this.first = null;
 		this.last = null;
 	}
 	/**
-	 * Plockar ut f�rsta element ur k�n och returnera str�ngen.
-	 * @return str�ngen i f�rsta elementet om det finns annars null.
+	 * A method to return the first message from the queue.
+	 * @return Returns the first message from the queue.
 	 */
 	public synchronized MessageSuper get() {
 		while (this.first == null) {
@@ -39,8 +38,8 @@ public class FIFO {
 
 	}
 	/**
-	 * Tar ett str�ng och skapar en Node i listan.
-	 * @param m som ett str�ng
+	 * Puts a message in the queue.
+	 * @param Message m has to be of type MessageSuper.
 	 */
 	public synchronized void put(MessageSuper m) {
 		Node ny = new Node(m, null);
@@ -56,39 +55,40 @@ public class FIFO {
 	}
 
 	/**
-	 * Subklassen Node som hanterar alla noder.
-	 * @author  Athanasios, Hassan(Ramin), Daniel, Eric, Marcus
+	 * Subclass Node, not reachable from outside FIFO. Handles the Nodes in the list.
+	 * @author  group 8
 	 *
 	 */
 	private class Node {
 		private MessageSuper m;
 		private Node next;
+		
 		/**
-		 * Konstruktorn Node tar en str�ng m och en Node next.
-		 * @param m
-		 * @param next
+		 * Constructor, takes a MessageSuper and a Node.
+		 * @param m, MessageSuper
+		 * @param next, Node
 		 */
 		public Node(MessageSuper m, Node next) {
 			this.m = m;
 			this.next = next;
 		}
 		/**
-		 * S�tter en nodes next variabel till Noden n. 
-		 * @param n
+		 * Sets a nodes next variable to n. 
+		 * @param n, the Node to set the next variable to.
 		 */
 		public void setNext(Node n) {
 			this.next = n;
 		}
 		/**
-		 * Returnera next pekaren.
-		 * @return next pekaren.
+		 * Gets a Nodes next value.
+		 * @return The nodes next value.
 		 */
 		public Node getNext() {
 			return this.next;
 		}
 		/**
-		 * Returnera medelandet ur en nod
-		 * @return medelandet ur en nod
+		 * Returns the message from a node
+		 * @return The message from a node.
 		 */
 		public MessageSuper getMsg(){
 			return this.m;
