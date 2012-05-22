@@ -21,6 +21,7 @@ public class AL_CBL_Grass implements ItemListener {
 
 	/**
 	 * Tells the MapPanel instance to hide/unhide grass on the display.
+	 * @param e an event passed by the ItemSelectable.
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {		

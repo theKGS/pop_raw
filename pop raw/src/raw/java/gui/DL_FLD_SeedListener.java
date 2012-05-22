@@ -3,6 +3,11 @@ package raw.java.gui;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+/**
+ * 
+ * @author andreas
+ *
+ */
 public class DL_FLD_SeedListener implements DocumentListener {
 
 	@Override

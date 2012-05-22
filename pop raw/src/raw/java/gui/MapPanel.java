@@ -33,6 +33,9 @@ public class MapPanel extends JPanel {
 	private MapNode[][] nodes;
 	private RabbitsAndWolves mainRef;
 
+	/**
+	 * Constructor.
+	 */
 	public MapPanel() {
 		/*
 		 * try { //IconWolf = ImageIO.read(new File("Dragon3Headed.PNG"));
@@ -48,7 +51,8 @@ public class MapPanel extends JPanel {
 	}
 
 	/**
-	 * This draws the graphics
+	 * Draws the component.
+	 * @param g the Graphics object to use for drawing.
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
