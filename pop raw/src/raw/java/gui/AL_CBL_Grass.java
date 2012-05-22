@@ -24,8 +24,6 @@ public class AL_CBL_Grass implements ItemListener {
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {		
-		System.out.println("Grass button pressed");
-		
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				mPanel.setGrassVisibility(false);
 			} else {

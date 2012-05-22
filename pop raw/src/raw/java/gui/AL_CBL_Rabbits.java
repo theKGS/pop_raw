@@ -24,8 +24,6 @@ public class AL_CBL_Rabbits implements ItemListener {
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {		
-		System.out.println("Rabbit button pressed");
-		
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				mPanel.setRabbitsVisibility(false);
 			} else {

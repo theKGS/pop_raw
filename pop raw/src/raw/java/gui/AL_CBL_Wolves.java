@@ -24,7 +24,6 @@ public class AL_CBL_Wolves implements ItemListener {
 	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {		
-		System.out.println("ButtonChange");
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				mPanel.setWolvesVisibility(false);
 			} else {
