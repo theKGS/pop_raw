@@ -9,9 +9,9 @@ import raw.java.map.MapNode;
  * @author andreas
  *
  */
-public class Main implements Runnable, UpdateListener{    
+public class RabbitsAndWolves implements Runnable, UpdateListener{    
 	static Map map;
-	private static Main se;
+	private static RabbitsAndWolves se;
 	private static MapPanel mapDisplayPanel;
     private JTextField textFieldSize;
     private JTextField textFieldSeed;
@@ -53,8 +53,6 @@ public class Main implements Runnable, UpdateListener{
         mapFrame.setEnabled(false);
         controlFrame.setEnabled(false);
         startupFrame.setAlwaysOnTop(true);*/
-        
-        
         
         /*
          * Start, stop, reset -buttons
@@ -169,11 +167,11 @@ public class Main implements Runnable, UpdateListener{
     }
 
 	/**
-	 * Main method
+	 * Main method. Launches the application. Arguments are ignored.
 	 * @param args
 	 */
     public static void main(String[] args) {
-    	se = new Main();    	
+    	se = new RabbitsAndWolves();    	
     	
         mapDisplayPanel = new MapPanel();
         mapDisplayPanel.setMain(se);
