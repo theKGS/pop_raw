@@ -6,12 +6,12 @@ import raw.java.map.MapNode;
 public class SendMessage extends MessageSuper{
 	private MapNode[] map;
 	
-	public SendMessage(String type, OtpErlangPid pid, MapNode[] map){
+	public SendMessage(int type, OtpErlangPid pid, MapNode[] map){
 		super(type, pid);
 		this.map = map;
 	}
 	
-	public SendMessage(String type,String mail, OtpErlangPid pid, MapNode[] map){
+	public SendMessage(int type,String mail, OtpErlangPid pid, MapNode[] map){
 		super(type, mail, pid);
 		this.map = map;
 	}
