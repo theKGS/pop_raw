@@ -141,7 +141,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
     	
         mapDisplayPanel = new MapPanel();
         mapDisplayPanel.setUpdateListener(se);
-    	mapDisplayPanel.newMap(100,32);
+    	mapDisplayPanel.newMap(25,32);
     	mapDisplayPanel.getMap().start();
         SwingUtilities.invokeLater(se);
     }
