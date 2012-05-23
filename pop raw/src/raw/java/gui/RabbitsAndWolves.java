@@ -75,7 +75,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         textFieldSize.setBounds(16, 260, 64, 24);
         textFieldSeed.setBounds(116, 260, 64, 24);
         textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
-        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener());
+        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener(mapDisplayPanel));
         
         controlFrame.getContentPane().add(textFieldSize);
         controlFrame.getContentPane().add(textFieldSeed);
@@ -114,7 +114,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
          */
         rawButtonStart.addActionListener(new AL_StartButton(mapDisplayPanel));
         rawButtonStop.addActionListener(new AL_StopButton(mapDisplayPanel));
-        rawButtonReset.addActionListener(new AL_InitButton(mapDisplayPanel));
+        rawButtonReset.addActionListener(new AL_ResetButton(mapDisplayPanel));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
         cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
@@ -141,7 +141,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
     	
         mapDisplayPanel = new MapPanel();
         mapDisplayPanel.setUpdateListener(se);
-    	mapDisplayPanel.newMap(100,32);
+    	mapDisplayPanel.newMap(25,32);
     	mapDisplayPanel.getMap().start();
         SwingUtilities.invokeLater(se);
     }

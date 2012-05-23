@@ -4,6 +4,9 @@ import java.io.IOException;
 import raw.java.map.MapNode;
 import com.ericsson.otp.erlang.*;
 
+/**
+ * @author group 8
+ */
 public class Gui_send implements Runnable{
 	private FIFO queue;
 	private String nodeName = "rawsender";
@@ -11,6 +14,12 @@ public class Gui_send implements Runnable{
 	private OtpMbox mbox;
 	private OtpErlangPid pid;
 
+	/**
+	 * Makes a Gui_send object. This will loop over the queue and send all
+	 * messages in the order they are received.
+	 * @param queue The queue where to get the outgoing messages.
+	 * @param pid The PID where to send the messages.
+	 */
 	public Gui_send(FIFO queue, OtpErlangPid pid) {
 		this.queue = queue;
 		this.pid = pid;
@@ -18,23 +27,37 @@ public class Gui_send implements Runnable{
 		try {
 			init();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Initializes a node and a mailbox to use for the communication.
+	 * @throws IOException Exception if the node could not be made.
+	 */
 	public void init() throws IOException {
 		OtpNode node = new OtpNode(nodeName, cookie);
 		mbox = node.createMbox();
 	}
 
+	/**
+	 * Runnable code, fetches messages and encode them with the enCode() 
+	 * function. When messages are encoded they are sent.
+	 */
 	public void run() {
 		while(true) {
 			OtpErlangTuple message = enCode(queue.get());
-			mbox.send(this.pid , message);
+			mbox.send(this.pid, message);
 		}
 	}
 
+	/**
+	 * Encode method to transform messages from either Message or SendMessage
+	 * objects to OtpErlangTuples.
+	 * @param msgReceive Either a Message or SendMessage object, both instances
+	 * of MessageSuper.
+	 * @return msgReceive transformed into an OtpErlangTuple.
+	 */
 	private OtpErlangTuple enCode(MessageSuper msgReceive) {
 		OtpErlangTuple answer = null;
 		if (msgReceive instanceof Message) {
