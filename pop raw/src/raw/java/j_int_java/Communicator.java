@@ -10,10 +10,10 @@ import com.ericsson.otp.erlang.*;
  */
 public class Communicator {
 	private FIFO outGoing = new FIFO();
-	private FIFO inComming = new FIFO();
+	private FIFO inComing = new FIFO();
 	private Gui_send sender;
 	private Gui_receive receiver;
-	public OtpErlangPid pid = null;
+	private OtpErlangPid pid = null;
 	
 	/**
 	 * Creating the Java side of the communication. It will create a receive 
@@ -23,7 +23,7 @@ public class Communicator {
 	 * contains will be disregarded.
 	 */
 	public Communicator() {
-		receiver = new Gui_receive(inComming, this);
+		receiver = new Gui_receive(inComing, this);
 		new Thread(receiver).start();
 		while (this.pid == null) {
 			try {
@@ -59,7 +59,20 @@ public class Communicator {
 	 * @return The first unread message received.
 	 */
 	public MessageSuper receive() {
-		return inComming.get();
+		return inComing.get();
+	}
+	
+	/**
+	 * Method to clear the queues of messages. All incoming and outgoing 
+	 * messages will be removed but not read.
+	 */
+	public void flush() {
+		while (this.outGoing.hasNext()) {
+			this.outGoing.get();
+		}
+		while (this.inComing.hasNext()) {
+			this.inComing.get();
+		}
 	}
 	
 	/**
@@ -67,7 +80,7 @@ public class Communicator {
 	 * @param m A MessageSuper object.
 	 */
 	public void putReceive(MessageSuper m) {
-		inComming.put(m);
+		inComing.put(m);
 	}
 	
 	/**
@@ -76,5 +89,13 @@ public class Communicator {
 	 */
 	public OtpErlangPid getPid() {
 		return this.pid;
+	}
+	
+	/**
+	 * Set the pid to the included pid.
+	 * @param pid The PID to set the value, has to be an OtpErlangPid object.
+	 */
+	public void setPid(OtpErlangPid pid) {
+		this.pid = pid;
 	}
 }
