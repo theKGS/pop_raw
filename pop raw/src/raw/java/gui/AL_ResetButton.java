@@ -26,11 +26,9 @@ public class AL_ResetButton implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// SIZE, SEED
-		mPanel.getMap().setMapSize(25);
-				
+		mPanel.getMap().simulationStop();
+		mPanel.getMap().setMapSize(mPanel.getDefaultSize());
 		mPanel.getMap().simulationReset();
-		
-		//mPanel.newMap(80, 99);
 		mPanel.repaint();
 	}
 }

@@ -32,6 +32,7 @@ public class MapPanel extends JPanel {
 
 	private MapNode[][] nodes;
 	private UpdateListener mainRef;
+	private int defaultSize = 25;
 
 	/**
 	 * Constructor.
@@ -218,5 +219,13 @@ public class MapPanel extends JPanel {
 		this.scrollCoordinateX += x;
 		this.scrollCoordinateY += y;
 		this.repaint();
+	}
+
+	public int getDefaultSize() {
+		return defaultSize;
+	}
+
+	public void setDefaultSize(int defaultSize) {
+		this.defaultSize = defaultSize;
 	}
 }
