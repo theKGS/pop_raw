@@ -166,7 +166,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         SwingUtilities.invokeLater(se);
        
         try {
-			Runtime.getRuntime().exec("mkdir fulgris");
+			Runtime.getRuntime().exec("make start");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
