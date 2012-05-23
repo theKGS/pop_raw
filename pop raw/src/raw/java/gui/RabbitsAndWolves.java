@@ -1,8 +1,23 @@
 package raw.java.gui;
 
+import java.io.IOException;
+
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+
 import raw.java.map.Map;
 import raw.java.map.MapNode;
+
+/*
+ * wolf 
+ *   max age, reproduction age, reproduction success probability
+ * rabbit
+ *   -||-
+ * grass
+ *   grass growth speed
+ */
+
+
 
 /**
  * A application that runs a primitive simulation of rabbits & wolves wherein the 
@@ -76,6 +91,11 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         textFieldSeed.setBounds(116, 260, 64, 24);
         textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
         textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener(mapDisplayPanel));
+        /*try {
+			textFieldSize.getDocument().insertString(0, "25", null);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}*/
         
         controlFrame.getContentPane().add(textFieldSize);
         controlFrame.getContentPane().add(textFieldSeed);
@@ -144,6 +164,13 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
     	mapDisplayPanel.newMap(25,32);
     	mapDisplayPanel.getMap().start();
         SwingUtilities.invokeLater(se);
+       
+        try {
+			Runtime.getRuntime().exec("make start");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void update(int x, int y, MapNode mn){

@@ -15,8 +15,8 @@ import raw.java.map.MapNode;
  */
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	static int TILEWIDTH = 16; // width of a tile
-	static int TILEHEIGHT = 16; // height of a tile
+	private int TILEWIDTH = 16; // width of a tile
+	private int TILEHEIGHT = 16; // height of a tile
 	private int SIZE = 16;
 
 	private int scrollCoordinateX;
