@@ -166,7 +166,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         SwingUtilities.invokeLater(se);
        
         try {
-			Runtime.getRuntime().exec("make start");
+			Runtime.getRuntime().exec("erl -sname foo -setcookie thisissparta -run jint_send setup");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
