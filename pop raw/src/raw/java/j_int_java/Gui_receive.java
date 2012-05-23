@@ -15,11 +15,10 @@ public class Gui_receive implements Runnable{
 	private Communicator com;
 
 	/**
-	 * Constructor for Gui_receive. Makes a Gui_receive object, this object
-	 * waits for an incoming transmission containing an OtpErlangTuple where
-	 * the first object in the tuple is an OtpErlangPid. The constructor calls
-	 * the start() method.
-	 * @param send The queue where to send incomming messages.
+	 * Makes a Gui_receive object, this object waits for an incoming 
+	 * transmission containing an OtpErlangTuple where the first object in the 
+	 * tuple is an OtpErlangPid. The constructor calls the init() method last.
+	 * @param send The queue where to send incoming messages.
 	 * @param com A Communicator object, has to have the method 
 	 * setPid(OtpErlangPid).
 	 */
@@ -81,7 +80,7 @@ public class Gui_receive implements Runnable{
 	}
 	
 	/**
-	 * Method to decode messages from OtpErlangObjects to Java objects. The
+	 * Method to decode messages from OtpErlangTuple to Message object. The
 	 * OtpErlangObject has to be an OtpErlangTuple where the item at 0 is an
 	 * OtpErlangLong, the item at 1 is an OtpErlangPid and any additional items
 	 * is OtpErlangLong.
