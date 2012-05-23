@@ -30,6 +30,7 @@ public class AL_ResetButton implements ActionListener{
 		mPanel.getMap().simulationResetStop();
 		mPanel.getMap().setMapSize(mPanel.getDefaultSize());
 		mPanel.getMap().simulationReset();
+		mPanel.resetMapSize();
 		mPanel.repaint();
 	}
 }

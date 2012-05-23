@@ -203,6 +203,15 @@ public class MapPanel extends JPanel {
 	}
 
 	/**
+	 * Fix the nodes array. Call this in reset.
+	 * @param size
+	 * @param seed
+	 */
+	public void resetMapSize() {
+		nodes = map.getMapArray();
+	}
+	
+	/**
 	 * Sets an UpdateListener. It is not used directly by the MapPanel, but passed on to the Map.
 	 * @param mref  the UpdateListener.
 	 */
