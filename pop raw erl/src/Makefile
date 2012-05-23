@@ -5,7 +5,7 @@ NAME = -sname foo -setcookie thisissparta
 all:
 	erlc $(SOURCES)
 
-start:	all
+start:
 	erl $(NAME) -run jint_send setup
 
 clean:
