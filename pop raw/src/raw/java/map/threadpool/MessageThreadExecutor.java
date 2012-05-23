@@ -40,6 +40,7 @@ public class MessageThreadExecutor {
 				TimeUnit.SECONDS, mWorksQueue, executionHandler);
 		executor.allowCoreThreadTimeOut(true);
 		executor.prestartAllCoreThreads();
+		
 	}
 
 	/**
@@ -73,5 +74,16 @@ public class MessageThreadExecutor {
 			counter = 1;
 		}
 
+	}
+	public void flush(){
+	    executor.shutdownNow();
+//	    try
+//        {
+//            executor.awaitTermination(10, TimeUnit.SECONDS);
+//        } catch (InterruptedException e)
+//        {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
 	}
 }

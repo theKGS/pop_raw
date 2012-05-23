@@ -38,6 +38,7 @@ public class MessagePool
                 temp.setCoords(msg.getValues());
                 temp.setPid(msg.getPid());
                 temp.setRequester(requester);
+                temp.setMap(map);
                 return temp;
             } else
             {
@@ -66,6 +67,7 @@ public class MessagePool
                 temp.setCoords(msg.getValues());
                 temp.setPid(msg.getPid());
                 temp.setRequester(requester);
+                temp.setMap(map);
                 return temp;
             } else
             {
@@ -93,6 +95,7 @@ public class MessagePool
                 temp.setCoords(msg.getValues());
                 temp.setPid(msg.getPid());
                 temp.setRequester(requester);
+                temp.setMap(map);
                 return temp;
             } else
             {
@@ -121,6 +124,7 @@ public class MessagePool
                 temp.setCoords(msg.getValues());
                 temp.setPid(msg.getPid());
                 temp.setRequester(requester);
+                temp.setMap(map);
                 return temp;
             } else
             {
@@ -147,6 +151,7 @@ public class MessagePool
                 temp.setCoords(msg.getValues());
                 temp.setPid(msg.getPid());
                 temp.setRequester(requester);
+                temp.setMap(map);
                 return temp;
             } else
             {
@@ -170,6 +175,7 @@ public class MessagePool
                 temp.setCoords(msg.getValues());
                 temp.setPid(msg.getPid());
                 temp.setRequester(requester);
+                temp.setMap(map);
                 return temp;
             } else
             {

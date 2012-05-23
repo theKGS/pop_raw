@@ -6,10 +6,10 @@ import raw.java.gui.UpdateListener;
  * 
  * @author Johan Runnable that makes the grass grow
  */
-public class GrassGrower implements Runnable {
+public class GrassGrower extends Thread {
 	Map map;
 	long growthRate;
-	public boolean running = true;
+	public boolean running = false;
 	private UpdateListener mUpdtLis;
 
 	/**
@@ -32,7 +32,11 @@ public class GrassGrower implements Runnable {
 
 	@Override
 	public void run() {
+	    running = true;
 		while (running) {
+		    if(Map.paused){
+		        continue;
+		    }
 			for (int i = 0; i < map.getMapSize(); i++) {
 				for (int j = 0; j < map.getMapSize(); j++) {
 					synchronized (map.getMapArray()[i][j]) {

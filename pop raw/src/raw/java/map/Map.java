@@ -42,28 +42,28 @@ public class Map extends Thread
     public static final int EATMOVE = 12;
     public static final int WOLFMOVE = 13;
 
-    private int mapSize = 0;
-    private int amountOfGrass = 0;
-    private int speedOfGrassGrowth = 5000;
-    private int numberOfWolves = 0;
-    private int maxWolfAge = 0;
-    private int wolfReprAge = 4;
-    private int woldReprSuccessProb = 0;
-    private int numberOfRabbits = 0;
-    private int maxRabbitAge = 0;
-    private int rappitReprAge = 10;
-    private int rabbitReprSuccessProb = 300;
+    private static int mapSize = 25;
+    private static int amountOfGrass = 5;
+    private static int speedOfGrassGrowth = 5000;
+    private static int numberOfWolves = 0;
+    private static int maxWolfAge = 0;
+    private static int wolfReprAge = 4;
+    private static int woldReprSuccessProb = 0;
+    private static int numberOfRabbits = 0;
+    private static int maxRabbitAge = 0;
+    private static int rappitReprAge = 10;
+    private static int rabbitReprSuccessProb = 300;
 
     MapNode[][] mapArray;
     private boolean running = true;
-    private boolean paused = false;
+    public static boolean paused = true;
     private Communicator mErlCom;
 
     private MessageThreadExecutor mMsgThrExec;
     private MessageSuper nextMessage;
     private UpdateListener mUpdtLis;
     private Random r;
-    private long Seed;
+    private static long Seed;
     // private FakeMsgSender mFakeMsgSender;
     private GrassGrower grassGrower;
     private MessagePool messagePool;
@@ -82,43 +82,30 @@ public class Map extends Thread
         {
             this.mUpdtLis = udpLis;
         }
-        this.mapSize = 25; // Size;
-        this.Seed = Seed; // Seed;
-        mapArray = new MapNode[mapSize][mapSize];
-        this.messagePool = new MessagePool();
+        Map.mapSize = Size; // Size;
+        Map.Seed = Seed; // Seed;
+        
+        
+        this.mErlCom = new Communicator();
         // printMap();
         setUp();
+        
+        
+       
     }
-
-    /**
-     * Prints the map to the console
-     */
-    @SuppressWarnings("unused")
-    private void printMap()
-    {
-        for (int y = 0; y < mapSize; y++)
-        {
-            for (int x = 0; x < mapSize; x++)
-            {
-                System.out.print(mapArray[x][y].getType() + " ");
-            }
-            System.out.print("\n");
-        }
-    }
-
     /**
      * Sets up Communicator and thread pool.
      */
     private void setUp()
     {
         r = new Random(Seed);
-        mErlCom = new Communicator();
-        System.out.println("com started");
+        this.mapArray = new MapNode[mapSize][mapSize];
         ArrayList<OtpErlangPid> startReceivers = new ArrayList<OtpErlangPid>();
         for (int i = 0; i < mapArray.length; i++)
         {
             for (int j = 0; j < mapArray[i].length; j++)
             {
+                mErlCom.flush();
                 int type = r.nextInt(4);
                 if (type > 2)
                     type = 0;
@@ -126,11 +113,11 @@ public class Map extends Thread
                     type %= 3;
                 if (type == MapNode.RABBIT)
                 {
-                    System.out.println("Sending new: " + i + ", " + j);
+                    
                     mErlCom.send(new Message(Map.NEW, null, new int[] { i, j }));
 
                     MessageSuper msg = mErlCom.receive();
-                    System.out.println("got send: " + msg.getPid());
+                    
                     mapArray[i][j] = new MapNode(r.nextInt(6), type,
                             msg.getPid());
                     startReceivers.add(msg.getPid());
@@ -158,11 +145,12 @@ public class Map extends Thread
         {
             mErlCom.send(new Message(Map.START, pid, null));
         }
-
+        mMsgThrExec = new MessageThreadExecutor(1000000, 10, 100, 10);
+        this.messagePool = new MessagePool();
+       
         // mFakeMsgSender = new FakeMsgSender(mErlCom, this);
 
-        mMsgThrExec = new MessageThreadExecutor(1000000, 10, 100, 10);
-
+        
     }
 
     /**
@@ -190,21 +178,22 @@ public class Map extends Thread
     public void run()
     {
         super.run();
-        try
-        {
-            Thread.sleep(1000);
-        } catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
-        grassGrower = new GrassGrower(this, this.speedOfGrassGrowth, mUpdtLis);
-        mMsgThrExec.execute(grassGrower);
+        // try
+        // {
+        // Thread.sleep(1000);
+        // } catch (InterruptedException e)
+        // {
+        // e.printStackTrace();
+        // }
+        
+        
         while (running)
         {
             if (paused)
             {
                 continue;
             }
+            
             handleNextMessage();
 
         }
@@ -216,7 +205,6 @@ public class Map extends Thread
     private void handleNextMessage()
     {
         nextMessage = mErlCom.receive();
-
         switch (nextMessage.getType())
         {
             case Map.RABBITMAP:
@@ -293,6 +281,8 @@ public class Map extends Thread
      */
     public void simulationStart()
     {
+        grassGrower = new GrassGrower(this, Map.speedOfGrassGrowth, mUpdtLis);
+        grassGrower.start();
         paused = false;
     }
 
@@ -301,91 +291,150 @@ public class Map extends Thread
      */
     public void simulationStop()
     {
+        grassGrower.interrupt();
+//        grassGrower.running = false;
         paused = true;
     }
 
+    public void simulationResetStop(){
+        paused = true;
+        grassGrower.running = false;
+//        this.mMsgThrExec.flush();
+        try
+        {
+            Thread.sleep(1000);
+        } catch (InterruptedException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        for(MapNode[] col : mapArray){
+            for(MapNode node : col){
+                if(node.getPid() != null){
+                    mErlCom.send(new Message(Map.DEATH, node.getPid(), null));
+                }
+            }
+        }
+        mErlCom.flush();
+    }
     /**
      * Resets the simulation
      */
     public void simulationReset()
     {
+        
         setUp();
 
     }
 
-    public int getMapSize()
+    public static int getMapSize()
     {
         return mapSize;
     }
 
-    public void setMapSize(int mapSize)
+    public static void setMapSize(int mapSize)
     {
-        this.mapSize = mapSize;
+        Map.mapSize = mapSize;
     }
 
-    public int getAmountOfGrass()
+    public static int getAmountOfGrass()
     {
         return amountOfGrass;
     }
 
-    public void setAmountOfGrass(int amountOfGrass)
+    public static void setAmountOfGrass(int amountOfGrass)
     {
-        this.amountOfGrass = amountOfGrass;
-
+        Map.amountOfGrass = amountOfGrass;
     }
 
-    public int getSpeedOfGrassGrowth()
+    public static int getSpeedOfGrassGrowth()
     {
         return speedOfGrassGrowth;
-
     }
 
-    public void setSpeedOfGrassGrowth(int speedOfGrassGrowth)
+    public static void setSpeedOfGrassGrowth(int speedOfGrassGrowth)
     {
-        this.speedOfGrassGrowth = speedOfGrassGrowth;
-
+        Map.speedOfGrassGrowth = speedOfGrassGrowth;
     }
 
-    public int getNumberOfWolves()
+    public static int getNumberOfWolves()
     {
         return numberOfWolves;
-
     }
 
-    public void setNumberOfWolves(int numberOfWolves)
+    public static void setNumberOfWolves(int numberOfWolves)
     {
-        this.numberOfWolves = numberOfWolves;
-
+        Map.numberOfWolves = numberOfWolves;
     }
 
-    public int getMaxWolfAge()
+    public static int getMaxWolfAge()
     {
         return maxWolfAge;
-
     }
 
-    public void setMaxWolfAge(int maxWolfAge)
+    public static void setMaxWolfAge(int maxWolfAge)
     {
-        this.maxWolfAge = maxWolfAge;
-
+        Map.maxWolfAge = maxWolfAge;
     }
 
-    public int getWolfReprAge()
+    public static int getWolfReprAge()
     {
         return wolfReprAge;
-
     }
 
-    public void setWolfReprAge(int wolfReprAge)
+    public static void setWolfReprAge(int wolfReprAge)
     {
-        this.wolfReprAge = wolfReprAge;
-
+        Map.wolfReprAge = wolfReprAge;
     }
 
-    public int getWoldReprSuccessProb()
+    public static int getWoldReprSuccessProb()
     {
         return woldReprSuccessProb;
+    }
 
+    public static void setWoldReprSuccessProb(int woldReprSuccessProb)
+    {
+        Map.woldReprSuccessProb = woldReprSuccessProb;
+    }
+
+    public static int getNumberOfRabbits()
+    {
+        return numberOfRabbits;
+    }
+
+    public static void setNumberOfRabbits(int numberOfRabbits)
+    {
+        Map.numberOfRabbits = numberOfRabbits;
+    }
+
+    public static int getMaxRabbitAge()
+    {
+        return maxRabbitAge;
+    }
+
+    public static void setMaxRabbitAge(int maxRabbitAge)
+    {
+        Map.maxRabbitAge = maxRabbitAge;
+    }
+
+    public static int getRappitReprAge()
+    {
+        return rappitReprAge;
+    }
+
+    public static void setRappitReprAge(int rappitReprAge)
+    {
+        Map.rappitReprAge = rappitReprAge;
+    }
+
+    public static int getRabbitReprSuccessProb()
+    {
+        return rabbitReprSuccessProb;
+    }
+
+    public static void setRabbitReprSuccessProb(int rabbitReprSuccessProb)
+    {
+        Map.rabbitReprSuccessProb = rabbitReprSuccessProb;
     }
 
     public MapNode[][] getMapArray()
@@ -398,48 +447,105 @@ public class Map extends Thread
         this.mapArray = mapArray;
     }
 
-    public void setWoldReprSuccessProb(int woldReprSuccessProb)
+    public boolean isRunning()
     {
-        this.woldReprSuccessProb = woldReprSuccessProb;
+        return running;
     }
 
-    public int getNumberOfRabbits()
+    public void setRunning(boolean running)
     {
-        return numberOfRabbits;
+        this.running = running;
     }
 
-    public void setNumberOfRabbits(int numberOfRabbits)
+    public static boolean isPaused()
     {
-        this.numberOfRabbits = numberOfRabbits;
+        return paused;
     }
 
-    public int getMaxRabbitAge()
+    public static void setPaused(boolean paused)
     {
-        return maxRabbitAge;
+        Map.paused = paused;
     }
 
-    public void setMaxRabbitAge(int maxRabbitAge)
+    public Communicator getmErlCom()
     {
-        this.maxRabbitAge = maxRabbitAge;
+        return mErlCom;
     }
 
-    public int getRappitReprAge()
+    public void setmErlCom(Communicator mErlCom)
     {
-        return rappitReprAge;
+        this.mErlCom = mErlCom;
     }
 
-    public void setRappitReprAge(int rappitReprAge)
+    public MessageThreadExecutor getmMsgThrExec()
     {
-        this.rappitReprAge = rappitReprAge;
+        return mMsgThrExec;
     }
 
-    public int getRabbitReprSuccessProb()
+    public void setmMsgThrExec(MessageThreadExecutor mMsgThrExec)
     {
-        return rabbitReprSuccessProb;
+        this.mMsgThrExec = mMsgThrExec;
     }
 
-    public void setRabbitReprSuccessProb(int rabbitReprSuccessProb)
+    public MessageSuper getNextMessage()
     {
-        this.rabbitReprSuccessProb = rabbitReprSuccessProb;
+        return nextMessage;
     }
+
+    public void setNextMessage(MessageSuper nextMessage)
+    {
+        this.nextMessage = nextMessage;
+    }
+
+    public UpdateListener getmUpdtLis()
+    {
+        return mUpdtLis;
+    }
+
+    public void setmUpdtLis(UpdateListener mUpdtLis)
+    {
+        this.mUpdtLis = mUpdtLis;
+    }
+
+    public Random getR()
+    {
+        return r;
+    }
+
+    public void setR(Random r)
+    {
+        this.r = r;
+    }
+
+    public long getSeed()
+    {
+        return Seed;
+    }
+
+    public void setSeed(long seed)
+    {
+        Seed = seed;
+    }
+
+    public GrassGrower getGrassGrower()
+    {
+        return grassGrower;
+    }
+
+    public void setGrassGrower(GrassGrower grassGrower)
+    {
+        this.grassGrower = grassGrower;
+    }
+
+    public MessagePool getMessagePool()
+    {
+        return messagePool;
+    }
+
+    public void setMessagePool(MessagePool messagePool)
+    {
+        this.messagePool = messagePool;
+    }
+
+
 }

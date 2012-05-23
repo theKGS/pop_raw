@@ -88,12 +88,6 @@ getMap(Wolf) ->
 			List
 	end.
 	
-%% 	PID = Rabbit#rabbit.spid,
-%% 	PID ! {get, self()},
-%% 	receive
-%% 		{map, Array} ->
-%% 			Array
-%% 	end.
 
 
 %%  1  2  3  4  5
@@ -101,8 +95,6 @@ getMap(Wolf) ->
 %% 11 12 13 14 15
 %% 16 17 18 19 20
 %% 21 22 23 24 25
-
-%%{Food Type}
 parseList(_, [], Acc, _)->
 	Acc;
 parseList(Wolf, [{_,Type}|Map], Acc, Index)->
