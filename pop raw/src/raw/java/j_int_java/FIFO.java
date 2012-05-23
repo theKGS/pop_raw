@@ -55,6 +55,17 @@ public class FIFO {
 	}
 
 	/**
+	 * Method to check if there's messages in the queue.
+	 * @return Returns true if there is messages, false if there isn't.
+	 */
+	public boolean hasNext() {
+		if (this.first != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	/**
 	 * Subclass Node, not reachable from outside FIFO. Handles the Nodes in the list.
 	 * @author  group 8
 	 *
