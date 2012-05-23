@@ -8,14 +8,14 @@ import raw.java.map.Map;
  * Listener for the reset button.
  * @author andreas
  */
-public class AL_InitButton implements ActionListener{	
+public class AL_ResetButton implements ActionListener{	
 	private MapPanel mPanel;
 	
 	/**
 	 * Constructor. Is passed a reference to a MapPanel.
 	 * @param mp  the MapPanel the JButton will be linked to.
 	 */
-	public AL_InitButton(MapPanel mp) {
+	public AL_ResetButton(MapPanel mp) {
 		mPanel = mp;
 	}
 
@@ -25,8 +25,11 @@ public class AL_InitButton implements ActionListener{
 	 */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		// SIZE, SEED
+		mPanel.getMap().setMapSize(25);
+				
 		mPanel.getMap().simulationReset();
-		mPanel.getMap().start();
+		
 		//mPanel.newMap(80, 99);
 		mPanel.repaint();
 	}
