@@ -15,8 +15,6 @@ import raw.java.map.MapNode;
  */
 public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private int TILEWIDTH = 16; // width of a tile
-	private int TILEHEIGHT = 16; // height of a tile
 	private int SIZE = 16;
 
 	private int scrollCoordinateX;
@@ -137,7 +135,6 @@ public class MapPanel extends JPanel {
 								SIZE, SIZE);
 					}
 				}
-
 			}
 		}
 	}
@@ -167,8 +164,8 @@ public class MapPanel extends JPanel {
 	}
 
 	/**
-	 * Sets zoom value.
-	 * @param b  value to set the zoom to.
+	 * Sets zoom value which is actually the size, in pixels, on screen of one tile.
+	 * @param b  value to set the tilesize to.
 	 */
 	public void setZoom(int size) {
 		SIZE = size;
@@ -230,10 +227,18 @@ public class MapPanel extends JPanel {
 		this.repaint();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int getDefaultSize() {
 		return defaultSize;
 	}
 
+	/**
+	 * 
+	 * @param defaultSize
+	 */
 	public void setDefaultSize(int defaultSize) {
 		this.defaultSize = defaultSize;
 	}

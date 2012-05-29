@@ -3,7 +3,6 @@ package raw.java.gui;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 
 import raw.java.map.Map;
 import raw.java.map.MapNode;
