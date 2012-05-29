@@ -1,19 +1,43 @@
 -module(jint_send).
 
--export([setup/0, send/0]).
+-export([setup/0, send/1]).
 
+%% ----------------------------------------------------------------------------
+%% @doc The sending part of the send/receive pair. This spawns the receive part
+%%		and sends the ping to {sparta, Address} where Address is the atom
+%%		athens@Computername where Computername is the name of the computer.
+%% @specc setup() -> none()
+%% @end
+%% ----------------------------------------------------------------------------
 setup() ->
-	PidSelf = spawn(jint_send, send, []),
+	Node = erlang:atom_to_list(athens@),
+	Host = net_adm:localhost(),
+	Address = erlang:list_to_atom(lists:append(Node, Host)),
+	PidSelf = spawn(jint_send, send, [Address]),
 	Pid = spawn(jint_rec, setup, [PidSelf]),
-	Node = erlang:atom_to_list(athens@),
-	Host = net_adm:localhost(),
-	Address = erlang:list_to_atom(lists:append(Node, Host)),
-	{sparta, Address} ! {Pid}.
+	sendPid(net_adm:ping(Address), Address, Pid).
 
-send() ->
-	Node = erlang:atom_to_list(athens@),
-	Host = net_adm:localhost(),
-	Address = erlang:list_to_atom(lists:append(Node, Host)),
+%% ----------------------------------------------------------------------------
+%% @doc Funktion to send the pid Java will communicate with. This function will
+%%		ping the Java node and will continuing doing this untill it succeeds.
+%%		When it's successfull it will send 1 message containing the pid Java 
+%%		should communicate with.
+%% @specc sendPid(atom(), Address::atom(), Pid::pid())
+%% @end
+%% ----------------------------------------------------------------------------
+sendPid(pong, Address, Pid) ->
+	{sparta, Address} ! {Pid};
+sendPid(pang, Address, Pid) ->
+	timer:sleep(10),
+	sendPid(net_adm:ping(Address), Address, Pid).
+
+%% ----------------------------------------------------------------------------
+%% @doc Receives a message from the Erlang side and translates it accordingly
+%%		and send is to the Java side.
+%% @specc send() -> none()
+%% @end
+%% ----------------------------------------------------------------------------
+send(Address) ->
 	receive
 		%% rabbitMap = 0
 		{rabbitMap, A, B, C} ->
@@ -43,4 +67,6 @@ send() ->
 		{wolfMove, A, B, C, D, E, F, G} ->
 			{sparta, Address} ! {13, A, B, C, D, E, F, G}
 	end,
-	send().
+	send(Address).
+
+%% @type none(). Does not return anything.

@@ -1,9 +1,8 @@
 package raw.java.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import raw.java.map.Map;
 
-/*
+/**
  * Listener for the stop button.
  */
 

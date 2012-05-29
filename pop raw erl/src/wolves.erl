@@ -6,79 +6,75 @@
 %%
 %% Include files
 %%
-
+-include_lib("eunit/include/eunit.hrl").
 %%
 %% Exported Functions
 %%
--export([preloop/1, loop/1, newWolf/2]).
+-export([preloop/1, newWolf/2]).
 
 %% 
-%% Defining a rabbit record
+%% Defining a Wolf record
 %% 
 -record(wolf, {age=0, hunger=0, x=none, y=none, spid=none}).
 
-%% 
-%% @doc Spwans a new rabbit process.
-%% 
-
+%% ----------------------------------------------------------------------------
+%% @doc Spawns a new wolf process. When the wolf is initialised it sends a 
+%%message to the java server.
+%% @spec newWolf(Touple::{X::integer(),Y::integer()}, 
+%%					SenderPid::pid()) -> {newWolf, PID, X, Y}
+%% @end
+%% ----------------------------------------------------------------------------
 newWolf({X, Y}, SenderPID) ->
-	PID = spawn(wolves, preloop, [#wolf{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
+	PID = spawn(wolves, preloop, 
+				[#wolf{age = 0, hunger = 10, x = X, y = Y, spid = SenderPID}]),
 	SenderPID ! {newWolf, PID, X, Y}.
 		
 
 
 
-%% 
-%% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
-%% 
-
+%% ----------------------------------------------------------------------------
+%% @doc Finds a new random square for the Wolf. 
+%% <br/>If there is no possible move, this funktion does not return.
+%% @spec findNewSquare(Wolf::wolf(), 
+%% 		MapList::list(),
+%% 		Length::integer()) -> NewWolf::wolf()
+%% @end
+%% ----------------------------------------------------------------------------
 findNewSquare(Wolf, MapList, Length) ->
 	if(Length =/= 0)->
 		  Dir = random:uniform(Length),
 		  {_, X,Y}= lists:nth(Dir, MapList),
 		  randw:move({wolf, Wolf, {X, Y}});
 	  true ->
-		  loop(Wolf)
+		  Wolf
 	end.
 
-%% 	PID = Rabbit#rabbit.spid,
-%% 	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, X, Y, X2, Y2},
-%% 	receive
-%% 		yes ->
-%% 			move(Rabbit, {X2, Y2});
-%% 		no ->
-%% 			findNewSquare(Rabbit)
-%% 	end.
 
-							
-%% 
-%% 
-%% 
-
-
-
+%% ----------------------------------------------------------------------------
+%% @doc Function handling the wolf eating.
+%% @spec eat(Wolf::wolf(), Map::list(), Length::integer())->UpdatedWolf::wolf()
+%% @end
+%% ----------------------------------------------------------------------------
 eat(Wolf, Map, Length) ->
+	
 	Dir = random:uniform(Length),
 	{_, X, Y} = lists:nth(Dir, Map),
 	PID = Wolf#wolf.spid,
-	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, Wolf#wolf.y, X, Y},
+	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, 
+		   Wolf#wolf.y, X, Y},
 	receive
 		{yes} ->
-			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 20};
-%% 			loop(Wolf2);
+			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 5};
 		{eatMove} ->
 			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger+1};
-%% 			loop(Wolf2);
 		{no} ->
 			Wolf#wolf{hunger = Wolf#wolf.hunger+1}
-%% 			loop(Wolf)
 	end.
-	
-
-%% 
-%% 
-%% 
-
+%% ----------------------------------------------------------------------------
+%% @doc requests the map from the server.
+%% @spec getMap(Wolf::wolf())-> Map::list()
+%% @end
+%% ----------------------------------------------------------------------------
 getMap(Wolf) ->
 	Wolf#wolf.spid ! {wolfMap, self(), Wolf#wolf.x, Wolf#wolf.y},
 	receive
@@ -90,11 +86,12 @@ getMap(Wolf) ->
 	
 
 
-%%  1  2  3  4  5
-%%  6  7  8  9 10
-%% 11 12 13 14 15
-%% 16 17 18 19 20
-%% 21 22 23 24 25
+%% ----------------------------------------------------------------------------
+%% @doc Searches the Map and finds the best moves 
+%% @spec parseList(Wolf::wolf(), MapList::list(), Acc::list(), 
+%%Index::integer()) -> PossibleMovesList::list()
+%% @end
+%% ----------------------------------------------------------------------------
 parseList(_, [], Acc, _)->
 	Acc;
 parseList(Wolf, [{_,Type}|Map], Acc, Index)->
@@ -154,11 +151,13 @@ parseList(Wolf, [{_,Type}|Map], Acc, Index)->
 	   true->
 		   parseList(Wolf, Map, Acc, Index+1)
 	end.
-
+%% ----------------------------------------------------------------------------
+%% @doc Executes one tick for the wolf
+%% @spec doTick(Wolf::wolf())->NewWolf::wolf()
+%% @end
+%% ----------------------------------------------------------------------------
 doTick(Wolf) ->	
 	{Eatable, Movable} = lists:splitwith(fun({A,_,_})-> A =:= rabbit end, parseList(Wolf, getMap(Wolf), [], 1)),
-	
-	%%lists:foldl(fun(Next, Acc)->io:format("~w~n", [Next]),Acc end, 0, Movable),
 	ELength = lists:foldl(fun(_,AccIn)-> AccIn+1 end, 0, Eatable),
 	MLength = lists:foldl(fun(_, AccIn)->AccIn+1 end, 0, Movable),
 	Hunger = randw:isHungry({wolf,Wolf}),
@@ -173,10 +172,11 @@ doTick(Wolf) ->
 		   Wolf
 	end.
 
-%% 
-%% 
-%% 
-
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @hidden
+%% @end
+%% ----------------------------------------------------------------------------
 preloop(Wolf) ->
 	receive
 		{start} ->
@@ -184,36 +184,40 @@ preloop(Wolf) ->
 			init(),
 			loop(Wolf)
 	end.
-
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @hidden
+%% @end
+%% ----------------------------------------------------------------------------
 loop(Wolf) ->
+	Wolf2 = randw:increaseAge({wolf, Wolf}),
 	receive
 		{Sender, getInfo} ->
-			Sender ! {self(), Wolf},
-			loop(Wolf);
+			Sender ! {self(), Wolf2},
+			loop(Wolf2);
 		{Sender, getCoords} ->
-			Sender ! {self(), {Wolf#wolf.x, Wolf#wolf.y}},
-			loop(Wolf);
+			Sender ! {self(), {Wolf2#wolf.x, Wolf2#wolf.y}},
+			loop(Wolf2);
 		{death} ->
 			exit(killed)
 		after 200 ->
- 			case randw:checkToDie({wolf, Wolf}) of
+ 			case randw:checkToDie({wolf, Wolf2}) of
  				true ->
-					PID = Wolf#wolf.spid,
-					PID ! {death, self(), Wolf#wolf.x, Wolf#wolf.y},
+					PID = Wolf2#wolf.spid,
+					PID ! {death, self(), Wolf2#wolf.x, Wolf2#wolf.y},
  					exit(died);
  				false ->
 					
- 					Wolf2 = doTick(Wolf),
-					randw:increaseAge({wolf, Wolf}),
-					loop(doTick(Wolf2))
+ 					Wolf3 = doTick(Wolf2),
+					
+					loop(doTick(Wolf3))
  			end
 	end.
-
-%% 
-%% 
-%% 
-
-
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @hidden
+%% @end
+%% ----------------------------------------------------------------------------
 init() ->
 	{A1, A2, A3} = now(),
 	Mega = lists:nth(2, pid_to_list(self())),
@@ -221,6 +225,144 @@ init() ->
 
 
 
+%% @type wolf(). A record describing a wolf.
+%% @end
+%%      ___________________________________________________________
+%%     /,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-\
+%%    /'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'\
+%%   /-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,\
+%%  /-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'\
+%% |'*-.,.-*'^'*-.,.-*'^'*-.,.-*'TEST CASES ^'*-.,.-*'^'*-.,.-*'^'*-.,.|
+%%  \-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'/
+%%   \-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,/
+%%    \'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'/
+%%     \,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-.,.-*'^'*-/
+%%      \_________________________________________________________/
+%%       \XXXXXXXXXXXX/\XXXXXXXXXXXX/ \XXXXXXXXXXXX/\XXXXXXXXXXXX/
+%%        \XXXXXXXXXX/  \XXXXXXXXXX/   \XXXXXXXXXX/  \XXXXXXXXXX/
+%%         \XXXXXXXX/    \XXXXXXXX/     \XXXXXXXX/    \XXXXXXXX/
+%%          \XXXXXX/      \XXXXXX/       \XXXXXX/      \XXXXXX/
+%%           \XXXX/        \XXXX/         \XXXX/        \XXXX/
+%%            \XX/          \XX/           \XX/          \XX/
+%%             \/____________\/_____________\/____________\/
+%%              \XXXXXXXXXXXX/\XXXXXXXXXXXXX/\XXXXXXXXXXXX/
+%%               \XXXXXXXXXX/  \XXXXXXXXXXX/  \XXXXXXXXXX/
+%%                \XXXXXXXX/    \XXXXXXXXX/    \XXXXXXXX/
+%%                 \XXXXXX/      \XXXXXXX/      \XXXXXX/
+%%                  \XXXX/        \XXXXX/        \XXXX/
+%%                   \XX/          \XXX/          \XX/
+%%                    \/____________\X/____________\/
+%%                     \XXXXXXXXXXXX/ \XXXXXXXXXXXX/
+%%                      \XXXXXXXXXX/   \XXXXXXXXXX/
+%%                       \XXXXXXXX/     \XXXXXXXX/
+%%                        \XXXXXX/       \XXXXXX/
+%%                         \XXXX/         \XXXX/
+%%                          \XX/           \XX/
+%%                           \/_____________\/
+%%                            \XXXXXXXXXXXXX/
+%%                             \XXXXXXXXXXX/
+%%                              \XXXXXXXXX/
+%%                               \XXXXXXX/
+%%                                \XXXXX/
+%%                                 \XXX/
+%%                                  \X/
+%%                                  /X\
+%%                                 / X \
+%%                                /  X  \
+%%                               /  X    \
+%%                              /     X   \
+%%                             /     X     \
+%%                            /____ __X_____\
+%%                           /\      X      /\
+%%                          /  \    X      /  \
+%%                         /    \    X    /    \
+%%                        /      \    X  /      \
+%%                       /        \  X  /        \
+%%                      /          \  X/          \
+%%                     /____________\X/____________\
+%%                    /\            /X\            /\
+%%                   /  \          /  X\          /  \
+%%                  /    \        /  X  \        /    \
+%%                 /      \      /  X    \      /      \
+%%                /        \    /    X    \    /        \
+%%               /          \  /     X     \  /          \
+%%              /____________\/_______X_____\/____________\
+%%             /\            /\      X      /\            /\
+%%            /  \          /  \   XXXXX   /  \          /  \
+%%           /    \        /    \XXXXXXXXX/    \        /    \
+%%          /      \      /     X\XXXXXXX/XX    \      /      \
+%%         /        \    /   XXXXX\XXXXX/XXXXXXXX\    /        \
+%%        /XXXXXXXXXX\XX/XXXXXXXXXX\XXX/XXXXXXXXXX\XX/XXXXXXXXXX\
+%%       /XXXXXXXXXXXX\/XXXXXXXXXXXX\X/XXXXXXXXXXXX\/XXXXXXXXXXXX\
+%%      /#########################################################\
+%%     /###########################################################\
+%%    /¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤\
+%%   /¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤¤\
+%%  /XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\
+%% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
+%%  \YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY/
+%%   \YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY/
+%%    \|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||/
+%%     \|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||/ 
+%%      ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨ 
+newWolf_test()->
+	newWolf({1,1},self()),
+	receive
+		{newWolf, _PID, 1,1}->
+			?assert(true)
+	after 50 ->
+		?assert(false)
+	end.
 
-%% out som atom för vargarna när de ska äta om ruta är utanför kartan, tex hörn och kanter
-%% istället för tick, när jag väntar matchning mot death osv, så kör en after och då börjar jag loopa igen så ny "doTick" startar
+findNewSquare_test()->
+	Wolf = #wolf{age = 0, hunger = 10, x = 2, y = 2, spid = self()},
+	NewWolf = findNewSquare(Wolf, [], 0),
+	List = [
+			{none, 0,0},{none, 1,0},{none, 2,0},{none, 3,0},{none, 4,0},
+		    {none, 0,1},{none, 1,1},{none, 2,1},{none, 3,1},{none, 4,1},
+			{none, 0,2},{none, 1,2},{none, 2,2},{none, 3,2},{none, 4,2},
+			{none, 0,3},{none, 1,3},{none, 2,3},{none, 3,3},{none, 4,3},
+			{none, 0,4},{none, 1,4},{none, 2,4},{none, 3,4},{none, 4,4}],
+	self() ! {yes},
+	NewWolf2 = findNewSquare(Wolf,List,25),
+	receive
+		{wolfMove, _,_,_,_,_,X,Y}->
+			nothing
+	end,
+	self() ! {no},
+	NewWolf3 = findNewSquare(Wolf,List,25),
+	receive
+		MSG -> nothing
+	end,
+	
+	
+	?assert(Wolf == NewWolf),
+	?assert(NewWolf2#wolf.x == X),
+	?assert(NewWolf2#wolf.y == Y),
+	?assert(NewWolf3 == Wolf).
+	
+
+eat_test()->
+	Wolf = #wolf{age = 0, hunger = 10, x = 2, y = 2, spid = self()},
+	List = [
+		{rabbit, 0,0},{rabbit, 1,0},{rabbit, 2,0},{rabbit, 3,0},{rabbit, 4,0},
+	    {rabbit, 0,1},{rabbit, 1,1},{rabbit, 2,1},{rabbit, 3,1},{rabbit, 4,1},
+		{rabbit, 0,2},{rabbit, 1,2},{rabbit, 2,2},{rabbit, 3,2},{rabbit, 4,2},
+		{rabbit, 0,3},{rabbit, 1,3},{rabbit, 2,3},{rabbit, 3,3},{rabbit, 4,3},
+		{rabbit, 0,4},{rabbit, 1,4},{rabbit, 2,4},{rabbit, 3,4},{rabbit, 4,4}],
+	Wolf2 = eat(Wolf, [], 0),
+	?assert(Wolf == Wolf2).
+%%  eat(Wolf, Map, Length) ->
+%%	Dir = random:uniform(Length),	
+%%  {_, X, Y} = lists:nth(Dir, Map),
+%%	PID = Wolf#wolf.spid,
+%%	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, 
+%%		   Wolf#wolf.y, X, Y},
+%%	receive
+%%		{yes} ->
+%%			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 5};
+%%		{eatMove} ->
+%%			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger+1};
+%%		{no} ->
+%%			Wolf#wolf{hunger = Wolf#wolf.hunger+1}
+%%	end.

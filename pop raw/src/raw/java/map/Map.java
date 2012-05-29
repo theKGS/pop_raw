@@ -41,7 +41,8 @@ public class Map extends Thread
     public static final int START = 11;
     public static final int EATMOVE = 12;
     public static final int WOLFMOVE = 13;
-
+    
+    
     private static int mapSize = 25;
     private static int amountOfGrass = 5;
     private static int speedOfGrassGrowth = 5000;
@@ -82,17 +83,12 @@ public class Map extends Thread
         {
             this.mUpdtLis = udpLis;
         }
-        Map.mapSize = Size; // Size;
-        Map.Seed = Seed; // Seed;
-        
-        
+        Map.mapSize = Size;
+        Map.Seed = Seed;
         this.mErlCom = new Communicator();
-        // printMap();
         setUp();
-        
-        
-       
     }
+
     /**
      * Sets up Communicator and thread pool.
      */
@@ -113,11 +109,8 @@ public class Map extends Thread
                     type %= 3;
                 if (type == MapNode.RABBIT)
                 {
-                    
                     mErlCom.send(new Message(Map.NEW, null, new int[] { i, j }));
-
                     MessageSuper msg = mErlCom.receive();
-                    
                     mapArray[i][j] = new MapNode(r.nextInt(6), type,
                             msg.getPid());
                     startReceivers.add(msg.getPid());
@@ -126,7 +119,6 @@ public class Map extends Thread
                     System.out.println("Sending new wolf: " + i + ", " + j);
                     mErlCom.send(new Message(Map.NEWWOLF, null, new int[] { i,
                             j }));
-
                     MessageSuper msg = mErlCom.receive();
                     System.out.println("got send from wolf: " + msg.getPid());
                     mapArray[i][j] = new MapNode(r.nextInt(6), type,
@@ -137,9 +129,7 @@ public class Map extends Thread
                     mapArray[i][j] = new MapNode(r.nextInt(6), MapNode.NONE,
                             null);
                 }
-
             }
-
         }
         for (OtpErlangPid pid : startReceivers)
         {
@@ -147,10 +137,6 @@ public class Map extends Thread
         }
         mMsgThrExec = new MessageThreadExecutor(1000000, 10, 100, 10);
         this.messagePool = new MessagePool();
-       
-        // mFakeMsgSender = new FakeMsgSender(mErlCom, this);
-
-        
     }
 
     /**
@@ -178,24 +164,13 @@ public class Map extends Thread
     public void run()
     {
         super.run();
-        // try
-        // {
-        // Thread.sleep(1000);
-        // } catch (InterruptedException e)
-        // {
-        // e.printStackTrace();
-        // }
-        
-        
         while (running)
         {
             if (paused)
             {
                 continue;
             }
-            
             handleNextMessage();
-
         }
     }
 
@@ -218,7 +193,6 @@ public class Map extends Thread
                         MapNode.RABBIT));
                 break;
             case Map.RABBITEAT:
-         
                 mMsgThrExec.execute(messagePool.getEatRunnable(
                         (Message) nextMessage, mErlCom, this, mUpdtLis,
                         MapNode.RABBIT));
@@ -247,7 +221,8 @@ public class Map extends Thread
                 synchronized (mapArray[coords[0]][coords[1]])
                 {
                     mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
-                    mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
+                    mUpdtLis.update(coords[0], coords[1],
+                            mapArray[coords[0]][coords[1]]);
                     mErlCom.send(new Message(Map.START, nextMessage.getPid(),
                             null));
                 }
@@ -257,7 +232,8 @@ public class Map extends Thread
                 synchronized (mapArray[coords[0]][coords[1]])
                 {
                     mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
-                    mUpdtLis.update(coords[0], coords[1], mapArray[coords[0]][coords[1]]);
+                    mUpdtLis.update(coords[0], coords[1],
+                            mapArray[coords[0]][coords[1]]);
                     mErlCom.send(new Message(Map.START, nextMessage.getPid(),
                             null));
                 }
@@ -266,7 +242,6 @@ public class Map extends Thread
                 coords = ((Message) nextMessage).getValues();
                 synchronized (mapArray[coords[0]][coords[1]])
                 {
-
                     mapArray[coords[0]][coords[1]].setType(MapNode.NONE);
                     mapArray[coords[0]][coords[1]].setPid(null);
                     mUpdtLis.update(coords[0], coords[1],
@@ -292,37 +267,38 @@ public class Map extends Thread
     public void simulationStop()
     {
         grassGrower.interrupt();
-//        grassGrower.running = false;
+        // grassGrower.running = false;
         paused = true;
     }
 
-    public void simulationResetStop(){
+    /**
+     * Stops the simulation and prepares the board for a reset.
+     */
+    public void simulationResetStop()
+    {
         paused = true;
         grassGrower.running = false;
-//        this.mMsgThrExec.flush();
-        try
+        grassGrower.interrupt();
+        this.mMsgThrExec.flush();
+        for (MapNode[] col : mapArray)
         {
-            Thread.sleep(1000);
-        } catch (InterruptedException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        for(MapNode[] col : mapArray){
-            for(MapNode node : col){
-                if(node.getPid() != null){
+            for (MapNode node : col)
+            {
+                if (node.getPid() != null)
+                {
                     mErlCom.send(new Message(Map.DEATH, node.getPid(), null));
                 }
             }
         }
         mErlCom.flush();
     }
+
     /**
      * Resets the simulation
      */
     public void simulationReset()
     {
-        
+
         setUp();
 
     }
@@ -546,6 +522,5 @@ public class Map extends Thread
     {
         this.messagePool = messagePool;
     }
-
 
 }

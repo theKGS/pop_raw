@@ -56,8 +56,9 @@ public class MessageThreadExecutor {
 	}
 
 	private static int counter = 0;
-
-	private void log() {
+	
+	@SuppressWarnings("unused")
+    private void log() {
 		if ((counter++) % 100 == 0) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Thread logging--------------------------------------------\n");
@@ -76,14 +77,16 @@ public class MessageThreadExecutor {
 
 	}
 	public void flush(){
-	    executor.shutdownNow();
-//	    try
-//        {
-//            executor.awaitTermination(10, TimeUnit.SECONDS);
-//        } catch (InterruptedException e)
-//        {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
+	    mWorksQueue.clear();
+	    
+            try
+            {
+                Thread.sleep(1000);
+            } catch (InterruptedException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+	    
 	}
 }
