@@ -226,15 +226,7 @@ public class MapPanel extends JPanel {
 		this.scrollCoordinateY += y;
 		this.repaint();
 	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public int getDefaultSize() {
-		return defaultSize;
-	}
-
+	
 	/**
 	 * 
 	 * @param defaultSize

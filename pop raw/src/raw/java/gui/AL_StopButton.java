@@ -2,7 +2,7 @@ package raw.java.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/*
+/**
  * Listener for the stop button.
  */
 

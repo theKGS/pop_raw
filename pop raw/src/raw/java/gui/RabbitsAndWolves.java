@@ -84,12 +84,12 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         /*
          * Text fields
          */
-        JTextField textFieldSize = new JTextField();
-        JTextField textFieldSeed = new JTextField();
+        textFieldSize = new JTextField();
+        textFieldSeed = new JTextField();
         textFieldSize.setBounds(16, 260, 64, 24);
         textFieldSeed.setBounds(116, 260, 64, 24);
-        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
-        textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener(mapDisplayPanel));
+        //textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
+        //textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener(mapDisplayPanel));
         /*try {
 			textFieldSize.getDocument().insertString(0, "25", null);
 		} catch (BadLocationException e) {

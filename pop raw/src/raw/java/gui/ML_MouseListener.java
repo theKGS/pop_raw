@@ -37,22 +37,18 @@ public class ML_MouseListener implements MouseMotionListener, MouseInputListener
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		//System.out.println("The mouse was dragged");
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		//System.out.println("Mouse was clicked");		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
