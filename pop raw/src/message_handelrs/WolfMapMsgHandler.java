@@ -3,7 +3,6 @@ package message_handelrs;
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
-import raw.java.j_int_java.MessageSuper;
 import raw.java.j_int_java.SendMessage;
 import raw.java.map.Map;
 import raw.java.map.MapNode;
@@ -47,8 +46,8 @@ public class WolfMapMsgHandler extends MsgHandler implements Runnable
             {
                 for (int i = -2; i < 3; i++)
                 {
-                    if (x + i >= 0 && x + i < map.getMapSize() && y + j >= 0
-                            && y + j < map.getMapSize())
+                    if (x + i >= 0 && x + i < Map.getMapSize() && y + j >= 0
+                            && y + j < Map.getMapSize())
                     {
                         squares[index] = map.getMapArray()[x + i][y + j];
                     }

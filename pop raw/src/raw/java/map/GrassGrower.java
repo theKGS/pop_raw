@@ -4,7 +4,9 @@ import raw.java.gui.UpdateListener;
 
 /**
  * 
- * @author Johan Runnable that makes the grass grow
+ * @author 
+ * 
+ * Johan Runnable that makes the grass grow
  */
 public class GrassGrower extends Thread {
 	Map map;
@@ -29,7 +31,7 @@ public class GrassGrower extends Thread {
 		this.growthRate = growthRate;
 		this.mUpdtLis = mUpdtLis;
 	}
-
+	
 	@Override
 	public void run() {
 	    running = true;
@@ -37,8 +39,8 @@ public class GrassGrower extends Thread {
 		    if(Map.paused){
 		        continue;
 		    }
-			for (int i = 0; i < map.getMapSize(); i++) {
-				for (int j = 0; j < map.getMapSize(); j++) {
+			for (int i = 0; i < Map.getMapSize(); i++) {
+				for (int j = 0; j < Map.getMapSize(); j++) {
 					synchronized (map.getMapArray()[i][j]) {
 						MapNode mn = map.getMapArray()[i][j];
 						if (mn.getGrassLevel() < 5
@@ -52,7 +54,7 @@ public class GrassGrower extends Thread {
 			try {
 				Thread.sleep(growthRate);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
