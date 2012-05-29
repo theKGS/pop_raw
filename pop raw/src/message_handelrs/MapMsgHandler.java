@@ -41,8 +41,8 @@ public class MapMsgHandler extends MsgHandler implements Runnable
             {
                 for (int i = -1; i < 2; i++)
                 {
-                    if (x + i >= 0 && x + i < map.getMapSize() && y + j >= 0
-                            && y + j < map.getMapSize())
+                    if (x + i >= 0 && x + i < Map.getMapSize() && y + j >= 0
+                            && y + j < Map.getMapSize())
                     {
                         squares[index] = map.getMapArray()[x + i][y + j];
                     }

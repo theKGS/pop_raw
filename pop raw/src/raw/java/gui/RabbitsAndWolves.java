@@ -3,7 +3,6 @@ package raw.java.gui;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 
 import raw.java.map.Map;
 import raw.java.map.MapNode;
@@ -134,7 +133,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
          */
         rawButtonStart.addActionListener(new AL_StartButton(mapDisplayPanel));
         rawButtonStop.addActionListener(new AL_StopButton(mapDisplayPanel));
-        rawButtonReset.addActionListener(new AL_ResetButton(mapDisplayPanel));
+        rawButtonReset.addActionListener(new AL_ResetButton(mapDisplayPanel, textFieldSize, textFieldSeed));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
         cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
@@ -180,20 +179,14 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
 		}*/
     }
     
+    /**
+     * Updates the internal map with a new MapNode at position x y
+     * @param x  position of MapNode
+     * @param y  position of MapNode
+     * @param mn  a new MapNode to place in the internal map
+     */
     public void update(int x, int y, MapNode mn){
     	mapDisplayPanel.addNode(x, y, mn);
     	mapDisplayPanel.repaint();
-    }
-    
-    public int getSizeFromTextField(){
-    	Integer size = 80;
-    	size = Integer.getInteger(textFieldSeed.getText());
-    	return size;
-    }
-    
-    public int getSeedFromTextField(){
-    	Integer seed = 0;
-    	seed = Integer.getInteger(textFieldSeed.getText());
-    	return seed;
     }
 }

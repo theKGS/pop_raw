@@ -109,7 +109,7 @@ isTooOld({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit.age >= 70;
 		wolf ->
-			Creature#wolf.age >= 100
+			Creature#wolf.age >= 70
 	end.
 
 %% 
@@ -121,7 +121,7 @@ isTooHungry({Atom, Creature}) ->
 		rabbit ->
 			Creature#rabbit.hunger >= 5;
 		wolf ->
-			Creature#wolf.hunger >= 70
+			Creature#wolf.hunger >= 30
 	end.
 
 %% 

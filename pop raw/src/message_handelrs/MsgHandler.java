@@ -1,6 +1,5 @@
 package message_handelrs;
 
-import raw.java.gui.RabbitsAndWolves;
 import raw.java.gui.UpdateListener;
 import raw.java.j_int_java.Communicator;
 import raw.java.j_int_java.Message;
@@ -158,7 +157,7 @@ public class MsgHandler
 
     private boolean isInsideMap(int[] i)
     {
-        return (i[0] > 0 && i[0] < map.getMapSize() && i[1] > 0 && i[1] < map
+        return (i[0] > 0 && i[0] < Map.getMapSize() && i[1] > 0 && i[1] < Map
                 .getMapSize());
     }
 
@@ -179,19 +178,19 @@ public class MsgHandler
         if (requester == MapNode.RABBIT)
         {
             minX = x > 0 ? -1 : 0;
-            maxX = x < map.getMapSize() - 1 ? 2 : 1;
+            maxX = x < Map.getMapSize() - 1 ? 2 : 1;
 
             minY = y > 0 ? -1 : 0;
-            maxY = y < map.getMapSize() - 1 ? 2 : 1;
+            maxY = y < Map.getMapSize() - 1 ? 2 : 1;
         } else if (requester == MapNode.WOLF)
         {
             minX = x > 0 ? (x > 1 ? -2 : -1) : 0;
 
-            maxX = x < map.getMapSize() - 1 ? (x < map.getMapSize() - 2 ? 2 : 1)
+            maxX = x < Map.getMapSize() - 1 ? (x < Map.getMapSize() - 2 ? 2 : 1)
                     : 1;
 
             minY = y > 0 ? (y > 1 ? -2 : 1) : 0;
-            maxY = y < map.getMapSize() - 1 ? (y < map.getMapSize() - 2 ? 2 : 1)
+            maxY = y < Map.getMapSize() - 1 ? (y < Map.getMapSize() - 2 ? 2 : 1)
                     : 1;
 
         }
@@ -220,8 +219,8 @@ public class MsgHandler
             int r = (int) (Math.random() * 1000);
             if (mateType == MapNode.RABBIT)
             {
-                if (r > map.getRabbitReprSuccessProb()
-                        && coords[AGE] > map.getRappitReprAge()
+                if (r > Map.getRabbitReprSuccessProb()
+                        && coords[AGE] > Map.getRappitReprAge()
                         && coords[HUNGER] < 3)
                 {
                     map.getMapArray()[newSpot[0]][newSpot[1]]
@@ -231,9 +230,10 @@ public class MsgHandler
 
             } else
             {
-                if (r > map.getWoldReprSuccessProb()
-                        && coords[AGE] > map.getWolfReprAge()
-                        && coords[HUNGER] < 20)
+                
+                if (r > Map.getWoldReprSuccessProb()
+                        && coords[AGE] > Map.getWolfReprAge()
+                        && coords[HUNGER] < 8)
                 {
                     map.getMapArray()[newSpot[0]][newSpot[1]]
                             .setType(MapNode.WOLF);
@@ -254,8 +254,8 @@ public class MsgHandler
      */
     protected int[] compareCoordsArr(int[] coords)
     {
-        return coords[Y1] * map.getMapSize() + coords[X1] + map.getMapSize() < coords[Y2]
-                * map.getMapSize() + coords[X2] + map.getMapSize() ? new int[] {
+        return coords[Y1] * Map.getMapSize() + coords[X1] + Map.getMapSize() < coords[Y2]
+                * Map.getMapSize() + coords[X2] + Map.getMapSize() ? new int[] {
                 coords[X1], coords[Y1], coords[X2], coords[Y2] } : new int[] {
                 coords[X2], coords[Y2], coords[X1], coords[Y1] };
 
