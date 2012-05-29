@@ -49,7 +49,7 @@ public class AL_ResetButton implements ActionListener {
 		if (size != null) {
 			mPanel.getMap().setMapSize(size);
 		} else {
-			mPanel.getMap().setMapSize(40);
+			mPanel.getMap().setMapSize(25);
 		}
 
 		/*
