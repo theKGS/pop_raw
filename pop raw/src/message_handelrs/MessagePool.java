@@ -16,7 +16,9 @@ public class MessagePool
     private Stack<EatMsgHandler> eatStack;
     private Stack<WolfMapMsgHandler> wolfMapStack;
     private Stack<WolfEatMsgHandler> wolfEatStack;
-
+    /**
+     * Pool container for all types of runnables
+     */
     public MessagePool()
     {
         eatStack = new Stack<EatMsgHandler>();
@@ -27,6 +29,22 @@ public class MessagePool
         wolfEatStack = new Stack<WolfEatMsgHandler>();
     }
 
+    /**
+     * Gets an available EatRunnable or creates a new one if there is none
+     * available
+     * 
+     * @param msg
+     *            the new message
+     * @param mErlCom
+     *            communicator to answer to
+     * @param map
+     *            the map that wants the Runnable
+     * @param updtLis
+     *            update handle to the gui
+     * @param requester
+     *            wolf or rabbit
+     * @return A new EatMsgHandler with the new params set
+     */
     public EatMsgHandler getEatRunnable(Message msg, Communicator mErlCom,
             Map map, UpdateListener updtLis, int requester)
     {
@@ -56,6 +74,22 @@ public class MessagePool
         }
     }
 
+    /**
+     * Gets an available MapRunnable or creates a new one if there is none
+     * available
+     * 
+     * @param msg
+     *            the new message
+     * @param mErlCom
+     *            communicator to answer to
+     * @param map
+     *            the map that wants the Runnable
+     * @param updtLis
+     *            update handle to the gui
+     * @param requester
+     *            wolf or rabbit
+     * @return A new MapMsgHandler with the new params set
+     */
     public MapMsgHandler getMapRunnable(Message msg, Communicator mErlCom,
             Map map, UpdateListener updtLis, int requester)
     {
@@ -84,6 +118,22 @@ public class MessagePool
         }
     }
 
+    /**
+     * Gets an available MoveRunnable or creates a new one if there is none
+     * available
+     * 
+     * @param msg
+     *            the new message
+     * @param mErlCom
+     *            communicator to answer to
+     * @param map
+     *            the map that wants the Runnable
+     * @param updtLis
+     *            update handle to the gui
+     * @param requester
+     *            wolf or rabbit
+     * @return A new MoveMsgHandler with the new params set
+     */
     public MoveMsgHandler getMoveRunnable(Message msg, Communicator mErlCom,
             Map map, UpdateListener updtLis, int requester)
     {
@@ -113,6 +163,22 @@ public class MessagePool
         }
     }
 
+    /**
+     * Gets an available NewRunnable or creates a new one if there is none
+     * available
+     * 
+     * @param msg
+     *            the new message
+     * @param mErlCom
+     *            communicator to answer to
+     * @param map
+     *            the map that wants the Runnable
+     * @param updtLis
+     *            update handle to the gui
+     * @param requester
+     *            wolf or rabbit
+     * @return A new NewMsgHandler with the new params set
+     */
     public NewMsgHandler getNewRunnable(Message msg, Communicator mErlCom,
             Map map, UpdateListener updtLis, int requester)
     {
@@ -140,6 +206,23 @@ public class MessagePool
             newStack.push(newMsg);
         }
     }
+
+    /**
+     * Gets an available WolfMapRunnable or creates a new one if there is none
+     * available
+     * 
+     * @param msg
+     *            the new message
+     * @param mErlCom
+     *            communicator to answer to
+     * @param map
+     *            the map that wants the Runnable
+     * @param updtLis
+     *            update handle to the gui
+     * @param requester
+     *            wolf or rabbit
+     * @return A new WolfMapMsgHandler with the new params set
+     */
     public WolfMapMsgHandler getWolfMapRunnable(Message msg, Communicator mErlCom,
             Map map, UpdateListener updtLis, int requester)
     {
@@ -164,6 +247,23 @@ public class MessagePool
        this.wolfMapStack.push(wolffMapMsgHandler);
         
     }
+
+    /**
+     * Gets an available WolfEatRunnable or creates a new one if there is none
+     * available
+     * 
+     * @param msg
+     *            the new message
+     * @param mErlCom
+     *            communicator to answer to
+     * @param map
+     *            the map that wants the Runnable
+     * @param updtLis
+     *            update handle to the gui
+     * @param requester
+     *            wolf or rabbit
+     * @return A new WolfEatMsgHandler with the new params set
+     */
     public WolfEatMsgHandler getWolfEatRunnable(Message msg, Communicator mErlCom,
             Map map, UpdateListener updtLis, int requester)
     {

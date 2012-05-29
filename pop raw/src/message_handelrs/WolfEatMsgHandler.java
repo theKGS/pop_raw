@@ -29,8 +29,8 @@ public class WolfEatMsgHandler extends MsgHandler implements Runnable
     public void run()
     {
         mate();
-        if (coords[X2] < 0 || coords[X2] >= map.getMapSize() || coords[Y2] < 0
-                || coords[Y2] >= map.getMapSize())
+        if (coords[X2] < 0 || coords[X2] >= Map.getMapSize() || coords[Y2] < 0
+                || coords[Y2] >= Map.getMapSize())
         {
             mErlCom.send(new Message(Map.NO, pid, null));
         } else

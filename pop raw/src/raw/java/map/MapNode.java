@@ -8,6 +8,8 @@ import com.ericsson.otp.erlang.OtpErlangPid;
 
 public class MapNode implements Lock
 {
+
+    private int type;
     /**
      * int representing an empty square value: 0
      */
@@ -21,7 +23,7 @@ public class MapNode implements Lock
      */
     public static final int WOLF = 2;
     private int grassLevel;
-
+    private OtpErlangPid pid;
     private boolean isLocked = false;
 
     public int getGrassLevel()
@@ -44,8 +46,6 @@ public class MapNode implements Lock
         this.pid = pid;
     }
 
-    private int type;
-
     public int getType()
     {
         return type;
@@ -55,8 +55,6 @@ public class MapNode implements Lock
     {
         this.type = type;
     }
-
-    private OtpErlangPid pid;
 
     /**
      * Constructor for the MapNode.
@@ -76,15 +74,30 @@ public class MapNode implements Lock
         this.pid = pid;
 
     }
-    public void clearNode(){
+
+    /**
+     * Clear the node, setting pid to null and type to NONE
+     */
+    public void clearNode()
+    {
         this.type = MapNode.NONE;
         this.pid = null;
     }
-    public void takeDataFrom(MapNode node){
+
+    /**
+     * Copies the data from another node
+     * 
+     * @param node
+     *            the node to copy data from
+     */
+    public void takeDataFrom(MapNode node)
+    {
         type = node.getType();
         pid = node.getPid();
     }
-
+    /**
+     * Locks the node.
+     */
     @Override
     public synchronized void lock()
     {
@@ -92,11 +105,11 @@ public class MapNode implements Lock
         {
             try
             {
-               
+
                 wait();
             } catch (InterruptedException e)
             {
-                
+
                 e.printStackTrace();
             }
         }
@@ -107,21 +120,21 @@ public class MapNode implements Lock
     @Override
     public void lockInterruptibly() throws InterruptedException
     {
-        // TODO Auto-generated method stub
+       
 
     }
 
     @Override
     public Condition newCondition()
     {
-        // TODO Auto-generated method stub
+       
         return null;
     }
 
     @Override
     public boolean tryLock()
     {
-        // TODO Auto-generated method stub
+     
         return false;
     }
 
@@ -129,10 +142,12 @@ public class MapNode implements Lock
     public boolean tryLock(long time, TimeUnit unit)
             throws InterruptedException
     {
-        // TODO Auto-generated method stub
+     
         return false;
     }
-
+    /**
+     * Unlocks the node.
+     */
     @Override
     public synchronized void unlock()
     {

@@ -22,7 +22,7 @@
 %% 
 
 newWolf({X, Y}, SenderPID) ->
-	PID = spawn(wolves, preloop, [#wolf{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
+	PID = spawn(wolves, preloop, [#wolf{age = 0, hunger = 10, x = X, y = Y, spid = SenderPID}]),
 	SenderPID ! {newWolf, PID, X, Y}.
 		
 
@@ -64,7 +64,7 @@ eat(Wolf, Map, Length) ->
 	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, Wolf#wolf.y, X, Y},
 	receive
 		{yes} ->
-			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 20};
+			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 5};
 %% 			loop(Wolf2);
 		{eatMove} ->
 			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger+1};
@@ -157,8 +157,6 @@ parseList(Wolf, [{_,Type}|Map], Acc, Index)->
 
 doTick(Wolf) ->	
 	{Eatable, Movable} = lists:splitwith(fun({A,_,_})-> A =:= rabbit end, parseList(Wolf, getMap(Wolf), [], 1)),
-	
-	%%lists:foldl(fun(Next, Acc)->io:format("~w~n", [Next]),Acc end, 0, Movable),
 	ELength = lists:foldl(fun(_,AccIn)-> AccIn+1 end, 0, Eatable),
 	MLength = lists:foldl(fun(_, AccIn)->AccIn+1 end, 0, Movable),
 	Hunger = randw:isHungry({wolf,Wolf}),
@@ -186,26 +184,27 @@ preloop(Wolf) ->
 	end.
 
 loop(Wolf) ->
+	Wolf2 = randw:increaseAge({wolf, Wolf}),
 	receive
 		{Sender, getInfo} ->
-			Sender ! {self(), Wolf},
-			loop(Wolf);
+			Sender ! {self(), Wolf2},
+			loop(Wolf2);
 		{Sender, getCoords} ->
-			Sender ! {self(), {Wolf#wolf.x, Wolf#wolf.y}},
-			loop(Wolf);
+			Sender ! {self(), {Wolf2#wolf.x, Wolf2#wolf.y}},
+			loop(Wolf2);
 		{death} ->
 			exit(killed)
 		after 200 ->
- 			case randw:checkToDie({wolf, Wolf}) of
+ 			case randw:checkToDie({wolf, Wolf2}) of
  				true ->
-					PID = Wolf#wolf.spid,
-					PID ! {death, self(), Wolf#wolf.x, Wolf#wolf.y},
+					PID = Wolf2#wolf.spid,
+					PID ! {death, self(), Wolf2#wolf.x, Wolf2#wolf.y},
  					exit(died);
  				false ->
 					
- 					Wolf2 = doTick(Wolf),
-					randw:increaseAge({wolf, Wolf}),
-					loop(doTick(Wolf2))
+ 					Wolf3 = doTick(Wolf2),
+					
+					loop(doTick(Wolf3))
  			end
 	end.
 

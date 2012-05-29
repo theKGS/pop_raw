@@ -31,8 +31,8 @@ public class MoveMsgHandler extends MsgHandler implements Runnable
     public void run()
     {
 
-        if (coords[X2] < 0 || coords[X2] >= map.getMapSize() || coords[Y2] < 0
-                || coords[Y2] >= map.getMapSize())
+        if (coords[X2] < 0 || coords[X2] >= Map.getMapSize() || coords[Y2] < 0
+                || coords[Y2] >= Map.getMapSize())
         {
             mErlCom.send(new Message(Map.NO, pid, null));
         } else
@@ -61,7 +61,6 @@ public class MoveMsgHandler extends MsgHandler implements Runnable
             }
         }
         msgPool.AddMoveToStack(this);
-
     }
 
     /**
@@ -74,8 +73,6 @@ public class MoveMsgHandler extends MsgHandler implements Runnable
      */
     private void checkMove()
     {
-        // System.out.println("moving: " + coords[X1] + " , " + coords[Y1] +
-        // "to " + coords[X2] + ", " + coords[Y2]);
         MapNode currentNode = map.getMapArray()[coords[X1]][coords[Y1]];
         MapNode targetNode = map.getMapArray()[coords[X2]][coords[Y2]];
         if (targetNode.getType() != MapNode.NONE)
@@ -86,8 +83,6 @@ public class MoveMsgHandler extends MsgHandler implements Runnable
             targetNode.takeDataFrom(currentNode);
             currentNode.clearNode();
             mErlCom.send(new Message(Map.YES, pid, null));
-
         }
-        // System.out.println("Move handled");
     }
 }

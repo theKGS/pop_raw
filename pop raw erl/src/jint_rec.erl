@@ -41,5 +41,7 @@ server(SendPid) ->
 			server(SendPid);
 		{12, Pid} ->
 			Pid ! {eatMove},
-			server(SendPid)
+			server(SendPid);
+		{666, _} ->
+			exit(quit)
 	end.

@@ -5,6 +5,7 @@
 setup() ->
 	PidSelf = spawn(jint_send, send, []),
 	Pid = spawn(jint_rec, setup, [PidSelf]),
+	link(Pid),
 	Node = erlang:atom_to_list(athens@),
 	Host = net_adm:localhost(),
 	Address = erlang:list_to_atom(lists:append(Node, Host)),
