@@ -262,7 +262,7 @@ public class MsgHandler
     }
 
     /**
-     * Sends update to the upådate listener
+     * Sends update to the update listener
      * 
      * @param x
      *            x coord of the node

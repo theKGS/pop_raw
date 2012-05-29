@@ -2,9 +2,22 @@
 
 -export([setup/1, server/1]).
 
+%% ----------------------------------------------------------------------------
+%% @doc The receiving part of the send/receive pair. Links this process to the
+%%		send part (SendPid).
+%% @specc setup(SendPid::pid())
+%% @end
+%% ----------------------------------------------------------------------------
 setup(SendPid) ->
+	link(SendPid),
 	server(SendPid).
 
+%% ----------------------------------------------------------------------------
+%% @doc Receives a message from the Java side and acts accordingly. For example
+%%		receiving the tuple {4, pid, X, Y} spawns a new rabbit at point X, Y.
+%% @specc setup(SendPid::pid())
+%% @end
+%% ----------------------------------------------------------------------------
 server(SendPid) ->
 	receive
 		%% 4 = newRabbit
