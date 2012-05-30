@@ -45,10 +45,10 @@ public class AL_ResetButton implements ActionListener {
 		 * it uses a default size as configured here.
 		 */
 		Integer size;
-		size = Integer.getInteger(textFieldSize.getText());
+		size = Integer.parseInt(textFieldSize.getText());
 		if (size != null) {
 			mPanel.getMap().setMapSize(size);
-			System.out.println("size: " + size);
+			System.err.println("size: " + size);
 		} else {
 			mPanel.getMap().setMapSize(25);
 		}
@@ -58,10 +58,10 @@ public class AL_ResetButton implements ActionListener {
 		 * it uses a default seed as configured here.
 		 */
 		Integer seed;
-		seed = Integer.getInteger(textFieldSeed.getText());
+		seed = Integer.parseInt(textFieldSeed.getText());
 		if (seed != null) {
 			mPanel.getMap().setSeed(seed);
-			System.out.println("seed: " + seed);
+			System.err.println("seed: " + seed);
 		} else {
 			mPanel.getMap().setSeed(0);
 		}
