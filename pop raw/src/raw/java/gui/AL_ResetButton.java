@@ -48,8 +48,9 @@ public class AL_ResetButton implements ActionListener {
 		size = Integer.getInteger(textFieldSize.getText());
 		if (size != null) {
 			mPanel.getMap().setMapSize(size);
+			System.out.println("size: " + size);
 		} else {
-			mPanel.getMap().setMapSize(40);
+			mPanel.getMap().setMapSize(25);
 		}
 
 		/*
@@ -60,6 +61,7 @@ public class AL_ResetButton implements ActionListener {
 		seed = Integer.getInteger(textFieldSeed.getText());
 		if (seed != null) {
 			mPanel.getMap().setSeed(seed);
+			System.out.println("seed: " + seed);
 		} else {
 			mPanel.getMap().setSeed(0);
 		}
