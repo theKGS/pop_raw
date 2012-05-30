@@ -116,11 +116,11 @@ public class Map extends Thread
                     startReceivers.add(msg.getPid());
                 } else if (type == MapNode.WOLF)
                 {
-                    System.out.println("Sending new wolf: " + i + ", " + j);
+                   
                     mErlCom.send(new Message(Map.NEWWOLF, null, new int[] { i,
                             j }));
                     MessageSuper msg = mErlCom.receive();
-                    System.out.println("got send from wolf: " + msg.getPid());
+
                     mapArray[i][j] = new MapNode(r.nextInt(6), type,
                             msg.getPid());
                     startReceivers.add(msg.getPid());
