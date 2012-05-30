@@ -15,10 +15,13 @@
 
 -record(rabbit, {age=0, hunger=0, x=none, y=none, spid=none}).
 -record(wolf, {age=0, hunger=0, x=none, y=none, spid=none}).
+%% @type wolf(). A record representing a wolf.
+%% @type rabbit(). A record representing a rabbit.
+%% @type creature(). A record for either a wolf() or rabbit()
 
 %% 
-%% @doc Increases Rabbit's/Wolf's age by 1.
-%% @spec increaseAge({Atom::atom(), Creature::wolf()/rabbig()}) -> Creature::wolf()/rabbit()
+%% @doc Increases Rabbit's/Wolf's age by 1. The "Atom" must be either rabbor or wolf
+%% @spec increaseAge({Atom::atom(), Creature::creature()})->Creature::creature()
 
 increaseAge({Atom, Creature}) ->
 	case Atom of
