@@ -350,19 +350,91 @@ eat_test()->
 		{rabbit, 0,2},{rabbit, 1,2},{rabbit, 2,2},{rabbit, 3,2},{rabbit, 4,2},
 		{rabbit, 0,3},{rabbit, 1,3},{rabbit, 2,3},{rabbit, 3,3},{rabbit, 4,3},
 		{rabbit, 0,4},{rabbit, 1,4},{rabbit, 2,4},{rabbit, 3,4},{rabbit, 4,4}],
-	Wolf2 = eat(Wolf, [], 0),
-	?assert(Wolf == Wolf2).
-%%  eat(Wolf, Map, Length) ->
-%%	Dir = random:uniform(Length),	
-%%  {_, X, Y} = lists:nth(Dir, Map),
-%%	PID = Wolf#wolf.spid,
-%%	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, 
-%%		   Wolf#wolf.y, X, Y},
-%%	receive
-%%		{yes} ->
-%%			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 5};
-%%		{eatMove} ->
-%%			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger+1};
-%%		{no} ->
-%%			Wolf#wolf{hunger = Wolf#wolf.hunger+1}
-%%	end.
+	self() ! {yes},
+	Wolf2 = eat(Wolf, List, 25),
+	receive
+		{wolfEat, _,_, _, _, _, X, Y} ->
+			nothing
+	end,
+	
+	self() ! {no},
+	Wolf3 = eat(Wolf, List, 25),
+	receive
+		{wolfEat, _,_, _, _, _, _, _} ->
+			nothing
+	end,
+	
+	self() ! {eatMove},
+	Wolf4 = eat(Wolf, List, 25),
+	receive
+		{wolfEat, _,_, _, _, _, X3, Y3} ->
+			nothing
+	end,
+	?assert(Wolf2#wolf.x == X),
+	?assert(Wolf2#wolf.y == Y),
+	?assert(Wolf2#wolf.hunger == Wolf#wolf.hunger -5),
+	?assert(Wolf3#wolf.x == Wolf#wolf.x),
+	?assert(Wolf3#wolf.y == Wolf#wolf.y),
+	?assert(Wolf3#wolf.hunger == Wolf#wolf.hunger +1),
+	?assert(Wolf4#wolf.x == X3),
+	?assert(Wolf4#wolf.y == Y3),
+	?assert(Wolf4#wolf.hunger == Wolf#wolf.hunger +1).
+getMap_test()->
+	Wolf = #wolf{age = 0, hunger = 10, x = 2, y = 2, spid = self()},
+	List = [
+		{rabbit, 0,0},{rabbit, 1,0},{rabbit, 2,0},{rabbit, 3,0},{rabbit, 4,0},
+	    {rabbit, 0,1},{rabbit, 1,1},{rabbit, 2,1},{rabbit, 3,1},{rabbit, 4,1},
+		{rabbit, 0,2},{rabbit, 1,2},{rabbit, 2,2},{rabbit, 3,2},{rabbit, 4,2},
+		{rabbit, 0,3},{rabbit, 1,3},{rabbit, 2,3},{rabbit, 3,3},{rabbit, 4,3},
+		{rabbit, 0,4},{rabbit, 1,4},{rabbit, 2,4},{rabbit, 3,4},{rabbit, 4,4}],
+	self() ! {wolfMap, List},
+	Map = getMap(Wolf),
+	?assert(Map == List).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+parseList_test()->
+	Wolf = #wolf{age = 0, hunger = 10, x = 2, y = 2, spid = self()},
+	List = [
+		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf},
+		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf},
+		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf},
+		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf},
+		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf}],
+	NewMap = parseList(Wolf, List, [], 0),
+	List2 = [
+		{5,wolf},{5,rabbit},{5,none},{5,wolf},{5,rabbit},
+		{5,none},{5,wolf},{5,rabbit},{5,none},{5,wolf},
+		{5,rabbit},{5,none},{5,wolf},{5,rabbit},{5,none},
+		{5,wolf},{5,rabbit},{5,none},{5,wolf},{5,rabbit},
+		{5,none},{5,rabbit},{5,wolf},{5,wolf},{5,rabbit}],
+	NewMap2 = parseList(Wolf, List2, [], 0),
+	AuxList = 
+		[{rabbit, 1,0},{none, 2,0},{rabbit, 4,0},
+	    {none, 0,1},{rabbit, 2,1},{none, 3,1},
+		{rabbit, 0,2},{none, 1,2},{rabbit, 3,2},{none, 4,2},
+		{rabbit, 1,3},{none, 2,3},{rabbit, 4,3},
+		{none, 0,4},{rabbit, 1,4},{rabbit, 4,4}],
+	
+	?assert(NewMap == []),
+	?assert(NewMap2 == AuxList).
+
+
+
+
