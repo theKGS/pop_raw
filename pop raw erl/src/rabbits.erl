@@ -13,14 +13,21 @@
 -export([newRabbit/2, parseList/4, maxGrass/4, findNewSquare/2, eat/1, getMap/1, doTick/1, preloop/1, loop/1, test/0, sendTick/1, getInfo/1, getCoords/1, execute/1, init/0]).
 %% -compile(exportall).
 
-%% 
-%% Defining a rabbit record
-%% 
+%% ----------------------------------------------------------------------------
+%% @edoc A rabbit record
+%% @type rabbit() = #rabbit{ age::integer(), hunger::integer(),
+%%                           x::integer(), y::integer(), spid::integer()}. CAN THIS BE DOCUMENTED!?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @end
+%% ----------------------------------------------------------------------------
 -record(rabbit, {age=0, hunger=0, x=none, y=none, spid=none}).
 
-%% 
-%% @doc Spwans a new rabbit process.
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc Spawns a new rabbit process. When the rabbit is initialized it sends a 
+%% message to the java server.
+%% @spec newRabbit(Touple::{X::integer(),Y::integer()}, 
+%%					SenderPid::pid()) -> {newRabbit, PID, X, Y}
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 newRabbit({X, Y}, SenderPID) ->
 	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
@@ -28,9 +35,11 @@ newRabbit({X, Y}, SenderPID) ->
 		
 
 
-%% 
-%% 
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 parseList(_,[],_,Acc)->
 	Acc;
@@ -62,9 +71,11 @@ parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
 		   parseList(Rabbit, T, ListIndex+1, Acc)
 	end.
 	
-%% 
-%% 
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 maxGrass([], Acc, _CurrMax, Length) ->
 	{Length, Acc};
@@ -78,9 +89,12 @@ maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
 	end.
 
 
-%% 
-%% @doc Finds a new random square for Rabbit, left/right/up/down compared to Rabbit's current coordinate.  
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc Finds a new square for Rabbit, left/right/up/down/diagonal compared to 
+%% Rabbit's current coordinate.
+%% @spec findNewSquare(Rabbit::record(), MapList::list()) -> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 findNewSquare(Rabbit, MapList) ->
 	{Length, PossibleSquares} = maxGrass(parseList(Rabbit, MapList, 1, []),[],0,0),
@@ -103,9 +117,11 @@ findNewSquare(Rabbit, MapList) ->
 %% 	end.
 
 							
-%% 
-%% 
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc Makes a rabbit who is hungry eat if it there is enough grass 
+%% @spec eat(Rabbit::record()) -> {Rabbit, gotFood/noFood, List}
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 eat(Rabbit) ->
 	{Grass, _, List} = getMap(Rabbit),
@@ -120,9 +136,11 @@ eat(Rabbit) ->
 	end.
 	
 
-%% 
-%% 
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc Ask the map process for the map and its current layout 
+%% @spec getMap(Rabbit::record()) ->  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 getMap(Rabbit) ->
 	Rabbit#rabbit.spid ! {rabbitMap, self(), Rabbit#rabbit.x, Rabbit#rabbit.y},
@@ -144,6 +162,11 @@ getMap(Rabbit) ->
 
 
 
+%% ----------------------------------------------------------------------------
+%% @doc Initiates all things required to happen during a time tick for a rabbit
+%% @spec doTick(Rabbit::record()) -> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 doTick(Rabbit) ->
 	Rabbit2 = randw:increaseAge({rabbit, Rabbit}),
@@ -158,9 +181,12 @@ doTick(Rabbit) ->
 			findNewSquare(Rabbit3, List)
 	end.
 
-%% 
-%% 
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc Calls init() and loop() or kills the rabbits process when that command 
+%% is recieved
+%% @spec preloop(Rabbit::record()) -> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 preloop(Rabbit) ->
 	receive	
@@ -171,6 +197,12 @@ preloop(Rabbit) ->
 			init(),
 			loop(Rabbit)
 	end.
+
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec loop(Rabbit::record())
+%% @end
+%% ---------------------------------------------------------------------------- '
 
 loop(Rabbit) ->
 	receive
@@ -194,12 +226,20 @@ loop(Rabbit) ->
  			end
 	end.
 
-%% 
-%% 
-%% 
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 sendTick(Pid) ->
 	Pid ! {self(), tick}.
+
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 getInfo(Pid) ->
 	Pid ! {self(), getInfo},
@@ -208,21 +248,44 @@ getInfo(Pid) ->
 			Rabbit
 	end.
 
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
+
 getCoords(Pid) ->
 	Pid ! {self(), getCoords},
 	receive
 		{Pid, Coords} ->
 			Coords
 	end.
-	
+
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
+
 execute(Pid) ->
 	Pid ! {self(), die}.
 
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 init() ->
 	{A1, A2, A3} = now(),
 	Mega = lists:nth(2, pid_to_list(self())),
 	random:seed(A1 + Mega, A2 + Mega, A3 + Mega).
+
+%% ----------------------------------------------------------------------------
+%% @doc 
+%% @spec
+%% @end
+%% ---------------------------------------------------------------------------- 
 
 test() ->
 	init(),
@@ -247,7 +310,3 @@ test() ->
 	io:format("x: ~w~ny: ~w~n", [X, Y]),
 	execute(KaninPid),
 	test_finished.
-
-
-%% out som atom för vargarna när de ska äta om ruta är utanför kartan, tex hörn och kanter
-%% istället för tick, när jag väntar matchning mot death osv, så kör en after och då börjar jag loopa igen så ny "doTick" startar
