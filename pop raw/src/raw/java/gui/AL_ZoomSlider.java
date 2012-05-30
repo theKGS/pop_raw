@@ -3,7 +3,6 @@ package raw.java.gui;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import raw.java.map.Map;
 
 /**
  * A listener for the zoom slider.

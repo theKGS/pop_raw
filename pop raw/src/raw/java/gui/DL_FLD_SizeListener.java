@@ -19,35 +19,14 @@ public class DL_FLD_SizeListener implements DocumentListener{
 	
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-		// TODO Auto-generated method stub
-		Document d = e.getDocument();
-		try {
-			String t = d.getText(0, d.getLength());
-			System.out.println(t);
-		} catch (BadLocationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 	}
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-		Document d = e.getDocument();
-		try {
-			String t = d.getText(0, d.getLength());
-			System.out.println(t);
-			Integer sz = Integer.parseInt(t);
-			if (sz>3) mPanel.setDefaultSize(sz);
-		} catch (BadLocationException e1) {
-			e1.printStackTrace();
-		} catch (NumberFormatException e1) {
-			e1.printStackTrace();
-		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 }
