@@ -14,6 +14,7 @@ import raw.java.map.MapNode;
  *   -||-
  * grass
  *   grass growth speed
+ *    
  */
 
 
@@ -31,6 +32,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
 	private static MapPanel mapDisplayPanel;
     private JTextField textFieldSize; // Text field for map size input
     private JTextField textFieldSeed; // Text field for seed input
+    private JTextField textFieldMaster; //
     
 	/**
 	 * The Swing thread
@@ -86,14 +88,17 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
          */
         textFieldSize = new JTextField();
         textFieldSeed = new JTextField();
-        textFieldSize.setBounds(16, 260, 64, 24);
-        textFieldSeed.setBounds(116, 260, 64, 24);
+        textFieldMaster = new JTextField();
+        textFieldSize.setBounds(16, 170, 64, 24);
+        textFieldSeed.setBounds(116, 170, 64, 24);
+        textFieldMaster.setBounds(16, 200, 168, 48);
         textFieldSize.setToolTipText("Size of map on reset");
         textFieldSeed.setToolTipText("Seed for randomizer on reset");
+        textFieldMaster.setToolTipText("'WMA WRA WRSP RMA RRA RRSP GGS', updated on reset");
         
         controlFrame.getContentPane().add(textFieldSize);
         controlFrame.getContentPane().add(textFieldSeed);
-        
+        controlFrame.getContentPane().add(textFieldMaster);
         /*
          * Show/hide map elements 
          */
