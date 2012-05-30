@@ -29,15 +29,15 @@ server(SendPid) ->
 			wolves:newWolf({X, Y}, SendPid),
 			server(SendPid);
 		%% 0 = rabbitMap
-		{0,Pid, B} ->
+		{0, Pid, B} ->
 			Pid ! {rabbitMap, B},
 			server(SendPid);
 		%% 5 = death
-		{5,Pid} ->
+		{5, Pid} ->
 			Pid ! {death},
 			server(SendPid);
-		%% 0 = wolfMap
-		{7,Pid, B} ->
+		%% 7 = wolfMap
+		{7, Pid, B} ->
 			Pid ! {wolfMap, B},
 			server(SendPid);
 		%% 9 = yes
@@ -54,6 +54,9 @@ server(SendPid) ->
 			server(SendPid);
 		{12, Pid} ->
 			Pid ! {eatMove},
+			server(SendPid);
+		{42, _Pid} ->
+			idiot_rabbit:new(SendPid),
 			server(SendPid);
 		{666, _} ->
 			exit(quit)
