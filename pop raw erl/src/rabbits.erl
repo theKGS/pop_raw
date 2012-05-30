@@ -10,13 +10,13 @@
 %%
 %% Exported Functions
 %%
--export([newRabbit/2, parseList/4, maxGrass/4, findNewSquare/2, eat/1, getMap/1, doTick/1, preloop/1, loop/1, test/0, sendTick/1, getInfo/1, getCoords/1, execute/1, init/0]).
-%% -compile(exportall).
+-export([newRabbit/2, parseList/4, maxGrass/4, findNewSquare/2, eat/1, 
+		 getMap/1, doTick/1, preloop/1, loop/1, init/0]).
 
 %% ----------------------------------------------------------------------------
 %% @edoc A rabbit record
 %% @type rabbit() = #rabbit{ age::integer(), hunger::integer(),
-%%                           x::integer(), y::integer(), spid::integer()}. CAN THIS BE DOCUMENTED!?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%%                           x::integer(), y::integer(), spid::integer()}.
 %% @end
 %% ----------------------------------------------------------------------------
 -record(rabbit, {age=0, hunger=0, x=none, y=none, spid=none}).
@@ -25,21 +25,24 @@
 %% @doc Spawns a new rabbit process. When the rabbit is initialized it sends a 
 %% message to the java server.
 %% @spec newRabbit(Touple::{X::integer(),Y::integer()}, 
-%%					SenderPid::pid()) -> {newRabbit, PID, X, Y}
+%%					SenderPid::pid()) -> {newRabbit::atom(), PID::pid(), 
+%% 											X::integer(), Y::integer()}
 %% @end
 %% ---------------------------------------------------------------------------- 
 
 newRabbit({X, Y}, SenderPID) ->
-	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, spid = SenderPID}]),
+	PID = spawn(rabbits, preloop, [#rabbit{age = 0, hunger = 0, x = X, y = Y, 
+										   spid = SenderPID}]),
 	SenderPID ! {newRabbit, PID, X, Y}.
 		
 
 
 %% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
+%% @doc Searches the Map and finds the best moves 
+%% @spec parseList(Rabbit::rabbit(), MapList::list(), Index::integer(), 
+%% 					Acc::list()) -> PossibleMovesList::list()
 %% @end
-%% ---------------------------------------------------------------------------- 
+%% ----------------------------------------------------------------------------
 
 parseList(_,[],_,Acc)->
 	Acc;
@@ -47,24 +50,32 @@ parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
 	if Type =:= none ->
 		   case ListIndex of
 			   1->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y-1}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,
+													Rabbit#rabbit.y-1}]++Acc);
 			   2->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y-1}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,
+													Rabbit#rabbit.y-1}]++Acc);
 			   3->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y-1}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,
+													Rabbit#rabbit.y-1}]++Acc);
 			   4->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,
+													Rabbit#rabbit.y}]++Acc);
 			   5->
 				   parseList(Rabbit,T,ListIndex+1, Acc);
 			   6->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,
+													Rabbit#rabbit.y}]++Acc);
 			   7->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,Rabbit#rabbit.y+1}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x-1,
+													Rabbit#rabbit.y+1}]++Acc);
 			   8->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,Rabbit#rabbit.y+1}]++Acc);
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x,
+													Rabbit#rabbit.y+1}]++Acc);
 			   9->
-				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,Rabbit#rabbit.y+1}]++Acc);
-			   Def->
+				   parseList(Rabbit,T,ListIndex+1,[{Grass,Rabbit#rabbit.x+1,
+													Rabbit#rabbit.y+1}]++Acc);
+			   _Def->
 				   parseList(Rabbit,T,ListIndex+1,Acc)
 		   end;
 	   Type =/= none ->
@@ -72,8 +83,12 @@ parseList(Rabbit, [{Grass, Type}|T], ListIndex, Acc) ->
 	end.
 	
 %% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
+%% @doc Returns a list of squares with the highest grasslevel, gets the entire 
+%% list with squares if the grasslevel = 0 in all squares
+%% @spec maxGrass([{Grass::integer(), X::integer(), Y::integer()}|T]::list(), 
+%% 					Acc::integer(), _CurrMax::integer(), Length::integer()) ->
+%%					maxGrass(T::list(), Acc::integer(), CurrMax::integer(), 
+%% 					Length::integer())
 %% @end
 %% ---------------------------------------------------------------------------- 
 
@@ -88,16 +103,17 @@ maxGrass([{Grass, X, Y}|T], Acc, CurrMax, Length) ->
 		   maxGrass(T, Acc, CurrMax, Length)
 	end.
 
-
 %% ----------------------------------------------------------------------------
 %% @doc Finds a new square for Rabbit, left/right/up/down/diagonal compared to 
-%% Rabbit's current coordinate.
-%% @spec findNewSquare(Rabbit::record(), MapList::list()) -> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% Rabbit's current coordinate. If there are no possible moves, the function 
+%% returns to loop(Rabbit::rabbit()).
+%% @spec findNewSquare(Rabbit::rabbit(), MapList::list()) -> Rabbit:rabbit() 
 %% @end
 %% ---------------------------------------------------------------------------- 
 
 findNewSquare(Rabbit, MapList) ->
-	{Length, PossibleSquares} = maxGrass(parseList(Rabbit, MapList, 1, []),[],0,0),
+	{Length, PossibleSquares} = maxGrass(parseList(Rabbit, MapList, 1, []),
+										 [],0,0),
 	
 	if(Length =/= 0)->
 		Dir = random:uniform(Length),
@@ -106,27 +122,16 @@ findNewSquare(Rabbit, MapList) ->
 	  true ->
 		  loop(Rabbit)
 	end.
-
-%% 	PID = Rabbit#rabbit.spid,
-%% 	PID ! {move, self(), Rabbit#rabbit.age, Rabbit#rabbit.hunger, X, Y, X2, Y2},
-%% 	receive
-%% 		yes ->
-%% 			move(Rabbit, {X2, Y2});
-%% 		no ->
-%% 			findNewSquare(Rabbit)
-%% 	end.
-
-							
+						
 %% ----------------------------------------------------------------------------
 %% @doc Makes a rabbit who is hungry eat if it there is enough grass 
-%% @spec eat(Rabbit::record()) -> {Rabbit, gotFood/noFood, List}
+%% @spec eat(Rabbit::rabbit()) -> {Rabbit::rabbit(), gotFood/noFood::atom(), 
+%%   								List::list()}
 %% @end
 %% ---------------------------------------------------------------------------- 
 
 eat(Rabbit) ->
 	{Grass, _, List} = getMap(Rabbit),
-%% 	Grass = 5,
-%% 	{X, Y} = {Rabbit#rabbit.x, Rabbit#rabbit.y},
 	case randw:isHungry({rabbit, Rabbit}) and (Grass > 0) of
 		true ->
 			{Rabbit#rabbit{hunger = Rabbit#rabbit.hunger - 1}, gotFood, List};
@@ -138,7 +143,8 @@ eat(Rabbit) ->
 
 %% ----------------------------------------------------------------------------
 %% @doc Ask the map process for the map and its current layout 
-%% @spec getMap(Rabbit::record()) ->  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @spec getMap(Rabbit::rabbit()) ->  {Grass::integer(), Type::atom(), 
+%% 										List::list()}
 %% @end
 %% ---------------------------------------------------------------------------- 
 
@@ -152,19 +158,10 @@ getMap(Rabbit) ->
 			{Grass, Type, List}
 		
 	end.
-	
-%% 	PID = Rabbit#rabbit.spid,
-%% 	PID ! {get, self()},
-%% 	receive
-%% 		{map, Array} ->
-%% 			Array
-%% 	end.
-
-
 
 %% ----------------------------------------------------------------------------
 %% @doc Initiates all things required to happen during a time tick for a rabbit
-%% @spec doTick(Rabbit::record()) -> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @spec doTick(Rabbit::rabbit()) -> Rabbit:rabbit()
 %% @end
 %% ---------------------------------------------------------------------------- 
 
@@ -175,16 +172,17 @@ doTick(Rabbit) ->
 	
 	if
 		Ate == gotFood ->
- 			PID ! {rabbitEat, self(), Rabbit3#rabbit.age, Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
+ 			PID ! {rabbitEat, self(), Rabbit3#rabbit.age, 
+				   Rabbit3#rabbit.hunger, Rabbit3#rabbit.x, Rabbit3#rabbit.y},
 			Rabbit3;
 		true ->
 			findNewSquare(Rabbit3, List)
 	end.
 
 %% ----------------------------------------------------------------------------
-%% @doc Calls init() and loop() or kills the rabbits process when that command 
-%% is recieved
-%% @spec preloop(Rabbit::record()) -> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%% @doc Calls init() and loop(Rabbit:rabbit()) or kills the rabbit process 
+%% when that command is recieved
+%% @spec preloop(Rabbit::rabbit()) -> loop(Rabbit::rabbit()) 
 %% @end
 %% ---------------------------------------------------------------------------- 
 
@@ -199,10 +197,12 @@ preloop(Rabbit) ->
 	end.
 
 %% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec loop(Rabbit::record())
+%% @doc Upon starting the program, loop(Rabbit::rabbit()) is started and will
+%% call other functions in the program, will kill the rabbit process if that
+%% command is recieved. 
+%% @spec loop(Rabbit::rabbit()) -> loop(NewRabbit::rabbit()) 
 %% @end
-%% ---------------------------------------------------------------------------- '
+%% ---------------------------------------------------------------------------- 
 
 loop(Rabbit) ->
 	receive
@@ -227,52 +227,8 @@ loop(Rabbit) ->
 	end.
 
 %% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
-%% @end
-%% ---------------------------------------------------------------------------- 
-
-sendTick(Pid) ->
-	Pid ! {self(), tick}.
-
-%% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
-%% @end
-%% ---------------------------------------------------------------------------- 
-
-getInfo(Pid) ->
-	Pid ! {self(), getInfo},
-	receive
-		{Pid, Rabbit} ->
-			Rabbit
-	end.
-
-%% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
-%% @end
-%% ---------------------------------------------------------------------------- 
-
-getCoords(Pid) ->
-	Pid ! {self(), getCoords},
-	receive
-		{Pid, Coords} ->
-			Coords
-	end.
-
-%% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
-%% @end
-%% ---------------------------------------------------------------------------- 
-
-execute(Pid) ->
-	Pid ! {self(), die}.
-
-%% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
+%% @doc Sets the random seed.
+%% @spec init() -> random:seed::integer()
 %% @end
 %% ---------------------------------------------------------------------------- 
 
@@ -281,32 +237,52 @@ init() ->
 	Mega = lists:nth(2, pid_to_list(self())),
 	random:seed(A1 + Mega, A2 + Mega, A3 + Mega).
 
-%% ----------------------------------------------------------------------------
-%% @doc 
-%% @spec
-%% @end
-%% ---------------------------------------------------------------------------- 
 
-test() ->
-	init(),
-	KaninPid = newRabbit({5, 5}, self()),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	sendTick(KaninPid),
-	{X, Y} = getCoords(KaninPid),
- 	RabbitInfo = getInfo(KaninPid),
-	io:format("Rabbit (~w)~nAge: ~w~nHunger: ~w~n", [KaninPid, RabbitInfo#rabbit.age, RabbitInfo#rabbit.hunger]),
-	io:format("x: ~w~ny: ~w~n", [X, Y]),
-	execute(KaninPid),
-	test_finished.
+%% ----------------------------------------------------------------------------
+%% FUNCTIONS FOR TESTING
+%% ----------------------------------------------------------------------------
+%%  
+%% sendTick(Pid) ->
+%% 	Pid ! {self(), tick}.
+%% 
+%% getInfo(Pid) ->
+%% 	Pid ! {self(), getInfo},
+%% 	receive
+%% 		{Pid, Rabbit} ->
+%% 			Rabbit
+%% 	end.
+%% 
+%% getCoords(Pid) ->
+%% 	Pid ! {self(), getCoords},
+%% 	receive
+%% 		{Pid, Coords} ->
+%% 			Coords
+%% 	end.
+%% 
+%% execute(Pid) ->
+%% 	Pid ! {self(), die}.
+%% 
+%% 
+%% test() ->
+%% 	init(),
+%% 	KaninPid = newRabbit({5, 5}, self()),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	sendTick(KaninPid),
+%% 	{X, Y} = getCoords(KaninPid),
+%%  	RabbitInfo = getInfo(KaninPid),
+%% 	io:format("Rabbit (~w)~nAge: ~w~nHunger: ~w~n", [KaninPid, RabbitInfo#rabbit.age, RabbitInfo#rabbit.hunger]),
+%% 	io:format("x: ~w~ny: ~w~n", [X, Y]),
+%% 	execute(KaninPid),
+%% 	test_finished.
