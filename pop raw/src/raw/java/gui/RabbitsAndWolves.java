@@ -73,7 +73,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         tButton.setSize(40, 40);
         
         JSlider zoomSlider = new JSlider();
-        zoomSlider.setBounds(0, 200, 200, 60);
+        zoomSlider.setBounds(0, 130, 200, 50);
         zoomSlider.setMaximum(64);
         zoomSlider.setMinimum(1);  
         zoomSlider.setValue(7);
@@ -88,13 +88,8 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         textFieldSeed = new JTextField();
         textFieldSize.setBounds(16, 260, 64, 24);
         textFieldSeed.setBounds(116, 260, 64, 24);
-        //textFieldSize.getDocument().addDocumentListener(new DL_FLD_SeedListener());
-        //textFieldSize.getDocument().addDocumentListener(new DL_FLD_SizeListener(mapDisplayPanel));
-        /*try {
-			textFieldSize.getDocument().insertString(0, "25", null);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}*/
+        textFieldSize.setToolTipText("Size of map on reset");
+        textFieldSeed.setToolTipText("Seed for randomizer on reset");
         
         controlFrame.getContentPane().add(textFieldSize);
         controlFrame.getContentPane().add(textFieldSeed);
@@ -103,15 +98,15 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
          * Show/hide map elements 
          */
         JCheckBox cBoxWolves = new JCheckBox();
-        cBoxWolves.setBounds(0, 140, 200, 20);
+        cBoxWolves.setBounds(0, 70, 200, 20);
         cBoxWolves.setText("Hide wolves");
         cBoxWolves.setToolTipText("Hide wolves in the display");
         JCheckBox cBoxRabbits = new JCheckBox();
-        cBoxRabbits.setBounds(0, 160, 200, 20);
+        cBoxRabbits.setBounds(0, 90, 200, 20);
         cBoxRabbits.setText("Hide rabbits");
         cBoxRabbits.setToolTipText("Hide rabbits in the display");
         JCheckBox cBoxGrass = new JCheckBox();
-        cBoxGrass.setBounds(0, 180, 200, 20);
+        cBoxGrass.setBounds(0, 110, 200, 20);
         cBoxGrass.setText("Hide grass");
         cBoxGrass.setToolTipText("Hide grass in the display");
         

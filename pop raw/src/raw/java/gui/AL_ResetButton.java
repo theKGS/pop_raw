@@ -63,7 +63,7 @@ public class AL_ResetButton implements ActionListener {
 			System.out.println("seed: " + seed);
 		} else {
 			mPanel.getMap().setSeed(0);
-		}
+		}		
 		
 		mPanel.getMap().simulationReset();
 		mPanel.resetMapSize();
