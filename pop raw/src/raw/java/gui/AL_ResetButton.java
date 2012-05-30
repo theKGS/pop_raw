@@ -14,17 +14,20 @@ public class AL_ResetButton implements ActionListener {
 	private MapPanel mPanel;
 	private JTextField textFieldSize; // Text field for map size input
 	private JTextField textFieldSeed; // Text field for seed input
-
+	private JTextField textFieldMaster; // Text field for input of other parameters
+	
 	/**
 	 * Constructor. Is passed a reference to a MapPanel.
 	 * 
 	 * @param mp
 	 *            the MapPanel the JButton will be linked to.
+	 * @param tm 
 	 */
-	public AL_ResetButton(MapPanel mp, JTextField sz, JTextField ss) {
+	public AL_ResetButton(MapPanel mp, JTextField sz, JTextField ss, JTextField tm) {
 		mPanel = mp;
 		textFieldSize = sz;
 		textFieldSeed = ss;
+		textFieldMaster = tm;
 	}
 
 	/**
@@ -64,6 +67,22 @@ public class AL_ResetButton implements ActionListener {
 		} else {
 			mPanel.getMap().setSeed(0);
 		}		
+		
+		/*
+		 * Attempts to retrieve all values from textFieldMaster
+		 */
+		String fldPrms = textFieldMaster.getText();
+		String params[] = fldPrms.split(" ");
+		
+		if (params.length != 5) {
+			System.err.println("Incorrect or missing parameters");
+		} else {
+			mPanel.getMap().setWolfReprAge			(Integer.parseInt(params[0]));
+			mPanel.getMap().setWoldReprSuccessProb	(Integer.parseInt(params[1]));
+			mPanel.getMap().setRappitReprAge		(Integer.parseInt(params[2]));
+			mPanel.getMap().setRabbitReprSuccessProb(Integer.parseInt(params[3]));
+			mPanel.getMap().setSpeedOfGrassGrowth	(Integer.parseInt(params[4]));
+		}
 		
 		mPanel.getMap().simulationReset();
 		mPanel.resetMapSize();

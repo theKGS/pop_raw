@@ -9,7 +9,7 @@ import raw.java.map.MapNode;
 
 /*
  * wolf 
- *   max age, reproduction age, reproduction success probability
+ *   reproduction age, reproduction success probability
  * rabbit
  *   -||-
  * grass
@@ -91,10 +91,11 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
         textFieldMaster = new JTextField();
         textFieldSize.setBounds(16, 170, 64, 24);
         textFieldSeed.setBounds(116, 170, 64, 24);
-        textFieldMaster.setBounds(16, 200, 168, 48);
+        textFieldMaster.setBounds(16, 200, 168, 24);
         textFieldSize.setToolTipText("Size of map on reset");
         textFieldSeed.setToolTipText("Seed for randomizer on reset");
-        textFieldMaster.setToolTipText("'WMA WRA WRSP RMA RRA RRSP GGS', updated on reset");
+        textFieldMaster.setToolTipText("'WRA WRSP RRA RRSP GGS', updated on reset");
+        textFieldMaster.setText("4 0 10 300 5000");
         
         controlFrame.getContentPane().add(textFieldSize);
         controlFrame.getContentPane().add(textFieldSeed);
@@ -133,7 +134,7 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
          */
         rawButtonStart.addActionListener(new AL_StartButton(mapDisplayPanel));
         rawButtonStop.addActionListener(new AL_StopButton(mapDisplayPanel));
-        rawButtonReset.addActionListener(new AL_ResetButton(mapDisplayPanel, textFieldSize, textFieldSeed));
+        rawButtonReset.addActionListener(new AL_ResetButton(mapDisplayPanel, textFieldSize, textFieldSeed, textFieldMaster));
         zoomSlider.addChangeListener(new AL_ZoomSlider(mapDisplayPanel, zoomSlider));
         cBoxWolves.addItemListener(new AL_CBL_Wolves(mapDisplayPanel));
         cBoxRabbits.addItemListener(new AL_CBL_Rabbits(mapDisplayPanel));
