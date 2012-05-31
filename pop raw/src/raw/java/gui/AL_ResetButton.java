@@ -74,15 +74,20 @@ public class AL_ResetButton implements ActionListener {
 		String fldPrms = textFieldMaster.getText();
 		String params[] = fldPrms.split(" ");
 		
-		if (params.length != 5) {
+		/*if (params.length != 5) {
 			System.err.println("Incorrect or missing parameters");
-		} else {
-			mPanel.getMap().setWolfReprAge			(Integer.parseInt(params[0]));
-			mPanel.getMap().setWoldReprSuccessProb	(Integer.parseInt(params[1]));
-			mPanel.getMap().setRappitReprAge		(Integer.parseInt(params[2]));
-			mPanel.getMap().setRabbitReprSuccessProb(Integer.parseInt(params[3]));
-			mPanel.getMap().setSpeedOfGrassGrowth	(Integer.parseInt(params[4]));
+		} else {*/
+		
+		for (String h : params){
+			System.out.print(h);
 		}
+
+		mPanel.getMap().setWolfReprAge			(Integer.parseInt(params[0]));
+		mPanel.getMap().setWoldReprSuccessProb	(Integer.parseInt(params[1]));
+		mPanel.getMap().setRappitReprAge		(Integer.parseInt(params[2]));
+		mPanel.getMap().setRabbitReprSuccessProb(Integer.parseInt(params[3]));
+		mPanel.getMap().setSpeedOfGrassGrowth	(Integer.parseInt(params[4]));
+		//}
 		
 		mPanel.getMap().simulationReset();
 		mPanel.resetMapSize();

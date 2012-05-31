@@ -164,20 +164,6 @@ public class RabbitsAndWolves implements Runnable, UpdateListener{
     	mapDisplayPanel.newMap(25,0);
     	mapDisplayPanel.getMap().start();
         SwingUtilities.invokeLater(se);
-       
-        try {
-			Process p = new ProcessBuilder("erl -sname foo -setcookie thisissparta -run jint_send setup", "").start();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        /*try {
-			Runtime.getRuntime().exec("erl -sname foo -setcookie thisissparta -run jint_send setup");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
     }
     
     /**
