@@ -82,11 +82,11 @@ public class AL_ResetButton implements ActionListener {
 			System.out.print(h);
 		}
 
-		mPanel.getMap().setWolfReprAge			(Integer.parseInt(params[0]));
+		/*mPanel.getMap().setWolfReprAge			(Integer.parseInt(params[0]));
 		mPanel.getMap().setWoldReprSuccessProb	(Integer.parseInt(params[1]));
 		mPanel.getMap().setRappitReprAge		(Integer.parseInt(params[2]));
 		mPanel.getMap().setRabbitReprSuccessProb(Integer.parseInt(params[3]));
-		mPanel.getMap().setSpeedOfGrassGrowth	(Integer.parseInt(params[4]));
+		mPanel.getMap().setSpeedOfGrassGrowth	(Integer.parseInt(params[4]));*/
 		//}
 		
 		mPanel.getMap().simulationReset();
