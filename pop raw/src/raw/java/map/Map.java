@@ -25,6 +25,7 @@ public class Map extends Thread
     public void setSimulationSpeed(int simulationSpeed)
     {
         this.simulationSpeed = simulationSpeed;
+
     }
 
     public static final int RABBITMAP = 0;
@@ -41,8 +42,7 @@ public class Map extends Thread
     public static final int START = 11;
     public static final int EATMOVE = 12;
     public static final int WOLFMOVE = 13;
-    
-    
+
     private static int mapSize = 25;
     private static int amountOfGrass = 5;
     private static int speedOfGrassGrowth = 5000;
@@ -94,14 +94,19 @@ public class Map extends Thread
      */
     private void setUp()
     {
+        System.out.println("Variables: " + wolfReprAge + ", "
+                + woldReprSuccessProb + ", " + rappitReprAge + ", "
+                + rabbitReprSuccessProb + ", " + speedOfGrassGrowth);
+
         r = new Random(Seed);
         this.mapArray = new MapNode[mapSize][mapSize];
         ArrayList<OtpErlangPid> startReceivers = new ArrayList<OtpErlangPid>();
+        mErlCom.flush();
         for (int i = 0; i < mapArray.length; i++)
         {
             for (int j = 0; j < mapArray[i].length; j++)
             {
-                mErlCom.flush();
+                
                 int type = r.nextInt(4);
                 if (type > 2)
                     type = 0;
@@ -113,10 +118,11 @@ public class Map extends Thread
                     MessageSuper msg = mErlCom.receive();
                     mapArray[i][j] = new MapNode(r.nextInt(6), type,
                             msg.getPid());
+                    
                     startReceivers.add(msg.getPid());
                 } else if (type == MapNode.WOLF)
                 {
-                   
+
                     mErlCom.send(new Message(Map.NEWWOLF, null, new int[] { i,
                             j }));
                     MessageSuper msg = mErlCom.receive();
@@ -133,6 +139,7 @@ public class Map extends Thread
         }
         for (OtpErlangPid pid : startReceivers)
         {
+           
             mErlCom.send(new Message(Map.START, pid, null));
         }
         mMsgThrExec = new MessageThreadExecutor(1000000, 10, 100, 10);
@@ -166,11 +173,10 @@ public class Map extends Thread
         super.run();
         while (running)
         {
-            if (paused)
+            if (!paused)
             {
-                continue;
+                handleNextMessage();
             }
-            handleNextMessage();
         }
     }
 
@@ -256,6 +262,7 @@ public class Map extends Thread
      */
     public void simulationStart()
     {
+        System.out.println("Got sim start");
         grassGrower = new GrassGrower(this, Map.speedOfGrassGrowth, mUpdtLis);
         grassGrower.start();
         paused = false;
@@ -266,7 +273,7 @@ public class Map extends Thread
      */
     public void simulationStop()
     {
-        grassGrower.interrupt();
+
         // grassGrower.running = false;
         paused = true;
     }
@@ -277,8 +284,11 @@ public class Map extends Thread
     public void simulationResetStop()
     {
         paused = true;
-        grassGrower.running = false;
-        grassGrower.interrupt();
+        if (grassGrower != null)
+        {
+            grassGrower.running = false;
+            grassGrower.interrupt();
+        }
         this.mMsgThrExec.flush();
         for (MapNode[] col : mapArray)
         {

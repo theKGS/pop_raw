@@ -233,7 +233,7 @@ public class MsgHandler
                 
                 if (r > Map.getWoldReprSuccessProb()
                         && coords[AGE] > Map.getWolfReprAge()
-                        && coords[HUNGER] < 8)
+                        && coords[HUNGER] < 20)
                 {
                     map.getMapArray()[newSpot[0]][newSpot[1]]
                             .setType(MapNode.WOLF);

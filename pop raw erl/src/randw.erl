@@ -33,7 +33,7 @@ increaseAge({Atom, Creature}) ->
 
 %% 
 %% @doc Updates Rabbit's/Wolf's coordinates to {X, Y}.
-%% 
+%% @spec move({Atom::atom(), Creature::creature(), {X::integer(), Y::integer()}})->Creature::creature()
 
 move({Atom, Creature, {X, Y}}) ->
 	case Atom of
@@ -64,8 +64,8 @@ move({Atom, Creature, {X, Y}}) ->
 
 
 %% 
-%% 
-%% 
+%% @doc checks if the creature is hungry
+%% @spec isHungry({Atom::atom(), Creature::creature()})->boolean()
 
 isHungry({Atom, Creature}) ->
 	case Atom of
@@ -76,8 +76,8 @@ isHungry({Atom, Creature}) ->
 	end.
 
 %% 
-%% 
-%% 
+%% @doc checks if the creature is to old
+%% @spec isTooOld({Atom::atom(), Creature::creature()})->boolean()
 
 isTooOld({Atom, Creature}) ->
 	case Atom of
@@ -88,8 +88,8 @@ isTooOld({Atom, Creature}) ->
 	end.
 
 %% 
-%% 
-%% 
+%% @doc checks if the creature is to hungry
+%% @spec isTooHungry({Atom::atom(), Creature::creature()})->boolean()
 
 isTooHungry({Atom, Creature}) ->
 	case Atom of 
@@ -100,8 +100,8 @@ isTooHungry({Atom, Creature}) ->
 	end.
 
 %% 
-%% 
-%% 
+%% @doc checks if the creature is too old or to hungry
+%% @spec checkToDie({Atom::atom(),Creature::creature()})->boolean()
 
 checkToDie({Atom, Creature}) ->
 	case isTooOld({Atom, Creature}) or isTooHungry({Atom, Creature}) of
@@ -115,6 +115,8 @@ checkToDie({Atom, Creature}) ->
 %%%%%%%% TESTS %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
+%%@doc
+%%@hidden
 isTooOld_test()->
 	Wolf = #wolf{age = 0, hunger = 0, x = 2, y = 2, spid = self()},
 	Wolf2 = #wolf{age = 69, hunger = 0, x = 2, y = 2, spid = self()},
@@ -145,7 +147,8 @@ isTooOld_test()->
 	?assert(RResponse2 == false),
 	?assert(RResponse3 == true),
 	?assert(RResponse4 == true).
-
+%%@doc
+%%@hidden
 isTooHungry_test()->
 	Wolf = #wolf{age = 0, hunger = 0, x = 2, y = 2, spid = self()},
 	Wolf2 = #wolf{age = 69, hunger = -10, x = 2, y = 2, spid = self()},
@@ -176,7 +179,8 @@ isTooHungry_test()->
 	?assert(RResponse2 == false),
 	?assert(RResponse3 == true),
 	?assert(RResponse4 == true).
-
+%%@doc
+%%@hidden
 increaseAge_test()->
 	Wolf = #wolf{age = 0, hunger = 0, x = 2, y = 2, spid = self()},
 	Wolf2 = #wolf{age = 69, hunger = -10, x = 2, y = 2, spid = self()},
@@ -207,7 +211,8 @@ increaseAge_test()->
 	?assert(RResponse2#rabbit.age == 70),
 	?assert(RResponse3#rabbit.age == 71),
 	?assert(RResponse4#rabbit.age == 72).
-
+%%@doc
+%%@hidden
 checkToDie_test()->
 	Wolf = #wolf{age = 0, hunger = 0, x = 2, y = 2, spid = self()},
 	Wolf2 = #wolf{age = 70, hunger = -10, x = 2, y = 2, spid = self()},
@@ -238,7 +243,8 @@ checkToDie_test()->
 	?assert(RResponse2 == true),
 	?assert(RResponse3 == true),
 	?assert(RResponse4 == true).
-
+%%@doc
+%%@hidden
 isHungry_test()->
 	Wolf = #wolf{age = 0, hunger = 0, x = 2, y = 2, spid = self()},
 	Wolf2 = #wolf{age = 69, hunger = -10, x = 2, y = 2, spid = self()},
@@ -270,7 +276,8 @@ isHungry_test()->
 	?assert(RResponse3 == true),
 	?assert(RResponse4 == true).
 
-
+%%@doc
+%%@hidden
 move_test()->
 	Wolf = #wolf{age = 0, hunger = 0, x = 2, y = 2, spid = self()},
 	
@@ -411,29 +418,3 @@ move_test()->
 	
 	?assert(RResp10 == Rabbit).
 	
-%% move({Atom, Creature, {X, Y}}) ->
-%% 	case Atom of
-%% 		rabbit ->
-%% 			PID = Creature#rabbit.spid,
-%% 			PID ! {move, self(), Creature#rabbit.age, Creature#rabbit.hunger, Creature#rabbit.x, Creature#rabbit.y, X, Y },
-%% 			receive
-%% 				{death}->
-%% 					exit(killed);
-%% 				{yes} ->
-%% 					NewRabbit = Creature#rabbit{x = X, y = Y};
-%% 				{no} ->
-%% 					Creature
-%% 			end;
-%% 		wolf ->
-%% 			PID = Creature#wolf.spid,
-%% 			PID ! {wolfMove, self(), Creature#wolf.age, Creature#wolf.hunger, Creature#wolf.x, Creature#wolf.y, X, Y },
-%% 			receive
-%% 				{death}->
-%% 					exit(killed);
-%% 				{yes} ->
-%% 					
-%% 					NewWolf = Creature#wolf{x = X, y = Y};
-%% 				{no} ->
-%% 					Creature
-%% 			end
-%% 	end.

@@ -55,7 +55,7 @@ public class GrassGrower extends Thread {
 				Thread.sleep(growthRate);
 			} catch (InterruptedException e) {
 				
-				e.printStackTrace();
+				
 			}
 		}
 
