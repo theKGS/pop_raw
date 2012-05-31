@@ -121,7 +121,7 @@ findNewSquare(Rabbit, MapList) ->
 		{_,X2,Y2} = lists:nth(Dir, PossibleSquares),
 		randw:move({rabbit, Rabbit, {X2, Y2}});
 	  true ->
-		  loop(Rabbit)
+		  Rabbit
 	end.
 						
 %% ----------------------------------------------------------------------------
@@ -304,14 +304,14 @@ newRabbit_test() ->
 parseList_test()->
 	Rabbit = #rabbit{age = 0, hunger = 2, x = 2, y = 2, spid = self()},
 	List = [{5,rabbit},{5,rabbit},{5,rabbit},{5,rabbit},{5,rabbit},
-		{5,rabbit},{5,rabbit},{5,rabbit}],
-%% 	NewMap = parseList(Rabbit, List, [], 0),
- 	List2 = [{5,none},{5,none},{5,none},{5,none},{5,none},
- 		{5,none},{5,none},{5,none}],
-	NewMap2 = parseList(Rabbit, List2, 0, []),
- 	AuxList = [{5,1,1},{5,1,2},{5,1,3},{5,2,1},{5,2,3},
- 		{5,3,1},{5,3,2},{5,3,3}],
-%% 	?assert(NewMap == []),
+		{5,rabbit},{5,rabbit},{5,rabbit},{5,rabbit}],
+ 	NewMap = parseList(Rabbit, List, 1, []),
+ 	List2 = [{5,none},{5,none},{5,none},{5,none},{5,rabbit},
+ 		{5,none},{5,none},{5,none},{5,none}],
+	NewMap2 = parseList(Rabbit, List2, 1, []),
+ 	AuxList = lists:reverse([{5,1,1},{5,2,1},{5,3,1},{5,1,2},{5,3,2},
+ 		{5,1,3},{5,2,3},{5,3,3}]),
+ 	?assert(NewMap == []),
  	?assert(NewMap2 == AuxList).
  
 maxGrass_test() ->
@@ -320,20 +320,34 @@ maxGrass_test() ->
 	?assert(List2 == {1,[{5,3,1}]}).
 
 findNewSquare_test() ->
-	true.
+	Rabbit = #rabbit{age = 0, hunger = 10, x = 2, y = 2, spid = self()},
+ 	NewRabbit = findNewSquare(Rabbit, []),
+	List = [{5,none},{5,none},{5,none},{5,none},{5,none},
+ 		{5,none},{5,none},{5,none},{5,none}],
+ 	self() ! {yes},
+ 	NewRabbit2 = findNewSquare(Rabbit,List),
+	receive
+		{move, _,_,_,_,_,X,Y}->
+			nothing
+	end,
+	self() ! {no},
+	NewRabbit3 = findNewSquare(Rabbit,List),
+	receive
+		MSG -> nothing
+	end,
+	
+  	?assert(Rabbit == NewRabbit),
+ 	?assert(NewRabbit2#rabbit.x == X),
+ 	?assert(NewRabbit2#rabbit.y == Y),
+	?assert(NewRabbit3 == Rabbit).
 
 eat_test()->
 	Rabbit = #rabbit{age = 0, hunger = 4, x = 2, y = 2, spid = self()},
-%% 	List = [{2, rabbit}, {0, rabbit}, {5, rabbit}, {1, rabbit}, {5, rabbit}, {2, rabbit}, {0, rabbit},
-%% 			{0, rabbit}, {1, rabbit}],
-	self() ! {yes},
-	Rabbit2 = eat(Rabbit),
-	case Rabbit2#rabbit.hunger of
-		3 ->
-			?assert(true);
-		5 ->
-			?assert(false)
-	end.
+ 	List = [{2, rabbit}, {0, rabbit}, {5, rabbit}, {1, rabbit}, {5, rabbit}, {2, rabbit}, {0, rabbit},
+ 			{0, rabbit}, {1, rabbit}],
+	self() ! {rabbitMap, List},
+	{Rabbit2, _, _} = eat(Rabbit),
+	?assert(Rabbit2#rabbit.hunger =:= 3).
 	
 getMap_test()->
 	Rabbit = #rabbit{age = 0, hunger = 10, x = 2, y = 2, spid = self()},

@@ -43,17 +43,24 @@ public class AL_ResetButton implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		mPanel.getMap().simulationResetStop();
-		// FIXME something is broken here. Sometimes it fails to update map
-		// size.
 		/*
 		 * Attempts to retrieve a size from the size text field. If that fails
 		 * it uses a default size as configured here.
 		 */
+		String txtStrng;
+		
 		Integer size;
-		if (textFieldSize.getText() != null) {
-			size = Integer.parseInt(textFieldSize.getText());
-			mPanel.getMap().setMapSize(size);
-			System.out.println("size: " + size);
+		txtStrng = textFieldSize.getText();
+		if (txtStrng != null) {
+			if (txtStrng.length() > 0) {
+				try {
+					size = Integer.parseInt(textFieldSize.getText());
+					mPanel.getMap().setMapSize(size);
+					System.out.println("size: " + size);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
 		} else {
 			mPanel.getMap().setMapSize(25);
 		}
@@ -63,10 +70,17 @@ public class AL_ResetButton implements ActionListener {
 		 * it uses a default seed as configured here.
 		 */
 		Integer seed;
-		if (textFieldSeed.getText() != null) {
-			seed = Integer.parseInt(textFieldSeed.getText());
-			mPanel.getMap().setSeed(seed);
-			System.out.println("seed: " + seed);
+		txtStrng = textFieldSeed.getText();
+		if (txtStrng != null) {
+			if (txtStrng.length() > 0) {
+				try {
+					seed = Integer.parseInt(textFieldSeed.getText());
+					mPanel.getMap().setSeed(seed);
+					System.out.println("seed: " + seed);
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
 		} else {
 			mPanel.getMap().setSeed(0);
 		}
