@@ -4,7 +4,7 @@
 -export([new/1, loop/1]).
 
 %% OBS THIS IS PURELY FOR TESTING PURPOSES AND 
-%%NOTHING SHOULD EVER BE DONE TO THIS
+%% NOTHING SHOULD EVER BE DONE TO THIS
 
 new(Pid) ->
 	ReportPid = spawn(idiot_rabbit, loop, [Pid]),

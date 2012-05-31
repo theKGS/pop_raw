@@ -10,3 +10,9 @@ start:
 
 clean:
 	del *.beam
+	
+testAux:
+	erlc test.erl
+
+test: clean testAux all
+	erl $(Name) -run test test
