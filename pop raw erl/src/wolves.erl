@@ -200,7 +200,7 @@ loop(Wolf) ->
 			loop(Wolf2);
 		{death} ->
 			exit(killed)
-		after 200 ->
+		after 400 ->
  			case randw:checkToDie({wolf, Wolf2}) of
  				true ->
 					PID = Wolf2#wolf.spid,

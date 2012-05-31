@@ -39,7 +39,7 @@ public class MessageThreadExecutor {
 		executor = new ThreadPoolExecutor(corNoThread, maxNoThread, timeOut,
 				TimeUnit.SECONDS, mWorksQueue, executionHandler);
 		executor.allowCoreThreadTimeOut(true);
-		executor.prestartAllCoreThreads();
+//		executor.prestartAllCoreThreads();
 		
 	}
 
@@ -58,8 +58,8 @@ public class MessageThreadExecutor {
 	private static int counter = 0;
 	
 	@SuppressWarnings("unused")
-    private void log() {
-		if ((counter++) % 100 == 0) {
+    public void log(boolean override) {
+		if ((counter++) % 100 == 0 || override) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Thread logging--------------------------------------------\n");
 			sb.append("Completed threads: ");
@@ -70,6 +70,8 @@ public class MessageThreadExecutor {
 			sb.append(executor.getTaskCount());
 			sb.append("\nAprox number of tasks active: ");
 			sb.append(executor.getActiveCount());
+			sb.append("\nJobs in queue");
+			sb.append(mWorksQueue.size());
 			sb.append("\n-----------------------------------------------------------");
 			System.out.println(sb.toString());
 			counter = 1;

@@ -215,7 +215,7 @@ loop(Rabbit) ->
 			loop(Rabbit);
 		{death} ->
 			exit(killed)
-		after 200 ->
+		after 400 ->
  			case randw:checkToDie({rabbit, Rabbit}) of
  				true ->
 					PID = Rabbit#rabbit.spid,

@@ -48,8 +48,8 @@ public class Map extends Thread
     private static int speedOfGrassGrowth = 5000;
     private static int numberOfWolves = 0;
     private static int maxWolfAge = 0;
-    private static int wolfReprAge = 4;
-    private static int woldReprSuccessProb = 0;
+    private static int wolfReprAge = 8;
+    private static int woldReprSuccessProb = 450;
     private static int numberOfRabbits = 0;
     private static int maxRabbitAge = 0;
     private static int rappitReprAge = 10;
@@ -106,7 +106,7 @@ public class Map extends Thread
         {
             for (int j = 0; j < mapArray[i].length; j++)
             {
-                
+
                 int type = r.nextInt(4);
                 if (type > 2)
                     type = 0;
@@ -118,7 +118,7 @@ public class Map extends Thread
                     MessageSuper msg = mErlCom.receive();
                     mapArray[i][j] = new MapNode(r.nextInt(6), type,
                             msg.getPid());
-                    
+
                     startReceivers.add(msg.getPid());
                 } else if (type == MapNode.WOLF)
                 {
@@ -139,10 +139,10 @@ public class Map extends Thread
         }
         for (OtpErlangPid pid : startReceivers)
         {
-           
+
             mErlCom.send(new Message(Map.START, pid, null));
         }
-        mMsgThrExec = new MessageThreadExecutor(1000000, 10, 100, 10);
+        mMsgThrExec = new MessageThreadExecutor(10000, 4, 100, 10);
         this.messagePool = new MessagePool();
     }
 
@@ -262,9 +262,14 @@ public class Map extends Thread
      */
     public void simulationStart()
     {
+        mMsgThrExec.log(true);
         System.out.println("Got sim start");
-        grassGrower = new GrassGrower(this, Map.speedOfGrassGrowth, mUpdtLis);
-        grassGrower.start();
+        if (grassGrower == null)
+        {
+            grassGrower = new GrassGrower(this, Map.speedOfGrassGrowth,
+                    mUpdtLis);
+            grassGrower.start();
+        }
         paused = false;
     }
 
@@ -275,6 +280,7 @@ public class Map extends Thread
     {
 
         // grassGrower.running = false;
+
         paused = true;
     }
 
