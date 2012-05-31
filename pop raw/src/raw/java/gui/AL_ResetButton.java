@@ -50,8 +50,8 @@ public class AL_ResetButton implements ActionListener {
 		 * it uses a default size as configured here.
 		 */
 		Integer size;
-		if (textFieldSeed.getText() != null) {
-			size = Integer.parseInt(textFieldSeed.getText());
+		if (textFieldSize.getText() != null) {
+			size = Integer.parseInt(textFieldSize.getText());
 			mPanel.getMap().setMapSize(size);
 			System.out.println("size: " + size);
 		} else {
