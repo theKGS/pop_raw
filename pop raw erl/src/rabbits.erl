@@ -6,6 +6,7 @@
 %%
 %% Include files
 %%
+-include_lib("eunit/include/eunit.hrl").
 
 %%
 %% Exported Functions
@@ -290,3 +291,56 @@ init() ->
 %% ----------------------------------------------------------------------------
 %% TESTS
 %% ----------------------------------------------------------------------------
+
+newRabbit_test() ->
+	newRabbit({1,2}, self()),
+	receive
+		{newRabbit, _PID, 1, 2} ->
+			?assert(true)
+	after 50 ->
+			?assert(false)
+	end.
+	
+parseList_test()->
+	Rabbit = #rabbit{age = 0, hunger = 2, x = 2, y = 2, spid = self()},
+	List = [{5,rabbit},{5,rabbit},{5,rabbit},{5,rabbit},{5,rabbit},
+		{5,rabbit},{5,rabbit},{5,rabbit}],
+%% 	NewMap = parseList(Rabbit, List, [], 0),
+ 	List2 = [{5,none},{5,none},{5,none},{5,none},{5,none},
+ 		{5,none},{5,none},{5,none}],
+	NewMap2 = parseList(Rabbit, List2, 0, []),
+ 	AuxList = [{5,1,1},{5,1,2},{5,1,3},{5,2,1},{5,2,3},
+ 		{5,3,1},{5,3,2},{5,3,3}],
+%% 	?assert(NewMap == []),
+ 	?assert(NewMap2 == AuxList).
+ 
+maxGrass_test() ->
+	List = [{4, 1,1}, {2,1,2}, {3,1,3}, {2,2,1}, {2,2,3}, {5,3,1}, {4,3,2}, {0,3,3}],
+	List2 = maxGrass(List, [], 0, 8),
+	?assert(List2 == {1,[{5,3,1}]}).
+
+findNewSquare_test() ->
+	true.
+
+eat_test()->
+	Rabbit = #rabbit{age = 0, hunger = 4, x = 2, y = 2, spid = self()},
+%% 	List = [{2, rabbit}, {0, rabbit}, {5, rabbit}, {1, rabbit}, {5, rabbit}, {2, rabbit}, {0, rabbit},
+%% 			{0, rabbit}, {1, rabbit}],
+	self() ! {yes},
+	Rabbit2 = eat(Rabbit),
+	case Rabbit2#rabbit.hunger of
+		3 ->
+			?assert(true);
+		5 ->
+			?assert(false)
+	end.
+	
+getMap_test()->
+	Rabbit = #rabbit{age = 0, hunger = 10, x = 2, y = 2, spid = self()},
+	List = [{2, rabbit}, {0, rabbit}, {5, rabbit}, {1, rabbit}, {2, rabbit}, {0, rabbit},
+			{0, rabbit}, {1, rabbit}],
+	self() ! {rabbitMap, List},
+	{_Grass, _Type, Map} = getMap(Rabbit),
+	?assert(Map == List).
+
+
