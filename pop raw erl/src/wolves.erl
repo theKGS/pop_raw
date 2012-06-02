@@ -10,7 +10,7 @@
 %%
 %% Exported Functions
 %%
--export([preloop/1, newWolf/2]).
+-export([preloop/1, newWolf/2, parseList/4]).
 
 %% 
 %% Defining a Wolf record
@@ -63,6 +63,8 @@ eat(Wolf, Map, Length) ->
 	PID ! {wolfEat, self(),Wolf#wolf.age, Wolf#wolf.hunger, Wolf#wolf.x, 
 		   Wolf#wolf.y, X, Y},
 	receive
+		{death} ->
+			exit(killed);
 		{yes} ->
 			Wolf#wolf{x = X, y = Y, hunger = Wolf#wolf.hunger - 5};
 		{eatMove} ->
@@ -122,7 +124,7 @@ parseList(Wolf, [{_,Type}|Map], Acc, Index)->
 			   12->
 				  parseList(Wolf,Map,[{Type, Wolf#wolf.x-1, Wolf#wolf.y}]++Acc, Index+1);
 			   13->
-				  parseList(Wolf,Map,[{Type, Wolf#wolf.x, Wolf#wolf.y}]++Acc, Index+1);
+				  parseList(Wolf,Map,Acc, Index+1);
 			   14->
 				  parseList(Wolf,Map,[{Type, Wolf#wolf.x+1, Wolf#wolf.y}]++Acc, Index+1);
 			   15->
@@ -417,23 +419,24 @@ parseList_test()->
 		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf},
 		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf},
 		{5,wolf},{5,wolf},{5,wolf},{5,wolf},{5,wolf}],
-	NewMap = parseList(Wolf, List, [], 0),
+	NewMap = parseList(Wolf, List, [], 1),
 	List2 = [
 		{5,wolf},{5,rabbit},{5,none},{5,wolf},{5,rabbit},
 		{5,none},{5,wolf},{5,rabbit},{5,none},{5,wolf},
 		{5,rabbit},{5,none},{5,wolf},{5,rabbit},{5,none},
 		{5,wolf},{5,rabbit},{5,none},{5,wolf},{5,rabbit},
 		{5,none},{5,rabbit},{5,wolf},{5,wolf},{5,rabbit}],
-	NewMap2 = parseList(Wolf, List2, [], 0),
+	NewMap2 = parseList(Wolf, List2, [], 1),
 	AuxList = 
-		[{rabbit, 1,0},{none, 2,0},{rabbit, 4,0},
+		lists:reverse([{rabbit, 1,0},{none, 2,0},{rabbit, 4,0},
 	    {none, 0,1},{rabbit, 2,1},{none, 3,1},
 		{rabbit, 0,2},{none, 1,2},{rabbit, 3,2},{none, 4,2},
 		{rabbit, 1,3},{none, 2,3},{rabbit, 4,3},
-		{none, 0,4},{rabbit, 1,4},{rabbit, 4,4}],
+		{none, 0,4},{rabbit, 1,4},{rabbit, 4,4}]),
 	
 	?assert(NewMap == []),
 	?assert(NewMap2 == AuxList).
+%% 	?assert(NewMap2 == AuxList).
 
 
 

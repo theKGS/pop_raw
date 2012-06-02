@@ -238,6 +238,7 @@ public class Map extends Thread
                 synchronized (mapArray[coords[0]][coords[1]])
                 {
                     mapArray[coords[0]][coords[1]].setPid(nextMessage.getPid());
+                    mapArray[coords[0]][coords[1]].setType(MapNode.WOLF);
                     mUpdtLis.update(coords[0], coords[1],
                             mapArray[coords[0]][coords[1]]);
                     mErlCom.send(new Message(Map.START, nextMessage.getPid(),
@@ -264,12 +265,13 @@ public class Map extends Thread
     {
         mMsgThrExec.log(true);
         System.out.println("Got sim start");
-        if (grassGrower == null)
-        {
-            grassGrower = new GrassGrower(this, Map.speedOfGrassGrowth,
-                    mUpdtLis);
-            grassGrower.start();
+        if(grassGrower != null){
+            grassGrower.running = false;
+            grassGrower.interrupt();
         }
+        grassGrower = new GrassGrower(this, Map.speedOfGrassGrowth, mUpdtLis);
+        grassGrower.start();
+
         paused = false;
     }
 
